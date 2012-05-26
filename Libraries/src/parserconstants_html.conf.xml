@@ -1,0 +1,41 @@
+<list>
+	<pcdata tag="script" />
+	<pcdata tag="style" />
+	<pcdata tag="textarea" />
+
+	<selfcloser tag="base" />
+	<selfcloser tag="br" />
+	<selfcloser tag="hr" />
+	<selfcloser tag="img" />
+	<selfcloser tag="input" />
+	<selfcloser tag="meta" />
+	<selfcloser tag="link" />
+
+	<optionalend tag="dd">
+		<end tag="dd" />
+		<end tag="dt" />
+	</optionalend>
+	<optionalend tag="dt">
+		<end tag="dt" />
+		<end tag="dd" />
+	</optionalend>
+	<optionalend tag="li">
+		<end tag="li" />
+	</optionalend>
+	<optionalend tag="p">
+		<end tag="p" />
+	</optionalend>
+	<optionalend tag="td">
+		<end tag="td" />
+		<end tag="th" />
+		<end tag="tr" />
+	</optionalend>
+	<optionalend tag="th">
+		<end tag="th" />
+		<end tag="td" />
+		<end tag="tr" />
+	</optionalend>
+	<optionalend tag="tr">
+		<end tag="tr" />
+	</optionalend>
+</list>

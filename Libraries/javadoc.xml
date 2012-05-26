@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpath="../HTTPClient/bin" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="simple.gui.component,simple.gui.event,simple.forms,simple.io,simple.gui.ui,simple.gui.container,simple.util.file,simple.monitor,simple.HTML,simple.util,simple.util.tree,simple.net,simple.time,simple.forms.old,simple.util.logging,simple.monitor.impl,simple.math,simple.ml,simple,simple.util.system,simple.gui.logging,simple.util.regex,simple.xml,simple.gui.factory,simple.gui,simple.sql,simple.util.command,simple.net.http,simple.util.hash" source="1.5" sourcefiles="src/tester.java" sourcepath="src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

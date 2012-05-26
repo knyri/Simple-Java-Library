@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="D:/Apps/EnvironmentViewer.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/Libraries/EnvironmentViewer.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=Libraries/src&lt;simple.util.system{EnvironmentViewer.java[EnvironmentViewer" manifestLocation="/Web Snatcher/src/picSnatcher/mediaSnatcher4/MediaSnatcher4" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.system{EnvironmentViewer.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util{Utils.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util{do_array.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util{do_str.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util{do_sort.java"/>
+    </selectedElements>
+</jardesc>

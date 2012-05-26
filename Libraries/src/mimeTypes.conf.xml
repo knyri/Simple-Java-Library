@@ -1,0 +1,254 @@
+<mime>
+<image>
+<type mime="image/jp2" ext="jp2" />
+<type mime="image/x-icon" ext="ico icns" />
+<type mime="image/icon" ext="ico icns" />
+<type mime="image/jpeg" ext="jpg jpeg jfif" />
+<type mime="image/pjpeg" ext="jpg jpeg jfif" />
+<type mime="image/jpg" ext="jpg jpeg jfif" />
+<type mime="image/gif" ext="gif" />
+<type mime="image/png" ext="png" />
+<type mime="image/bmp" ext="bmp" />
+<type mime="image/tiff" ext="tiff tff tif" />
+<type mime="image/tiff-fx" ext="tiff tff tif" />
+<type mime="image/cmu-raster" ext="ras" />
+<type mime="image/ief" ext="ief" />
+<type mime="image/x-cmu-raster" ext="ras" />
+<type mime="image/x-portable-anymap" ext="pnm" />
+<type mime="image/x-portable-bitmap" ext="pbm" />
+<type mime="image/x-portable-graymap" ext="pgm" />
+<type mime="image/x-portable-pixmap" ext="ppm" />
+<type mime="image/x-rgb" ext="rgb" />
+<type mime="image/x-xbitmap" ext="xbm" />
+<type mime="image/x-xpixmap" ext="xpm" />
+<type mime="image/x-xwindowdump" ext="xwd" />
+<type ext="dwf" mime="drawing/x-dwf" />
+<type ext="dwf" mime="model/vnd.dwf" />
+<type ext="dwg" mime="application/acad" />
+<type ext="dwg" mime="image/vnd.dwg" />
+<type ext="dwg" mime="image/x-dwg" />
+<type ext="dxf" mime="application/dxf" />
+<type ext="dxf" mime="image/vnd.dwg" />
+<type ext="dxf" mime="image/x-dwg" />
+<type ext="dxr" mime="application/x-director" />
+<type ext="odg"	mime="application/vnd.oasis.opendocument.graphics" />
+<type ext="odi"	mime="application/vnd.oasis.opendocument.image" />
+</image>
+<video>
+<type mime="application/shockwave" ext="swf" />
+<type mime="application/x-shockwave" ext="swf" />
+<type mime="application/x-shockwave-flash" ext="swf" />
+<type mime="application/mpeg4-generic" ext="mp4" />
+<type mime="application/mpeg4-iod" ext="mp4" />
+<type mime="application/mpeg4-iod-xmt" ext="mp4" />
+<type mime="video/3gpp"		ext="3gp" />
+<type mime="video/3gpp2"	ext="3gp2" />
+<type mime="video/3gpp-tt"	ext="3gp" />
+<type mime="video/dv" ext="dv" />
+<type mime="application/x-dvi" ext="dvi" />
+<type mime="video/H261"			ext="mpv" />
+<type mime="video/H263"			ext="mpv" />
+<type mime="video/H263-1998"	ext="mpv" />
+<type mime="video/H263-2000"	ext="mpv" />
+<type mime="video/H264"			ext="mpv" />
+<type mime="video/JPEG" ext="mjpeg mjpg" />
+<type mime="video/jpeg2000" ext="mj2" />
+<type mime="video/MJ2" ext="mj2" />
+<type mime="video/MP1S" ext="mpg mpeg mp1" />
+<type mime="video/MP2P" ext="mp2" />
+<type mime="video/MP2T" ext="mp2" />
+<type mime="video/mp4" ext="mp4" />
+<type mime="video/MP4V-ES" ext="mp4v" />
+<type mime="video/MPV" ext="mpv" />
+<type mime="video/mpeg" ext="mpeg mpg" />
+<type mime="video/mpeg4-generic" ext="mp4" />
+<type mime="video/nv" ext="nv" />
+<type mime="video/ogg" ext="ogg ogm" />
+<type mime="video/raw" ext="raw" />
+<type mime="video/dl" ext="dl" />
+<type mime="video/x-dl" ext="dl" />
+<type mime="video/dv" ext="dv" />
+<type mime="video/x-dvi" ext="dvi" />
+<type mime="video/fli" ext="fli" />
+<type mime="video/x-fli" ext="fli" />
+<type mime="video/flv" ext="flv" />
+<type mime="video/gl" ext="gl" />
+<type mime="video/mpeg" ext="mp2 mpe mpeg mpg" />
+<type mime="video/quicktime" ext="mov qt" />
+<type mime="video/vnd.vivo" ext="viv vivo" />
+<type mime="video/x-ms-asf" ext="asf" />
+<type mime="video/x-ms-asx" ext="asx" />
+<type mime="video/x-ms-wmv" ext="wmv" />
+<type mime="video/x-ms-wmx" ext="wmx" />
+<type mime="video/x-ms-wvx" ext="wvx" />
+<type mime="video/x-msvideo" ext="avi" />
+<type mime="video/x-sgi-movie" ext="movie" />
+</video>
+<audio>
+<type mime="audio/TSP-audio" ext="tsi" />
+<type mime="audio/basic" ext="au snd" />
+<type mime="audio/midi" ext="mid midi kar" />
+<type mime="audio/mpeg" ext="mp3 mp2 mpga" />
+<type mime="audio/ulaw" ext="au" />
+<type mime="audio/x-aiff" ext="aif aifc aiff" />
+<type mime="audio/x-mpegurl" ext="m3u" />
+<type mime="audio/x-ms-wax" ext="wax" />
+<type mime="audio/x-ms-wma" ext="wma" />
+<type mime="audio/x-pn-realaudio-plugin"	ext="rpm" />
+<type mime="audio/x-pn-realaudio"			ext="ram rm" />
+<type mime="audio/x-realaudio"				ext="ra" />
+<type mime="audio/x-wav" ext="wav" />
+<type mime="audio/wav" ext="wav" />
+<type mime="audio/nspaudio"		ext="la" />
+<type mime="audio/x-nspaudio"	ext="la" />
+<type mime="audio/x-liveaudio"	ext="lam" />
+<type mime="application/mp4"			ext="mp4 m4a m4v" />
+<type mime="application/mpeg4-generic"	ext="mp4" />
+<type mime="application/mpeg4-iod"		ext="mp4" />
+<type mime="application/mpeg4-iod-xmt"	ext="mp4" />
+<type mime="application/oda" ext="oda" />
+<type mime="application/ogg" ext="ogg ogm" />
+<type mime="music/x-karaoke" ext="kar" />
+</audio>
+<other>
+<type mime="application/base64" ext="mm mme" />
+<type mime="application/x-meme" ext="mm mme" />
+<type mime="application/dsptype"		ext="tsp" />
+<type mime="application/dxf"			ext="dxf" />
+<type mime="application/i-deas"			ext="unv" />
+<type mime="application/octet-stream"	ext="bin class dms exe lha lzh" />
+<type mime="application/pgp"			ext="pgp" />
+<type mime="application/postscript"		ext="ps eps ai" />
+<type mime="application/pro_eng"		ext="prt" />
+<type mime="application/set"			ext="set" />
+<type mime="application/SLA"			ext="stl" />
+<type mime="application/smil"			ext="smi smil" />
+<type mime="application/solids"			ext="sol" />
+<type mime="application/STEP"			ext="step stp" />
+<type mime="application/vda"			ext="vda" />
+<type mime="application/vnd.mif"		ext="mif" />
+<type mime="application/vnd.rim.cod"	ext="cod" />
+<type mime="application/x-bcpio"		ext="bcpio" />
+<type mime="application/x-bittorrent"	ext="torrent" />
+<type mime="application/x-cdlink"		ext="vcd" />
+<type mime="application/x-chess-pgn"	ext="pgn" />
+<type mime="application/x-cpio"			ext="cpio" />
+<type mime="application/x-csh"			ext="csh" />
+<type mime="application/x-debian-package" ext="deb" />
+<type mime="application/x-director"		ext="dcr dir dxr" />
+<type mime="application/x-freelance"	ext="pre" />
+<type mime="application/x-futuresplash" ext="spl" />
+<type mime="application/x-hdf"			ext="hdf" />
+<type mime="application/x-ipix"			ext="ipx" />
+<type mime="application/x-ipscript"		ext="ips" />
+<type mime="application/x-koan"			ext="skd skm skp skt" />
+<type mime="application/x-latex"		ext="latex" />
+<type mime="application/x-lisp"			ext="lsp" />
+<type mime="application/x-lotusscreencam" ext="scm" />
+<type mime="application/x-mif"			ext="mif" />
+<type mime="application/x-msdos-program" ext="bat com exe cmd msi" />
+<type mime="application/x-msdownload"	ext="exe com cmd bat msi" />
+<type mime="application/x-netcdf"		ext="cdf nc" />
+<type mime="application/x-perl"			ext="pl pm" />
+<type mime="application/x-sh"			ext="sh" />
+<type mime="application/x-sv4cpio" ext="sv4cpio" />
+<type mime="application/x-sv4crc" ext="sv4crc" />
+<type mime="application/x-tcl" ext="tcl" />
+<type mime="application/x-tex" ext="tex" />
+<type mime="application/x-texinfo" ext="texi" />
+<type mime="application/x-texinfo" ext="texinfo" />
+<type mime="application/x-troff" ext="roff t tr" />
+<type mime="application/x-troff-man" ext="man" />
+<type mime="application/x-troff-me" ext="me" />
+<type mime="application/x-troff-ms" ext="ms" />
+<type mime="application/x-ustar" ext="ustar" />
+<type mime="application/x-wais-source" ext="src" />
+<type mime="chemical/x-pdb" ext="pdb xyz" />
+<type mime="model/iges" ext="iges igs" />
+<type mime="model/mesh" ext="mesh msh silo" />
+<type mime="model/vrml" ext="vrml wrl" />
+<type mime="text/vnd.sun.j2me.app-descriptor" ext="jad" />
+<type mime="www/mime"		ext="mime mht mhtml" />
+<type mime="message/rfc822"	ext="mime mht mhtml" />
+<type mime="x-conference/x-cooltalk" ext="ice" />
+<type mime="x-world/x-vrml" ext="vrm vrml" />
+<type mime="application/binhex"			ext="hqx" />
+<type mime="application/binhex4"		ext="hqx" />
+<type mime="application/mac-binhex"		ext="hqx" />
+<type mime="application/mac-binhex40"	ext="hqx" />
+<type mime="application/x-binhex40"		ext="hqx" />
+<type mime="application/x-mac-binhex40"	ext="hqx" />
+</other>
+<archive>
+<type mime="application/java-archive"		ext="jar" />
+<type mime="application/mac-binhex40"		ext="hqx" />
+<type mime="application/mac-compactpro"		ext="cpt" />
+<type mime="application/x-arj-compressed"	ext="arj" />
+<type mime="application/x-bsh"				ext="bsh" />
+<type mime="application/x-bzip"				ext="bz" />
+<type mime="application/x-bzip2"			ext="bz2 boz" />
+<type mime="application/x-bittorrent"		ext="torrent" />
+<type mime="application/x-compressed"		ext="gz" />
+<type mime="application/x-gtar"				ext="gtar" />
+<type mime="application/x-gunzip"			ext="gz" />
+<type mime="application/x-gzip"				ext="gz gzip" />
+<type mime="multipart/x-gzip"				ext="gz gzip" />
+<type mime="application/x-rar-compressed"	ext="rar" />
+<type mime="application/x-shar"				ext="shar" />
+<type mime="application/x-stuffit"			ext="sit" />
+<type mime="application/x-tar"				ext="tar" />
+<type mime="application/x-tar-gz"			ext="tar.gz tgz" />
+<type mime="application/x-zip-compressed"	ext="zip" />
+<type mime="application/zip"				ext="zip" />
+</archive>
+<document>
+<type mime="application/book" ext="book" />
+<type mime="text/richtext" ext="rtx rtf" />
+<type mime="text/rtf" ext="rtf" />
+<type mime="text/sgml" ext="sgm sgml" />
+<type mime="text/tab-separated-values" ext="tsv" />
+<type mime="text/css"			ext="css" />
+<type mime="text/plain"			ext="asc c cc cpp c++ conf f77 f90 f h hh m txt" />
+<type mime="text/x-fortran"		ext="f f77 f90" />
+<type mime="text/x-c"			ext="c cc cpp" />
+<type mime="text/x-h"			ext="h hh" />
+<type mime="text/html"			ext="htm html shtml php asp jsp" />
+<type mime="application/hlp"		ext="hlp" />
+<type mime="application/x-helpfile" ext="hlp" />
+<type mime="application/x-winhelp"	ext="hlp" />
+<type mime="text/x-setext" ext="etx" />
+<type mime="text/xml" ext="xml" />
+<type mime="application/mspowerpoint" ext="ppt pps ppz pot" />
+<type mime="application/msword" ext="doc dot" />
+<type mime="application/excel" ext="xls" />
+<type mime="application/vnd.ms-excel" ext="xlc xll xlm xls xlw" />
+<type mime="application/rtf" ext="rtf" />
+<type mime="application/pdf" ext="pdf" />
+<type mime="application/x-msword" ext="doc" />
+<type mime="application/pdf" ext="pdf" />
+<type mime="application/javascript" ext="js jscript" />
+<type mime="application/xml" ext="xml" />
+<type mime="application/acad" ext="dwg" />
+<type mime="application/andrew-inset" ext="ez" />
+<type mime="application/clariscad" ext="ccad" />
+<type mime="application/drafting" ext="drw" />
+<type mime="text/csv" ext="csv" />
+<type ext="odt"	mime="application/vnd.oasis.opendocument.text" />
+<type ext="ods"	mime="application/vnd.oasis.opendocument.spreadsheet" />
+<type ext="odp"	mime="application/vnd.oasis.opendocument.presentation" />
+<type ext="odc"	mime="application/vnd.oasis.opendocument.chart" />
+<type ext="odf"	mime="application/vnd.oasis.opendocument.formula" />
+<type ext="odm"	mime="application/vnd.oasis.opendocument.text-master" />
+<type ext="odb"	mime="application/vnd.sun.xml.base" />
+<type ext="odb"	mime="application/vnd.oasis.opendocument.base" />
+<type ext="odb"	mime="application/vnd.oasis.opendocument.database" />
+<type ext="ott"	mime="application/vnd.oasis.opendocument.text-template" />
+<type ext="ots"	mime="application/vnd.oasis.opendocument.spreadsheet-template" />
+<type ext="otp"	mime="application/vnd.oasis.opendocument.presentation-template" />
+<type ext="otg"	mime="application/vnd.oasis.opendocument.graphics-template" />
+<type ext="otc"	mime="application/vnd.oasis.opendocument.chart-template" />
+<type ext="otf"	mime="application/vnd.oasis.opendocument.formula-template" />
+<type ext="oti"	mime="application/vnd.oasis.opendocument.image-template" />
+<type ext="oth"	mime="application/vnd.oasis.opendocument.text-web" />
+</document>
+</mime>

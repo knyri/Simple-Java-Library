@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="D:/Apps/simpleLibrary20110409.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/Libraries/Lib Full.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/Libraries/Lib Full" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.component"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.event"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.forms"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.io"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.ui"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.container"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.file"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Cookie2.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.HTML"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Page.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.tree"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Cookie.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.time"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.logging"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.forms.old"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{ParserConstants.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor.impl"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Tag.java"/>
+        <file path="/Libraries/src/mimeTypes.conf.xml"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.math"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{InlineLooseParser.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{RequestHeader.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{ParserTester.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.system"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.logging"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.regex"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.xml"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.factory"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{HttpFactory.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{ResponseHeader.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.sql"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.command"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{CookieHandler.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Site.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.hash"/>
+    </selectedElements>
+</jardesc>
