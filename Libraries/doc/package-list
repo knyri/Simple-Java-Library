@@ -1,4 +1,7 @@
 
+notmine
+se.datadosen.component
+se.datadosen.util
 simple
 simple.HTML
 simple.forms
@@ -21,6 +24,7 @@ simple.sql
 simple.time
 simple.util
 simple.util.command
+simple.util.constants
 simple.util.file
 simple.util.hash
 simple.util.logging
