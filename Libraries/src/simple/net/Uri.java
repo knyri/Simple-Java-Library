@@ -38,6 +38,7 @@ public final class Uri {
 	FILE = 16,
 	QUERY = 32,
 	FRAGMENT = 64;
+	private static String defaultScheme="";
 	/*
 	 * unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
 	 * reserved    = general-delimiters / sub-delimiters
@@ -91,13 +92,26 @@ public final class Uri {
 	/** A breakdown of the query. */
 	private final Hashtable<CIString, String> params = new Hashtable<CIString, String>();
 	private final int hash;
+	
+	public static void setDefaultScheme(String scheme){
+		defaultScheme=scheme.toLowerCase();
+	}
+	public static String getDefaultScheme(){return defaultScheme;}
+	
 	public Uri(final URI uri) {
 		this(uri.toString());
 	}
 	public Uri(final URL url) {
 		this(url.toExternalForm());
 	}
-	public Uri(final String uri) {
+	public Uri(final String uri){
+		this(uri,defaultScheme);
+	}
+	/**
+	 * @param uri
+	 * @param defaultScheme Used if the URI starts with "//". Is to address a new fad on the net(2012-07-08).
+	 */
+	public Uri(final String uri,String defaultScheme) {
 		hash = new CIString(uri).hashCode();
 		originalUri = uri;
 		final DoubleParsePosition pos = new DoubleParsePosition();
@@ -112,7 +126,9 @@ public final class Uri {
 		 */
 		try {
 			pos.end = uri.indexOf(':');
-			if (!pos.validEnd()) {
+			if(uri.startsWith("//")){
+				scheme=defaultScheme;
+			}else if (!pos.validEnd()) {
 				scheme = "";
 			} else if (pos.end > frag_index || pos.end > query_index || pos.end > path_index) {
 				scheme = "";
