@@ -111,7 +111,10 @@ public final class Uri {
 	 * @param uri
 	 * @param defaultScheme Used if the URI starts with "//". Is to address a new fad on the net(2012-07-08).
 	 */
-	public Uri(final String uri,String defaultScheme) {
+	public Uri(String uri,String defaultScheme) {
+		if(uri.startsWith("//") && !defaultScheme.isEmpty()){
+			uri=defaultScheme+":"+uri;
+		}
 		hash = new CIString(uri).hashCode();
 		originalUri = uri;
 		final DoubleParsePosition pos = new DoubleParsePosition();
@@ -126,11 +129,10 @@ public final class Uri {
 		 */
 		try {
 			pos.end = uri.indexOf(':');
-			if(uri.startsWith("//")){
-				scheme=defaultScheme;
-			}else if (!pos.validEnd()) {
+			if (!pos.validEnd()) {//semicolon found.
 				scheme = "";
 			} else if (pos.end > frag_index || pos.end > query_index || pos.end > path_index) {
+				//is before everything
 				scheme = "";
 				pos.end = -1;
 			} else {
@@ -763,6 +765,8 @@ public final class Uri {
 	}
 	/*
 	public static void main(final String[] arg) {
+		dump(new Uri("//thepiratebay.org/user/THE.DOCTOR.1963/0/3","http"));
+		dump(new Uri("//images.4chan.org/hc/src/1341547348739.jpg"));
 		dump(new Uri("http://thepiratebay.org/user/THE.DOCTOR.1963/0/3"));
 		dump(new Uri("http://host.com/sub1/d2plxsb"));
 		dump(new Uri("http://host.com/sub1/sub2/d2plxsb"));
@@ -776,7 +780,6 @@ public final class Uri {
 		dump(new Uri("gallery.php?g=poopa#d2plxsb"));
 		dump(new Uri("urn:gallery:booboo?k=90#/d2plxsb"));
 		dump(new Uri("index.php?page=post&s=list&tags=parent:654648"));
-		/**
 	}
 	private static void dump(Uri p){
 		System.out.println("baseURL:"+p.getOriginalUri());
