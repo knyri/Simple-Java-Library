@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="D:/Apps/simpleLibrary20110409.jar"/>
+    <jar path="D:/Apps/simplelib.jar"/>
     <options buildIfNeeded="true" compress="false" descriptionLocation="/Libraries/Lib Full.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
