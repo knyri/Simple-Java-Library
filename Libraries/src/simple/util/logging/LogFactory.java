@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util.logging;
 
@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Calendar;
 import java.util.Hashtable;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import simple.io.FileUtil;
 
@@ -32,14 +34,13 @@ import simple.io.FileUtil;
  */
 public final class LogFactory {
 	private static ErrorCodeResolver ecr = new ErrorCodeResolver() {
+		@Override
 		public String getErrorString(final int code) {
 			return null;
 		}};
 		private static Hashtable<Class<?>, Log> logCache = new Hashtable<Class<?>, Log>();
 		//private static final Log _log = new Log(LogFactory.class);
 		private static PrintStream globalStream = System.out;
-		private static Calendar cal = Calendar.getInstance();
-		private static long calLife = System.currentTimeMillis();
 		private static byte logOptions = (byte)0xFF;
 		private static boolean printTime=false,printDate=false;
 		public synchronized static final void setPrint(final LogLevel level, final boolean print) {
@@ -53,16 +54,12 @@ public final class LogFactory {
 			}
 		}
 		public static final String getTimeStamp() {
-			if ((System.currentTimeMillis()-calLife)>1000) {
-				cal = Calendar.getInstance();
-			}
-			final int hour = cal.get(Calendar.HOUR), minute = cal.get(Calendar.MINUTE), second = cal.get(Calendar.SECOND);
-			return ((hour<10?"0":"") + hour + (minute<10?"0":"") + minute  + (second<10?"0":"") + second);
+			LocalTime time=LocalTime.now();
+			return ((time.getHourOfDay()<10?"0":"") + time.getHourOfDay() + (time.getMinuteOfHour()<10?"0":"") + time.getMinuteOfHour()  + (time.getSecondOfMinute()<10?"0":"") + time.getSecondOfMinute());
 		}
 		public static final String getDateStamp() {
-			final Calendar c = Calendar.getInstance();
-			final int year = c.get(Calendar.YEAR), month = c.get(Calendar.MONTH), day = c.get(Calendar.DAY_OF_MONTH);
-			return (Integer.toString(year) + (month<10?"0":"")+Integer.toString(month) + (day<10?"0":"")+Integer.toString(day));
+			LocalDate now=LocalDate.now();
+			return (now.getYear() + (now.getMonthOfYear()<10?"0":"")+now.getMonthOfYear() + (now.getDayOfMonth()<10?"0":"")+now.getDayOfMonth());
 		}
 		public static final void setPrintTimeStamp(boolean print){
 			printTime=print;
