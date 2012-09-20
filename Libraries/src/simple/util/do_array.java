@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util;
 
@@ -24,14 +24,18 @@ public final class do_array {
 	 */
 	public static <E> Iterable<E> iterable(final Enumeration<E> e) {
 		return new Iterable<E>() {
+			@Override
 			public Iterator<E> iterator() {
 				return new Iterator<E>() {
+					@Override
 					public boolean hasNext() {
 						return e.hasMoreElements();
 					}
+					@Override
 					public E next() {
 						return e.nextElement();
 					}
+					@Override
 					public void remove() {}
 				};
 			}
@@ -45,12 +49,15 @@ public final class do_array {
 	public static <E> Iterator<E> iterator(final Enumeration<E> e) {
 		return new Iterator<E>() {
 			final Enumeration<E> _e = e;
+			@Override
 			public boolean hasNext() {
 				return _e.hasMoreElements();
 			}
+			@Override
 			public E next() {
 				return _e.nextElement();
 			}
+			@Override
 			public void remove() {}
 		};
 	}
@@ -64,13 +71,16 @@ public final class do_array {
 		return new Iterator<E>() {
 			final E[] elements = e;
 			int pos = 0;
+			@Override
 			public boolean hasNext() {
 				if (pos==elements.length) return false;
 				return true;
 			}
+			@Override
 			public E next() {
 				return elements[pos++];
 			}
+			@Override
 			public void remove() {}
 		};
 	}
@@ -97,10 +107,12 @@ public final class do_array {
 		return new Enumeration<E>() {
 			final E[] elem = e;
 			int pos = 0;
+			@Override
 			public boolean hasMoreElements() {
 				if (pos==elem.length) return false;
 				return true;
 			}
+			@Override
 			public E nextElement() {
 				return e[pos++];
 			}
@@ -174,6 +186,97 @@ public final class do_array {
 			list[i] = list[list.length-(i+1)];
 			list[list.length-(i+1)] = tmp;
 		}
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static byte[] reverse(byte[] list) {
+		byte tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static int[] reverse(int[] list) {
+		int tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static short[] reverse(short[] list) {
+		short tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static long[] reverse(long[] list) {
+		long tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static char[] reverse(char[] list) {
+		char tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static float[] reverse(float[] list) {
+		float tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
+	}
+	/**Reverses the elements in the list
+	 * @param list
+	 */
+	public static double[] reverse(double[] list) {
+		double tmp;
+		int mid = list.length/2;
+		for (int i = 0; i < mid; i++) {
+			tmp = list[i];
+			list[i] = list[list.length-(i+1)];
+			list[list.length-(i+1)] = tmp;
+		}
+		return list;
 	}
 	@SuppressWarnings("unchecked")
 	public static <E> E[] combine(E[] a,E[] b){
