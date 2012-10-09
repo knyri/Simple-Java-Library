@@ -3,6 +3,8 @@
  */
 package simple.util;
 
+import java.util.Arrays;
+
 /**
  * @author Ken
  *
@@ -51,26 +53,28 @@ public final class DataUtil{
 	 */
 	public static class LE{
 		public static long getLong(byte[] b){
-			byte end=(byte)Math.min(b.length,8);
-			b=do_array.reverse(do_array.)
+			if(b.length>8)Arrays.copyOfRange(b,0,8);
+			b=do_array.reverse(b);
 			long ret=0;
-			for (byte i = 0; i < end; i++) {
+			for (byte i = 0; i < 8; i++) {
 				ret = (ret << 8) | (b[i] & 0xFF);
 			}
 			return ret;
 		}
 		public static int getInt(byte[] b){
-			byte end=(byte)Math.min(b.length,4);
+			if(b.length>4)Arrays.copyOfRange(b,0,4);
+			b=do_array.reverse(b);
 			int ret=0;
-			for (byte i = 0; i < end; i++) {
+			for (byte i = 0; i < 4; i++) {
 				ret = (ret << 8) | (b[i] & 0xFF);
 			}
 			return ret;
 		}
 		public static short getShort(byte[] b){
-			byte end=(byte)Math.min(b.length,2);
+			if(b.length>2)Arrays.copyOfRange(b,0,2);
+			b=do_array.reverse(b);
 			int ret=0;
-			for (byte i = 0; i < end; i++) {
+			for (byte i = 0; i < 2; i++) {
 				ret = (ret << 8) | (b[i] & 0xFF);
 			}
 			return (short)ret;
