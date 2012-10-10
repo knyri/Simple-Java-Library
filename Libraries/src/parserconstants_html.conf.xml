@@ -38,4 +38,19 @@
 	<optionalend tag="tr">
 		<end tag="tr" />
 	</optionalend>
+	<optionalend tag="thead">
+		<end tag="thead" />
+		<end tag="tbody" />
+		<end tag="tfoot" />
+	</optionalend>
+	<optionalend tag="tbody">
+		<end tag="thead" />
+		<end tag="tbody" />
+		<end tag="tfoot" />
+	</optionalend>
+	<optionalend tag="tfoot">
+		<end tag="thead" />
+		<end tag="tbody" />
+		<end tag="tfoot" />
+	</optionalend>
 </list>

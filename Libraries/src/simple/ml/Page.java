@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.ml;
 
@@ -72,6 +72,13 @@ public class Page implements Iterable<Tag> {
 	public Vector<Tag> getTags(final String name) {
 		return cache.get(name);
 	}
+	/** Finds and returns all the tags with this name.
+	 * @param name Name of the tags wanted.
+	 * @return A Vector containing the tags.
+	 */
+	public Vector<Tag> getTags(final CIString name) {
+		return cache.get(name);
+	}
 	/** Rebuilds the tag cache. Should be called after a full parsing of the
 	 * page */
 	public void rebuildCache() {
@@ -132,6 +139,7 @@ public class Page implements Iterable<Tag> {
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
+	@Override
 	public Iterator<Tag> iterator() {
 		final Vector<Tag> tags = new Vector<Tag>(50,50);
 		for(final Vector<Tag> taglist: do_array.iterable(cache.elements())) {

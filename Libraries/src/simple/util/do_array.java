@@ -285,4 +285,34 @@ public final class do_array {
 		System.arraycopy(b,0,c,a.length,b.length);
 		return (E[])c;
 	}
+	public static byte[] grow(byte[] ary,int amount){
+		byte[] tmp=new byte[ary.length+amount];
+		System.arraycopy(ary,0,tmp,0,ary.length);
+		return tmp;
+	}
+	public static short[] grow(short[] ary,int amount){
+		short[] tmp=new short[ary.length+amount];
+		System.arraycopy(ary,0,tmp,0,ary.length);
+		return tmp;
+	}
+	public static int[] grow(int[] ary,int amount){
+		int[] tmp=new int[ary.length+amount];
+		System.arraycopy(ary,0,tmp,0,ary.length);
+		return tmp;
+	}
+	public static long[] grow(long[] ary,int amount){
+		long[] tmp=new long[ary.length+amount];
+		System.arraycopy(ary,0,tmp,0,ary.length);
+		return tmp;
+	}
+	public static double[] grow(double[] ary,int amount){
+		double[] tmp=new double[ary.length+amount];
+		System.arraycopy(ary,0,tmp,0,ary.length);
+		return tmp;
+	}
+	public static float[] grow(float[] ary,int amount){
+		float[] tmp=new float[ary.length+amount];
+		System.arraycopy(ary,0,tmp,0,ary.length);
+		return tmp;
+	}
 }

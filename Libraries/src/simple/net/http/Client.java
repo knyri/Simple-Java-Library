@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.net.http;
 
@@ -26,6 +26,7 @@ import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.cookie.Cookie;
@@ -37,13 +38,14 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 
 import simple.net.Uri;
+import simple.net.http.clientparams.ClientParam;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 /**
  * <hr>
  * <br>
  * Created: Oct 16, 2011
- * 
+ *
  * @author Kenneth Pierce
  */
 public final class Client{
@@ -56,6 +58,7 @@ public final class Client{
 		,new BasicHeader("Accept-Encoding","gzip,deflate")
 		,new BasicHeader("Accept-Language","en-US,en;q=0.8")
 	};
+	public static final String FORMAT_URLENCODED="application/x-www-form-urlencoded",FORMAT_FORMDATA="multipart/form-data";
 	/**
 	 * The last response
 	 */
@@ -75,6 +78,7 @@ public final class Client{
 			client.getParams().setIntParameter("http.socket.timeout",15000);
 			client.setHttpRequestRetryHandler(RetryHandler);
 			client.addRequestInterceptor(new HttpRequestInterceptor(){
+				@Override
 				public void process(final HttpRequest request,final HttpContext context) throws HttpException,IOException{
 					if(!request.containsHeader("Accept-Encoding")){
 						request.addHeader("Accept-Encoding","gzip,deflate");
@@ -82,10 +86,10 @@ public final class Client{
 				}
 			});
 			client.addResponseInterceptor(new HttpResponseInterceptor(){
+				@Override
 				public void process(final HttpResponse response,final HttpContext context) throws HttpException,IOException{
 					HttpEntity entity=response.getEntity();
 					Header ceheader=entity.getContentEncoding();
-					log.debug("CE",ceheader);
 					if(ceheader!=null){
 						HeaderElement[] codecs=ceheader.getElements();
 						log.debug("Codecs",codecs);
@@ -133,7 +137,7 @@ public final class Client{
 		else
 			response=client.execute(req,context);
 		log.debug("Request",req.getRequestLine().toString());
-		log.debug("Request",req.getAllHeaders());
+		//log.debug("Request",req.getAllHeaders());
 		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
 			Header location=response.getFirstHeader("Location");
 			log.debug("Redirect",uri+" --TO-- "+location);
@@ -145,13 +149,45 @@ public final class Client{
 	public HttpResponse get(Uri uri) throws ClientProtocolException, IOException{
 		return get(uri,null,null);
 	}
-	public HttpResponse post(Uri uri,Header[] headers,String[][] data){
-		return null;
+	public HttpResponse post(Uri uri,Header[] headers,ClientParam[] data,String format,HttpContext context) throws ClientProtocolException, IOException{
+		DefaultHttpClient client=getClient(uri);
+		HttpPost req=new HttpPost(uri.toString());
+		req.setHeaders(defaults);
+		String boundary=Integer.toHexString(uri.hashCode());
+		if(headers!=null){
+			for(Header header:headers)
+				req.setHeader(header);
+		}
+		if(data!=null){
+			if(FORMAT_URLENCODED.equals(format)){
+				req.setHeader("Content-Type",format);
+				for(ClientParam entity:data){
+					//TODO this
+				}
+			}else if(FORMAT_FORMDATA.equals(format)){
+				req.setHeader("Content-Type",format+"; boundary="+boundary);
+				req.setEntity(new MultipartFormEntity(data,boundary));
+			}
+		}
+		if(context==null)
+			response=client.execute(req);
+		else
+			response=client.execute(req,context);
+		log.debug("Request",req.getRequestLine().toString());
+		log.debug("Request",req.getAllHeaders());
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,format,context);
+		}
+		log.debug("Response",response);
+		return response;
 	}
 	public BufferedInputStream getInputStream() throws IllegalStateException,IOException{
 		return new BufferedInputStream(response.getEntity().getContent());
 	}
 	private static final HttpRequestRetryHandler RetryHandler=new HttpRequestRetryHandler(){
+		@Override
 		public boolean retryRequest(IOException exception,int executionCount,HttpContext context){
 			if(executionCount>=5){
 				// Do not retry if over max retry count
@@ -183,7 +219,7 @@ public final class Client{
 			//log.error(e);
 			//e.printStackTrace();
 		}//*/
-		
+
 	}
 	public void addCookies(List<Cookie> cookies2) {
 		for(Cookie cookie:cookies2){

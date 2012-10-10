@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import simple.CIString;
-//import simple.util.logging.Log;
-//import simple.util.logging.LogFactory;
 
 /**Node that has it all.<br>
  * <ul>
@@ -82,7 +80,7 @@ public class FullNode<T, K, V> {
 	 */
 	public final void setContent(T object) {	content = object;	}
 	/**
-	 * 
+	 *
 	 * @return The contents of the node.
 	 */
 	public final T getContent() {	return content;	}
@@ -132,6 +130,7 @@ public class FullNode<T, K, V> {
 	public final FullNode<T,K,V> getParent() {	return parent;	}
 	/**
 	 * Checks if it has a parent and returns the result.
+	 * Logical opposite of {@link #hasParent()}
 	 * @return True if it has no parent.
 	 */
 	public final boolean isRoot() {	return (parent==null);	}
@@ -168,17 +167,17 @@ public class FullNode<T, K, V> {
 	 * Gets a child at the index specified.
 	 * @param index Index of the child wanted.
 	 * @return Child Node at specified index or null if it has no children or the index is
-	 * out of the valid range(0&gt;= index &gt; childCount()). 
+	 * out of the valid range(0&gt;= index &gt; childCount()).
 	 */
 	public final FullNode<T,K,V> getChild(int index) {
-		if (index>children.size()||index<0) {	return null;	}
+		if (index>=children.size()||index<0) {	return null;	}
 		return children.elementAt(index);
 	}
 	/**
 	 * @return The number of children this node has.
 	 */
 	public final int childCount() {	return children.size();	}
-	
+
 	/**
 	 * Removes the specified Node from the list of children if it has any.
 	 * @param child Node to be removed.
@@ -208,7 +207,7 @@ public class FullNode<T, K, V> {
 	}
 	/**
 	 * Adds the key/value pair to the properties. If the key already exists then
-	 * the value for that key is replaced with the one provided. 
+	 * the value for that key is replaced with the one provided.
 	 * @param key Key for the value.
 	 * @param value Value to be set for the property.
 	 * @return The old value if previously set
@@ -230,6 +229,7 @@ public class FullNode<T, K, V> {
 	public final boolean hasProperty(K key) {
 		return properties.containsKey(key);
 	}
+	@Override
 	public String toString() {
 		return getName().toString();
 	}
