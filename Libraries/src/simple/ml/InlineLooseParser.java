@@ -90,6 +90,24 @@ public class InlineLooseParser {
 				continue;
 			}
 			buf.append(ReadWriterFactory.readUntil(bin, '>'));
+			if(buf.charAt(1)=='<' || do_str.isWhiteSpace(buf.charAt(1))){
+				//un-escaped <
+				int index=1;
+				while(buf.charAt(index)=='<' || do_str.isWhiteSpace(buf.charAt(index))){index++;}
+				if(cur!=null){
+					if(cur.getChild(cur.childCount()-1).getName().equals(Tag.CDATA)){
+						cur.getChild(cur.childCount()-1).setContent(cur.getChild(cur.childCount()-1).getContent()+buf.substring(0,index-1));
+						buf.delete(0,index-1);
+					}else{
+						cur.addChild(new Tag(Tag.CDATA, buf.substring(0,index-1), true));
+						buf.delete(0,index-1);
+					}
+				}else{
+					page.addTag(new Tag(Tag.CDATA, buf.substring(0,index-1), true), null);
+					buf.delete(0,index-1);
+				}
+			}
+			//log.warning(buf);
 			if (buf.length()>3 && buf.substring(0, 4).equals("<!--")) {
 				if (!buf.substring(buf.length()-3).equals("-->")) {
 					buf.append(ReadWriterFactory.readUntil(bin,"-->"));
@@ -103,7 +121,7 @@ public class InlineLooseParser {
 				buf.setLength(0);
 				continue;
 			}
-			if(buf.length()<2)break;
+			if(buf.length()<2)break;//hmm, can't remember why I did this...
 			if (buf.charAt(1)=='!'){
 				// <!DOCTYPE
 				if (buf.length()>9){
