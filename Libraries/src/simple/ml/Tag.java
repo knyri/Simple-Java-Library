@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.ml;
 
@@ -242,15 +242,19 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
+	@Override
 	public Iterator<Tag> iterator() {
 		return new Iterator<Tag>() {
 			private final Iterator<FullNode<String, CIString, String>> iter = children.iterator();
+			@Override
 			public boolean hasNext() {
 				return iter.hasNext();
 			}
+			@Override
 			public Tag next() {
 				return (Tag)iter.next();
 			}
+			@Override
 			public void remove() {iter.remove();}
 		};
 	}
@@ -282,7 +286,7 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 		sibling=tag;
 	}
 	/** The Element adjacent to this tag. In the markup this will be the tag below it.
-	 * @return
+	 * @return The sibling or null
 	 */
 	public Tag getSibling(){
 		return sibling;
