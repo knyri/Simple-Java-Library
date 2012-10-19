@@ -1,11 +1,15 @@
 package simple.net.http.clientparams;
 
-public abstract class ClientParam{
+import org.apache.http.NameValuePair;
+
+public abstract class ClientParam implements NameValuePair{
 	protected final String name,value;
 	public ClientParam(String name, String value){
 		this.name=name;
 		this.value=value;
 	}
+	@Override
 	public String getName(){return name;}
+	@Override
 	public abstract String getValue();
 }
