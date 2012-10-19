@@ -6,6 +6,7 @@ package simple.net.http;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -18,6 +19,7 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
@@ -25,10 +27,12 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -52,6 +56,7 @@ public final class Client{
 	private static final Log log=LogFactory.getLogFor(Client.class);
 	private final Hashtable<String,DefaultHttpClient> cache=new Hashtable<String,DefaultHttpClient>();
 	private final BasicCookieStore cookies=new BasicCookieStore();
+	private final HttpHost proxy;
 	public static final Header[] defaults=new Header[]{
 		new BasicHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 		,new BasicHeader("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.3")
@@ -73,6 +78,14 @@ public final class Client{
 		DefaultHttpClient client=cache.get(uri.getHost());
 		if(client==null){
 			client=new DefaultHttpClient();
+			if(proxy!=null)
+				client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
+			/*else{
+				ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+				        client.getConnectionManager().getSchemeRegistry(),
+				        ProxySelector.getDefault());
+				client.setRoutePlanner(routePlanner);
+			}*/
 			client.setCookieStore(cookies);
 			client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
 			client.getParams().setIntParameter("http.socket.timeout",15000);
@@ -137,7 +150,7 @@ public final class Client{
 		else
 			response=client.execute(req,context);
 		log.debug("Request",req.getRequestLine().toString());
-		//log.debug("Request",req.getAllHeaders());
+		log.debug("Request Headers",req.getAllHeaders());
 		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
 			Header location=response.getFirstHeader("Location");
 			log.debug("Redirect",uri+" --TO-- "+location);
@@ -161,9 +174,7 @@ public final class Client{
 		if(data!=null){
 			if(FORMAT_URLENCODED.equals(format)){
 				req.setHeader("Content-Type",format);
-				for(ClientParam entity:data){
-					//TODO this
-				}
+				req.setEntity(new UrlEncodedFormEntity(Arrays.asList(data)));
 			}else if(FORMAT_FORMDATA.equals(format)){
 				req.setHeader("Content-Type",format+"; boundary="+boundary);
 				req.setEntity(new MultipartFormEntity(data,boundary));
@@ -210,7 +221,11 @@ public final class Client{
 			return false;
 		}
 	};
+	public Client(String ProxyHost,int ProxyPort){
+		proxy = new HttpHost(ProxyHost,ProxyPort);
+	}
 	public Client(){
+		proxy=null;
 		/*
 		try{
 			//TODO: add persistent cookie cache
