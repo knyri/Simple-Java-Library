@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.net.http;
 
@@ -16,6 +16,7 @@ public class Site {
 		this.referrer = referrer;
 		this.site = site;
 	}
+	@Override
 	public String toString() {
 		return referrer.toString();
 	}
@@ -25,7 +26,10 @@ public class Site {
 	public Uri getSite() {
 		return site;
 	}
+	@Override
 	public int hashCode() {
+		//Why am I only using the referrer?
+		if(referrer==null)return 0;
 		return referrer.hashCode();
 	}
 }

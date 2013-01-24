@@ -128,9 +128,9 @@ public final class FileUtil{
 	 * @return
 	 */
 	public static final boolean ensureDir(File file){
-		file=cdup(file);
-		if(file.exists())return true;
-		return file.mkdirs();
+		File file2=cdup(file);
+		if(file2.exists()||file.equals(file2))return true;
+		return file2.mkdirs();
 	}
 	/**
 	 * Creates the file and any necessary directories.
