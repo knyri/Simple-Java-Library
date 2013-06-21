@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util.logging;
 
@@ -137,192 +137,92 @@ public final class Log {
 		_out.print(msg);
 		return _out.checkError();
 	}
-	public final boolean log(final LogLevel type, final Object msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final Exception msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final Dictionary<?,?> msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String msg, final Exception e) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg,e);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final Iterable<?> msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final Iterable<?> msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final Object[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final byte[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final short[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final int[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final long[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final float[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final double[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final Object msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final Object[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final byte[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final short[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final int[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final long[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final float[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
-	public final boolean log(final LogLevel type, final String ref, final double[] msg) {
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
-	}
+	public final boolean log(final LogLevel type, final Object msg){return _log(type,msg,options);}
+	public final boolean log(final LogLevel type, final Exception msg){return _log(type,msg,options);}
+	public final boolean log(final LogLevel type, final Dictionary<?,?> msg){return _log(type,msg,options);}
+	public final boolean log(final LogLevel type, final String msg, final Exception e){return _log(type,msg,e,options);}
+	public final boolean log(final LogLevel type, final Iterable<?> msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final Object[] msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final byte[] msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final short[] msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final int[] msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final long[] msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final float[] msg){return _log(type,msg,',',options);}
+	public final boolean log(final LogLevel type, final double[] msg){return _log(type,msg,',',options);}
+
+	public final boolean log(final LogLevel type, final Object[] msg,char sep){return _log(type,msg,sep,options);}
+	public final boolean log(final LogLevel type, final byte[] msg,char sep){return _log(type,msg,sep,options);}
+	public final boolean log(final LogLevel type, final short[] msg,char sep){return _log(type,msg,sep,options);}
+	public final boolean log(final LogLevel type, final int[] msg,char sep){return _log(type,msg,sep,options);}
+	public final boolean log(final LogLevel type, final long[] msg,char sep){return _log(type,msg,sep,options);}
+	public final boolean log(final LogLevel type, final float[] msg,char sep){return _log(type,msg,sep,options);}
+	public final boolean log(final LogLevel type, final double[] msg,char sep){return _log(type,msg,sep,options);}
+/*
+ * Reference Prefix
+ */
+	public final boolean log(final LogLevel type, final String ref, final Iterable<?> msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final Object msg){return _log(type,ref,msg,options);}
+	public final boolean log(final LogLevel type, final String ref, final Object[] msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final byte[] msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final short[] msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final int[] msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final long[] msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final float[] msg){return _log(type,ref,msg,',',options);}
+	public final boolean log(final LogLevel type, final String ref, final double[] msg){return _log(type,ref,msg,',',options);}
+
+	public final boolean log(final LogLevel type, final String ref, final Iterable<?> msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final Object[] msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final byte[] msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final short[] msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final int[] msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final long[] msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final float[] msg,char sep){return _log(type,ref,msg,sep,options);}
+	public final boolean log(final LogLevel type, final String ref, final double[] msg,char sep){return _log(type,ref,msg,sep,options);}
 	//Sectioned loggers
 	public final boolean log(final String section,final LogLevel type, final Object msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,msg,options);
 	}
 	public final boolean log(final String section,final LogLevel type, final Exception msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,msg,options);
 	}
 	public final boolean log(final String section,final LogLevel type, final Dictionary<?,?> msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,msg,options);
 	}
 	public final boolean log(final String section,final LogLevel type, final String ref, final Object msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,ref,msg,options);
 	}
 	public final boolean log(final String section,final LogLevel type, final String msg, final Exception e) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg,e);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,msg,e,options);
 	}
 	public final boolean log(final String section,final LogLevel type, final Iterable<?> msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,msg,',',options);
 	}
 	public final boolean log(final String section,final LogLevel type, final String ref, final Iterable<?> msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,ref,msg,',',options);
 	}
 	public final boolean log(final String section,final LogLevel type, final Object[] msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,msg,',',options);
 	}
 	public final boolean log(final String section,final LogLevel type, final String ref, final Object[] msg) {
 		Byte options = this.section.get(section);
-		if (options==null) {
-			options=this.options;
-		}
-		if ((options&type.getValue()) == type.getValue())
-			return _log(type,ref,msg);
-		return _out.checkError();
+		if(options==null)	options=this.options;
+		return _log(type,ref,msg,',',options);
 	}
 	//Error Code Resolver code
 	/**
@@ -348,16 +248,19 @@ public final class Log {
 		return log(LogLevel.ERROR, LogFactory.getECR(), errorCode);
 	}
 	//workhorse loggers
-	private final boolean _log(final LogLevel type, final Object msg) {
+	private final boolean _log(final LogLevel type, final Object msg,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.println(_getPreMessage(type)+_cName+": "+msg);
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final Exception msg) {
+	private final boolean _log(final LogLevel type, final Exception msg,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.println(_getPreMessage(type)+_cName+": "+msg);
 		msg.printStackTrace(_out);
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final Dictionary<?,?> msg) {
+	private final boolean _log(final LogLevel type, final Dictionary<?,?> msg,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.println(_getPreMessage(type)+_cName+": "+"Property listing:");
 		final Enumeration<?> keys = msg.keys();
 		Object key;
@@ -367,199 +270,217 @@ public final class Log {
 		}
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final Object msg) {
+	private final boolean _log(final LogLevel type, final String ref, final Object msg,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.println(_getPreMessage(type)+_cName+": "+ref+": "+msg);
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String msg, final Exception e) {
+	private final boolean _log(final LogLevel type, final String msg, final Exception e,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.println(_getPreMessage(type)+_cName+": "+msg);
 		e.printStackTrace(_out);
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final Iterable<?> msg) {
+	private final boolean _log(final LogLevel type, final Iterable<?> msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		final Iterator<?> iter = msg.iterator();
 		_out.print(iter.next());
 		while (iter.hasNext()) {
-			_out.print(",");
+			_out.print(sep);
 			_out.print(iter.next());
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final Iterable<?> msg) {
+	private final boolean _log(final LogLevel type, final String ref, final Iterable<?> msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		final Iterator<?> iter = msg.iterator();
 		_out.print(iter.next());
 		while (iter.hasNext()) {
-			_out.print(",");
+			_out.print(sep);
 			_out.print(iter.next());
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final byte[] msg) {
+	private final boolean _log(final LogLevel type, final byte[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final int[] msg) {
+	private final boolean _log(final LogLevel type, final int[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final short[] msg) {
+	private final boolean _log(final LogLevel type, final short[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final long[] msg) {
+	private final boolean _log(final LogLevel type, final long[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final float[] msg) {
+	private final boolean _log(final LogLevel type, final float[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final double[] msg) {
+	private final boolean _log(final LogLevel type, final double[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final Object[] msg) {
+	private final boolean _log(final LogLevel type, final Object[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final Object[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final Object[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final byte[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final byte[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final int[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final int[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final short[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final short[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final long[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final long[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final float[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final float[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
 		_out.println("}");
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String ref, final double[] msg) {
+	private final boolean _log(final LogLevel type, final String ref, final double[] msg,char sep,byte options) {
+		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
-				_out.print(",");
+				_out.print(sep);
 				_out.print(msg[i]);
 			}
 		}
@@ -573,81 +494,46 @@ public final class Log {
 	 * *************************** NOTE:DEBUG
 	 * **************************************
 	 */
-	public final boolean debugSect(final String section,final Object msg) {
-		return log(section,LogLevel.DEBUG, msg);
-	}
-	public final boolean debugSect(final String section,final Object[] msg) {
-		return log(section,LogLevel.DEBUG, msg);
-	}
-	public final boolean debugSect(final String section,final Exception msg) {
-		return log(section,LogLevel.DEBUG, msg);
-	}
-	public final boolean debugSect(final String section,final Dictionary<?,?> msg) {
-		return log(section,LogLevel.DEBUG, msg);
-	}
-	public final boolean debugSect(final String section,final String ref, final Object msg) {
-		return log(section,LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debugSect(final String section,final String msg, final Exception e) {
-		return log(section,LogLevel.DEBUG, msg, e);
-	}
-	public final boolean debug(final Object msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final Object[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final byte[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final int[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final short[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final float[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final long[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final double[] msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final Exception msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final Dictionary<?,?> msg) {
-		return log(LogLevel.DEBUG, msg);
-	}
-	public final boolean debug(final String ref, final Object[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String ref, final Object msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String msg, final Exception e) {
-		return log(LogLevel.DEBUG, msg, e);
-	}
-	public final boolean debug(final String ref,final byte[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String ref,final int[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String ref,final short[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String ref,final float[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String ref,final long[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
-	public final boolean debug(final String ref,final double[] msg) {
-		return log(LogLevel.DEBUG, ref, msg);
-	}
+	public final boolean debugSect(final String section,final Object msg){return log(section,LogLevel.DEBUG, msg);}
+	public final boolean debugSect(final String section,final Object[] msg){return log(section,LogLevel.DEBUG, msg);}
+	public final boolean debugSect(final String section,final Exception msg){return log(section,LogLevel.DEBUG, msg);}
+	public final boolean debugSect(final String section,final Dictionary<?,?> msg){return log(section,LogLevel.DEBUG, msg);}
+	public final boolean debugSect(final String section,final String ref, final Object msg){return log(section,LogLevel.DEBUG, ref, msg);}
+	public final boolean debugSect(final String section,final String msg, final Exception e){return log(section,LogLevel.DEBUG, msg, e);}
+	public final boolean debug(final Object msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final Object[] msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final byte[] msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final int[] msg)		{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final short[] msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final float[] msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final long[] msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final double[] msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final Object[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final byte[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final int[] msg,char sep)		{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final short[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final float[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final long[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final double[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
+	public final boolean debug(final Exception msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final Dictionary<?,?> msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final String ref,final Object msg)	{return log(LogLevel.DEBUG, ref, msg);}
+	public final boolean debug(final String msg,final Exception e)	{return log(LogLevel.DEBUG, msg, e);}
+	public final boolean debug(final String ref,final Object[] msg){return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final byte[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final int[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final short[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final float[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final long[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final double[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
+	public final boolean debug(final String ref,final Object[] msg,char sep){return log(LogLevel.DEBUG, ref, msg,sep);}
+	public final boolean debug(final String ref,final byte[] msg,char sep)	{return log(LogLevel.DEBUG, ref, msg,sep);}
+	public final boolean debug(final String ref,final int[] msg,char sep)	{return log(LogLevel.DEBUG, ref, msg,sep);}
+	public final boolean debug(final String ref,final short[] msg,char sep)	{return log(LogLevel.DEBUG, ref, msg,sep);}
+	public final boolean debug(final String ref,final float[] msg,char sep)	{return log(LogLevel.DEBUG, ref, msg,sep);}
+	public final boolean debug(final String ref,final long[] msg,char sep)	{return log(LogLevel.DEBUG, ref, msg,sep);}
+	public final boolean debug(final String ref,final double[] msg,char sep)	{return log(LogLevel.DEBUG, ref, msg,sep);}
+
 	/* **************************************
 	 * *************************** NOTE:ERROR
 	 * **************************************
@@ -670,24 +556,39 @@ public final class Log {
 	public final boolean errorSect(final String section,final String ref, final Object[] msg) {
 		return log(section,LogLevel.ERROR, ref, msg);
 	}
-	public final boolean error(final Object msg) {
-		return log(LogLevel.ERROR, msg);
-	}
-	public final boolean error(final Object[] msg) {
-		return log(LogLevel.ERROR, msg);
-	}
-	public final boolean error(final Exception msg) {
-		return log(LogLevel.ERROR, msg);
-	}
-	public final boolean error(final String msg, final Exception e) {
-		return log(LogLevel.ERROR, msg, e);
-	}
-	public final boolean error(final String ref, final Object msg) {
-		return log(LogLevel.ERROR, ref, msg);
-	}
-	public final boolean error(final String ref, final Object[] msg) {
-		return log(LogLevel.ERROR, ref, msg);
-	}
+	public final boolean error(final Object msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final Object[] msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final byte[] msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final int[] msg)		{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final short[] msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final float[] msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final long[] msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final double[] msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final Object[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final byte[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final int[] msg,char sep)		{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final short[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final float[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final long[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final double[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
+	public final boolean error(final Exception msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final Dictionary<?,?> msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final String ref,final Object msg)	{return log(LogLevel.ERROR, ref, msg);}
+	public final boolean error(final String msg,final Exception e)	{return log(LogLevel.ERROR, msg, e);}
+	public final boolean error(final String ref,final Object[] msg){return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final byte[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final int[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final short[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final float[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final long[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final double[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
+	public final boolean error(final String ref,final Object[] msg,char sep){return log(LogLevel.ERROR, ref, msg,sep);}
+	public final boolean error(final String ref,final byte[] msg,char sep)	{return log(LogLevel.ERROR, ref, msg,sep);}
+	public final boolean error(final String ref,final int[] msg,char sep)	{return log(LogLevel.ERROR, ref, msg,sep);}
+	public final boolean error(final String ref,final short[] msg,char sep)	{return log(LogLevel.ERROR, ref, msg,sep);}
+	public final boolean error(final String ref,final float[] msg,char sep)	{return log(LogLevel.ERROR, ref, msg,sep);}
+	public final boolean error(final String ref,final long[] msg,char sep)	{return log(LogLevel.ERROR, ref, msg,sep);}
+	public final boolean error(final String ref,final double[] msg,char sep)	{return log(LogLevel.ERROR, ref, msg,sep);}
 	/* **************************************
 	 * ************************* NOTE:WARNING
 	 * **************************************
@@ -710,24 +611,39 @@ public final class Log {
 	public final boolean warningSect(final String section,final String ref, final Object[] msg) {
 		return log(section,LogLevel.WARNING, ref, msg);
 	}
-	public final boolean warning(final Object msg) {
-		return log(LogLevel.WARNING, msg);
-	}
-	public final boolean warning(final Object[] msg) {
-		return log(LogLevel.WARNING, msg);
-	}
-	public final boolean warning(final Exception msg) {
-		return log(LogLevel.WARNING, msg);
-	}
-	public final boolean warning(final String msg, final Exception e) {
-		return log(LogLevel.WARNING, msg, e);
-	}
-	public final boolean warning(final String ref, final Object msg) {
-		return log(LogLevel.WARNING, ref, msg);
-	}
-	public final boolean warning(final String ref, final Object[] msg) {
-		return log(LogLevel.WARNING, ref, msg);
-	}
+	public final boolean warning(final Object msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final Object[] msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final byte[] msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final int[] msg)		{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final short[] msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final float[] msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final long[] msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final double[] msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final Object[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final byte[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final int[] msg,char sep)		{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final short[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final float[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final long[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final double[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
+	public final boolean warning(final Exception msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final Dictionary<?,?> msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final String ref,final Object msg)	{return log(LogLevel.WARNING, ref, msg);}
+	public final boolean warning(final String msg,final Exception e)	{return log(LogLevel.WARNING, msg, e);}
+	public final boolean warning(final String ref,final Object[] msg){return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final byte[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final int[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final short[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final float[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final long[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final double[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
+	public final boolean warning(final String ref,final Object[] msg,char sep){return log(LogLevel.WARNING, ref, msg,sep);}
+	public final boolean warning(final String ref,final byte[] msg,char sep)	{return log(LogLevel.WARNING, ref, msg,sep);}
+	public final boolean warning(final String ref,final int[] msg,char sep)	{return log(LogLevel.WARNING, ref, msg,sep);}
+	public final boolean warning(final String ref,final short[] msg,char sep)	{return log(LogLevel.WARNING, ref, msg,sep);}
+	public final boolean warning(final String ref,final float[] msg,char sep)	{return log(LogLevel.WARNING, ref, msg,sep);}
+	public final boolean warning(final String ref,final long[] msg,char sep)	{return log(LogLevel.WARNING, ref, msg,sep);}
+	public final boolean warning(final String ref,final double[] msg,char sep)	{return log(LogLevel.WARNING, ref, msg,sep);}
 	/* **************************************
 	 * ********************* NOTE:INFORMATION
 	 * **************************************
@@ -744,16 +660,37 @@ public final class Log {
 	public final boolean informationSect(final String section,final String ref, final Object msg) {
 		return log(section,LogLevel.INFORMATION, ref, msg);
 	}
-	public final boolean information(final Object msg) {
-		return log(LogLevel.INFORMATION, msg);
-	}
-	public final boolean information(final Dictionary<?,?> msg) {
-		return log(LogLevel.INFORMATION, msg);
-	}
-	public final boolean information(final String ref, final Object[] msg) {
-		return log(LogLevel.INFORMATION, ref, msg);
-	}
-	public final boolean information(final String ref, final Object msg) {
-		return log(LogLevel.INFORMATION, ref, msg);
-	}
+	public final boolean information(final Object msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final Object[] msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final byte[] msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final int[] msg)		{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final short[] msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final float[] msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final long[] msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final double[] msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final Object[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final byte[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final int[] msg,char sep)		{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final short[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final float[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final long[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final double[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
+	public final boolean information(final Exception msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final Dictionary<?,?> msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final String ref,final Object msg)	{return log(LogLevel.INFORMATION, ref, msg);}
+	public final boolean information(final String msg,final Exception e)	{return log(LogLevel.INFORMATION, msg, e);}
+	public final boolean information(final String ref,final Object[] msg){return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final byte[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final int[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final short[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final float[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final long[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final double[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
+	public final boolean information(final String ref,final Object[] msg,char sep){return log(LogLevel.INFORMATION, ref, msg,sep);}
+	public final boolean information(final String ref,final byte[] msg,char sep)	{return log(LogLevel.INFORMATION, ref, msg,sep);}
+	public final boolean information(final String ref,final int[] msg,char sep)	{return log(LogLevel.INFORMATION, ref, msg,sep);}
+	public final boolean information(final String ref,final short[] msg,char sep)	{return log(LogLevel.INFORMATION, ref, msg,sep);}
+	public final boolean information(final String ref,final float[] msg,char sep)	{return log(LogLevel.INFORMATION, ref, msg,sep);}
+	public final boolean information(final String ref,final long[] msg,char sep)	{return log(LogLevel.INFORMATION, ref, msg,sep);}
+	public final boolean information(final String ref,final double[] msg,char sep)	{return log(LogLevel.INFORMATION, ref, msg,sep);}
 }
