@@ -150,10 +150,6 @@ public final class RenameFormat {
 			fileName = fullName.substring(0, fullName.length()-(path.length()-extDot));
 			ext = path.substring(extDot);
 		}
-		System.out.println(path);
-		System.out.println(fullName);
-		System.out.println(fileName);
-		System.out.println(ext);
 		begin = end = 0;
 		for (int i = 0;i<syn.length();i++) {
 			if (syn.charAt(i)=='$') {
@@ -293,7 +289,7 @@ public final class RenameFormat {
 			String tmp2=tmp.substring(tmp.lastIndexOf('.'));
 			tmp=tmp.substring(0,tmp.length()-tmp2.length());
 			tmp=tmp.replace('.','-').replace("--","-");
-			
+
 			return tmp+tmp2;
 		}
 		return buf.toString();
@@ -397,14 +393,5 @@ public final class RenameFormat {
 		temp.pe = new ParseException(args[3]);
 		temp.errorNum = Integer.parseInt(args[4]);
 		return null;
-	}
-	public static void main(final String[] args){
-		RenameFormat.fRESOLVEURLESCAPED=true;
-		final RenameFormat test=new RenameFormat();
-		test.setFormat("$D\\$N$E");
-		test.setFile(new File("D:\\Apps\\MediaSnatcher4\\thepiratebay.org\\%5B3DS%5DLEGO_Star_Wars_III_3DS%5BLEEFNDSSTUFF.TK%5D.6663504.TPB.torrent"));
-		System.out.println(test.getError(test.mockRename()));
-		System.out.println(test.toString());
-		System.out.println(test.toStringTarget());
 	}
 }
