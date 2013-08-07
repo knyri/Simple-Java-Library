@@ -4,7 +4,7 @@ import simple.NumberIterator;
 import simple.io.StaticPrinter;
 
 /**
- * 
+ *
  */
 
 /**
@@ -17,7 +17,7 @@ public final class tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		NumberIterator iter = new NumberIterator("[11...11,3]");
+		NumberIterator iter = new NumberIterator("[011...45,3]");
 		System.out.println(iter.toString());
 		while (iter.hasNext())
 			System.out.println(iter.next());

@@ -8,9 +8,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JComponent;
 /**An extension of JDialog that simplifies setup and layout by predefining it.<br>
  * As shown below, there is a top, left, center, right, and bottom panel.
  * The top and bottom panels flow components left to right.
@@ -51,7 +51,7 @@ public class SDialog extends JDialog {
 		OK_CANCEL_BUTTON = OK_OPTION+CANCEL_OPTION,
 		YES_NO_CANCEL_BUTTON = YES_OPTION+NO_OPTION+CANCEL_OPTION;
 	/**
-	 * 
+	 *
 	 * @param frame Frame to center on.
 	 * @param title
 	 * @param modal Prevent loss of focus until closed.
@@ -158,6 +158,7 @@ public class SDialog extends JDialog {
 			tmp = new JButton("Yes");
 			tmp.setActionCommand("y");
 			tmp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					response = YES_OPTION;
 					setVisible(false);
@@ -168,6 +169,7 @@ public class SDialog extends JDialog {
 			tmp = new JButton("Okay");
 			tmp.setActionCommand("o");
 			tmp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					response = OK_OPTION;
 					setVisible(false);
@@ -178,6 +180,7 @@ public class SDialog extends JDialog {
 			tmp = new JButton("No");
 			tmp.setActionCommand("n");
 			tmp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					response = NO_OPTION;
 					setVisible(false);
@@ -188,6 +191,7 @@ public class SDialog extends JDialog {
 			tmp = new JButton("Cancel");
 			tmp.setActionCommand("c");
 			tmp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent ae) {
 					response = CANCEL_OPTION;
 					setVisible(false);
@@ -205,6 +209,10 @@ public class SDialog extends JDialog {
 	public void center() {
 		super.setLocationRelativeTo(super.getOwner());
 	}
+	/**
+	 * Temporarily sets this dialog as modal and displays it.
+	 * @return The response
+	 */
 	public int getResponse() {
 		response=-1;
 		center();
