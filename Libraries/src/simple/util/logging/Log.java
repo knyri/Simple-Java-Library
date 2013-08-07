@@ -27,6 +27,7 @@ public final class Log {
 	private final String _cName;
 	private boolean _printTime = false,
 		_printDate=false;
+	private final Object writeSync=new Object();
 	public static final byte LDEBUG = LogLevel.DEBUG.getValue(),
 	LERROR = LogLevel.ERROR.getValue(),
 	LWARNING = LogLevel.WARNING.getValue(),
@@ -250,17 +251,22 @@ public final class Log {
 	//workhorse loggers
 	private final boolean _log(final LogLevel type, final Object msg,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.println(_getPreMessage(type)+_cName+": "+msg);
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final Exception msg,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.println(_getPreMessage(type)+_cName+": "+msg);
 		msg.printStackTrace(_out);
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final Dictionary<?,?> msg,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.println(_getPreMessage(type)+_cName+": "+"Property listing:");
 		final Enumeration<?> keys = msg.keys();
 		Object key;
@@ -268,21 +274,27 @@ public final class Log {
 			key = keys.nextElement();
 			_out.println("["+key+"="+msg.get(key)+"]");
 		}
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final Object msg,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.println(_getPreMessage(type)+_cName+": "+ref+": "+msg);
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String msg, final Exception e,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.println(_getPreMessage(type)+_cName+": "+msg);
 		e.printStackTrace(_out);
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final Iterable<?> msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.print(_getPreMessage(type)+_cName+": "+"{");
 		final Iterator<?> iter = msg.iterator();
 		_out.print(iter.next());
@@ -291,10 +303,12 @@ public final class Log {
 			_out.print(iter.next());
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final Iterable<?> msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
+		synchronized(writeSync){
 		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
 		final Iterator<?> iter = msg.iterator();
 		_out.print(iter.next());
@@ -303,11 +317,13 @@ public final class Log {
 			_out.print(iter.next());
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final byte[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": byte[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -316,11 +332,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final int[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": int[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -329,11 +347,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final short[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": short[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -342,11 +362,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final long[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": long[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -355,11 +377,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final float[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": float[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -368,11 +392,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final double[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": double[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -381,11 +407,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final Object[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+"{");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": Object[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -394,11 +422,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final Object[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : Object[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -407,11 +437,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final byte[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : byte[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -420,11 +452,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final int[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : int[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -433,11 +467,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final short[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : short[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -446,11 +482,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final long[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : long[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -459,11 +497,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final float[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : float[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -472,11 +512,13 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final boolean _log(final LogLevel type, final String ref, final double[] msg,char sep,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
-		_out.print(_getPreMessage(type)+_cName+": "+ref+" : {");
+		synchronized(writeSync){
+		_out.print(_getPreMessage(type)+_cName+": "+ref+" : double[]{");
 		if (msg.length>0) {
 			_out.print(msg[0]);
 			for (int i = 1; i < msg.length; i++) {
@@ -485,6 +527,7 @@ public final class Log {
 			}
 		}
 		_out.println("}");
+		}
 		return _out.checkError();
 	}
 	private final String _getPreMessage(final LogLevel type){
