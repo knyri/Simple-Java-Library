@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package simple.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 /** An OutputStream that prints to a Writer.
  * <br>Created: Feb 5, 2010
@@ -13,35 +14,35 @@ import java.io.Writer;
  */
 public class WriterOutputStream extends OutputStream {
 	protected final Writer _writer;
-	protected final String _encoding;
-	private byte[] _buf = new byte[1];
+	protected final Charset _encoding;
 	public WriterOutputStream(Writer writer, String encoding) {
 		_writer = writer;
-		_encoding = encoding;
+		if(encoding!=null)
+			_encoding = Charset.forName(encoding);
+		else
+			_encoding=Charset.defaultCharset();
 	}
 	public WriterOutputStream(Writer writer) {
 		this(writer, null);
 	}
+	@Override
 	public void close() throws IOException {
 		_writer.close();
 	}
-	 public void flush() throws IOException {
+	 @Override
+	public void flush() throws IOException {
 		 _writer.flush();
 	}
+	@Override
 	public void write(byte[] b) throws IOException {
-		if (_encoding==null)
-			_writer.write(new String(b));
-		else
-			_writer.write(new String(b,_encoding));
+		_writer.write(new String(b,_encoding));
 	}
+	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
-		if (_encoding==null)
-			_writer.write(new String(b,off,len));
-		else
-			_writer.write(new String(b,off,len,_encoding));
+		_writer.write(new String(b,off,len,_encoding));
 	}
+	@Override
 	public synchronized void write(int b) throws IOException {
-		_buf[0]=(byte)b;
-		write(_buf);
+		_writer.write(b);
 	}
 }
