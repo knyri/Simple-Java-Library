@@ -21,4 +21,5 @@ public class TextAreaOutputStream extends OutputStream {
 		chars[0] = (byte)(b & 255);
 		out.append(new String(chars));
 	}
+	public JTextArea getJTextArea(){return out;}
 }

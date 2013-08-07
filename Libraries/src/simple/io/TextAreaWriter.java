@@ -19,6 +19,7 @@ public class TextAreaWriter extends Writer {
 	public void write(char[] cbuf, int off, int len) throws IOException {
 		out.append(new String(cbuf, off, len));
 	}
+	public JTextArea getJTextArea(){return out;}
 	@Override
 	public void flush() throws IOException {}
 
