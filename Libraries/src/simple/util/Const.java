@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util;
 
@@ -8,7 +8,7 @@ package simple.util;
  * <br>Created: Apr 23, 2011
  * @author Kenneth Pierce
  */
-public final class TextConstants {
+public final class Const {
 	public static enum LineEnding {
 		MAC("\r"),
 		UNIX("\n"),
@@ -35,5 +35,12 @@ public final class TextConstants {
 			if (t.isEnd(ending)) return t;
 		}
 		return null;
+	}
+	public static final String TRUE="true",FALSE="false";
+	public static boolean tf(String tf){
+		return TRUE.equals(tf.toLowerCase());
+	}
+	public static String tf(boolean tf){
+		return tf?TRUE:FALSE;
 	}
 }
