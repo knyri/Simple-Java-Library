@@ -11,8 +11,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-import simple.util.logging.LogFactory;
-
 /**All close(...) methods now log a warning message.
  * @since 4-19-2012
  * <hr>
@@ -20,7 +18,6 @@ import simple.util.logging.LogFactory;
  * @author Kenneth Pierce
  */
 public final class FileUtil{
-	private static final simple.util.logging.Log log=LogFactory.getLogFor(FileUtil.class);
 	/**
 	 * Convenience method for <code>formatSize(bytes, 2)</code>.
 	 * @param bytes Number of bytes.
@@ -31,7 +28,7 @@ public final class FileUtil{
 	}
 	/**
 	 * @param bytes Number of bytes.
-	 * @param precision Max number of spaces after the decimal point to show.
+	 * @param precision Max number of spaces after the decimal point to show. Max precision is 10.
 	 * @return The number of bytes in condensed form. (B,KB,MB,GB,TB)
 	 */
 	public static final String formatSize(final long bytes, double precision) {
@@ -77,7 +74,7 @@ public final class FileUtil{
 	 */
 	public static void close(final OutputStream os) {
 		if(os != null) {
-			try {os.flush(); os.close(); } catch(final Exception e) {log.warning(e);}
+			try {os.flush(); os.close(); } catch(final Exception e) {}
 		}
 	}
 	/**
@@ -86,7 +83,7 @@ public final class FileUtil{
 	 */
 	public static void close(final InputStream is) {
 		if(is != null) {
-			try { is.close(); } catch(final Exception e) {log.warning(e);}
+			try {is.close();} catch(final Exception e) {}
 		}
 	}
 	/**
@@ -95,7 +92,7 @@ public final class FileUtil{
 	 */
 	public static void close(final Reader rd) {
 		if(rd != null) {
-			try { rd.close(); } catch(final Exception e) {log.warning(e);}
+			try{rd.close();}catch(final Exception e){}
 		}
 	}
 	/**
@@ -104,14 +101,14 @@ public final class FileUtil{
 	 */
 	public static void close(final Writer wr) {
 		if(wr != null) {
-			try {wr.flush(); wr.close(); } catch(final Exception e) {log.warning(e);}
+			try {wr.flush();wr.close();}catch(final Exception e){}
 		}
 	}
 	/**Closes the object ignoring any errors made.
 	 * @param f
 	 */
 	public static final void close(final Closeable f){
-		try{f.close();}catch(final Exception e){log.warning(e);}
+		try{f.close();}catch(final Exception e){}
 	}
 	/**
 	 * @param file
@@ -160,5 +157,70 @@ public final class FileUtil{
 		}
 		if(idx==-1)return file.toString();
 		return file.toString().substring(0,idx);
+	}
+	/**
+	 * Copies from input directly to output.
+	 * @param input Source
+	 * @param output Destination
+	 * @param bufferSize Size of byte chunks to be copied at once.
+	 * @throws IOException
+	 */
+	public static void copy(final Reader input, final Writer output, final int bufferSize ) throws IOException {
+		final char buffer[] = new char[bufferSize];
+		int n = 0;
+		while( (n=input.read(buffer)) != -1) {
+			output.write(buffer, 0, n);
+		}
+		output.flush();
+	}
+	/**
+	 * Copies from input directly to output.
+	 * @param input Source
+	 * @param output Destination
+	 * @param bufferSize Size of byte chunks to be copied at once.
+	 * @param numBytes number of bytes to copy
+	 * @throws IOException
+	 */
+	public static void copy(final Reader input, final Writer output, final int bufferSize, long numBytes) throws IOException {
+		final char buffer[] = new char[bufferSize];
+		int n = 0;
+		while( numBytes > 0 ) {
+			if (bufferSize > numBytes) {
+				n = input.read(buffer, 0, (int)numBytes);
+			} else {
+				n = input.read(buffer, 0, bufferSize);
+			}
+			output.write(buffer, 0, n);
+			numBytes -= n;
+		}
+		output.flush();
+	}
+	/**
+	 * Copies from input directly to output.
+	 * @param input Source
+	 * @param output Destination
+	 * @param bufferSize Size of byte chunks the be copied at once.
+	 * @throws IOException
+	 */
+	public static void copy(final InputStream input, final OutputStream output, final int bufferSize ) throws IOException {
+		final byte buffer[] = new byte[bufferSize];
+		int n = 0;
+		while( (n=input.read(buffer)) != -1) {
+			output.write(buffer, 0, n);
+		}
+		output.flush();
+	}
+	public static void copy(final InputStream input, final OutputStream output, final int bufferSize, long numBytes ) throws IOException {
+		final byte buffer[] = new byte[bufferSize];
+		int n = 0;
+		while (numBytes > 0) {
+			if (bufferSize > numBytes)
+				n = input.read(buffer, 0, (int)numBytes);
+			else
+				n = input.read(buffer, 0, bufferSize);
+			output.write(buffer, 0, n);
+			numBytes -= n;
+		}
+		output.flush();
 	}
 }

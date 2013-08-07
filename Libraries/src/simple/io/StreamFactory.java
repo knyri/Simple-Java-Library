@@ -14,62 +14,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
-import simple.util.logging.LogFactory;
-
 /**convenience methods for InputStream and OutputStream
  * @author Ken
  *
  */
 public class StreamFactory {
-	public static int _jobBufferSize = 8192;
-	static class StreamJob implements Runnable {
-		final OutputStream _out;
-		final InputStream _in;
-		final int _bufferSize;
-		public StreamJob(final InputStream in, final OutputStream out) {
-			_in = in;
-			_out = out;
-			_bufferSize = _jobBufferSize;
-		}
-		public void run() {
-			try {
-				copy(_in, _out, _bufferSize);
-			} catch (final IOException e) {
-				LogFactory.getLogFor(StreamJob.class).warning(e);
-			}
-		}
-	}
-	/**
-	 * Copies from input directly to output.
-	 * @param input Source
-	 * @param output Destination
-	 * @param bufferSize Size of byte chunks the be copied at once.
-	 * @throws IOException
-	 */
-	public static void copy(final InputStream input, final OutputStream output, final int bufferSize ) throws IOException {
-		final byte buffer[] = new byte[bufferSize];
-		int n = 0;
-		while( (n=input.read(buffer)) != -1) {
-			output.write(buffer, 0, n);
-		}
-		output.flush();
-	}
-	public static void copy(final InputStream input, final OutputStream output, final int bufferSize, long numBytes ) throws IOException {
-		final byte buffer[] = new byte[bufferSize];
-		int n = 0;
-		while (numBytes > 0) {
-			if (bufferSize > numBytes)
-				n = input.read(buffer, 0, (int)numBytes);
-			else
-				n = input.read(buffer, 0, bufferSize);
-			output.write(buffer, 0, n);
-			numBytes -= n;
-		}
-		output.flush();
-	}
-	public static void copyThread(final InputStream input, final OutputStream output) {
-		new Thread(new StreamJob(input, output)).start();
-	}
+
 	/**
 	 * @param file
 	 * @return a FileInputStream wrapped in a BufferedInputStream

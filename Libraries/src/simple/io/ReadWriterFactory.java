@@ -16,72 +16,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
-import simple.util.logging.LogFactory;
-
 /**
  * Convenience methods for Readers.
  * @author Ken
  *
  */
 public final class ReadWriterFactory {
-	public static int _jobBufferSize = 8192;
-	static class WriterJob implements Runnable {
-		final Writer _out;
-		final Reader _in;
-		final int _bufferSize;
-		public WriterJob(final Reader in, final Writer out) {
-			_in = in;
-			_out = out;
-			_bufferSize = _jobBufferSize;
-		}
-		public void run() {
-			try {
-				copy(_in, _out, _bufferSize);
-			} catch (final IOException e) {
-				LogFactory.getLogFor(WriterJob.class).warning(e);
-			}
-		}
-	}
-	/**
-	 * Copies from input directly to output.
-	 * @param input Source
-	 * @param output Destination
-	 * @param bufferSize Size of byte chunks to be copied at once.
-	 * @throws IOException
-	 */
-	public static void copy(final Reader input, final Writer output, final int bufferSize ) throws IOException {
-		final char buffer[] = new char[bufferSize];
-		int n = 0;
-		while( (n=input.read(buffer)) != -1) {
-			output.write(buffer, 0, n);
-		}
-		output.flush();
-	}
-	/**
-	 * Copies from input directly to output.
-	 * @param input Source
-	 * @param output Destination
-	 * @param bufferSize Size of byte chunks to be copied at once.
-	 * @param numBytes number of bytes to copy
-	 * @throws IOException
-	 */
-	public static void copy(final Reader input, final Writer output, final int bufferSize, long numBytes) throws IOException {
-		final char buffer[] = new char[bufferSize];
-		int n = 0;
-		while( numBytes > 0 ) {
-			if (bufferSize > numBytes) {
-				n = input.read(buffer, 0, (int)numBytes);
-			} else {
-				n = input.read(buffer, 0, bufferSize);
-			}
-			output.write(buffer, 0, n);
-			numBytes -= n;
-		}
-		output.flush();
-	}
-	public static void copyThread(final Reader input, final Writer output) {
-		new Thread(new WriterJob(input, output)).start();
-	}
 	/**
 	 * @param file
 	 * @return a FileReader wrapped in a BufferedInputStream
@@ -109,7 +49,7 @@ public final class ReadWriterFactory {
 	 */
 	public static String readFully(final Reader reader) throws IOException {
 		final StringWriter writer = new StringWriter();
-		copy(reader, writer, 1024);
+		FileUtil.copy(reader, writer, 1024);
 		return writer.toString();
 	}
 	public static void readInto(final Reader reader, final StringBuilder buf) throws IOException {
@@ -121,7 +61,7 @@ public final class ReadWriterFactory {
 	}
 	/**
 	 * Reads until <code>end</code> is reached. The returned String includes the end character.<br>
-	 * As a result of this behaviour, an empty string means that the end has been reached. 
+	 * As a result of this behaviour, an empty string means that the end has been reached.
 	 * @param in Reader to read from.
 	 * @param end Character to stop at.
 	 * @return String of read characters.
