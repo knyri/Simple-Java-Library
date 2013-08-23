@@ -85,6 +85,15 @@ public class StreamFactory {
 		return new BufferedOutputStream(new FileOutputStream(file));
 	}
 	/**
+	 * @param file
+	 * @param append
+	 * @return A FileOutputStream wrapped in a BufferedOutputStream.
+	 * @throws FileNotFoundException If the file is a directory or if it cannot be created if it does not exist.
+	 */
+	public static BufferedOutputStream getBufferedOutputStream(final File file,boolean append) throws FileNotFoundException {
+		return new BufferedOutputStream(new FileOutputStream(file,append));
+	}
+	/**
 	 * Wraps an OutputStream in a BufferedOutputStream.
 	 * @param out
 	 * @return OutputStream wrapped in a BufferedOutputStream. If <var>out</var> is already
