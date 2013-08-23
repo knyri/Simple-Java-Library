@@ -38,7 +38,8 @@ public class SDialog extends JDialog {
 	private final JPanel right;// = SJPanel.makeBoxLayoutPanelY();
 	private final JPanel bottom;// = SJPanel.makeBoxLayoutPanelX();
 	private final JPanel center;// = SJPanel.makeBoxLayoutPanelY();
-	private int response = 0;
+	private volatile int response = 0;
+	private final Object sync=new Object();
 	public static final int YES_OPTION = 1,
 		NO_OPTION = 2,
 		CANCEL_OPTION = 4,
@@ -160,7 +161,9 @@ public class SDialog extends JDialog {
 			tmp.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					response = YES_OPTION;
+					synchronized(sync){
+						response = YES_OPTION;
+					}
 					setVisible(false);
 				}
 			});
@@ -171,7 +174,9 @@ public class SDialog extends JDialog {
 			tmp.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					response = OK_OPTION;
+					synchronized(sync){
+						response = OK_OPTION;
+					}
 					setVisible(false);
 				}
 			});
@@ -182,7 +187,9 @@ public class SDialog extends JDialog {
 			tmp.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					response = NO_OPTION;
+					synchronized(sync){
+						response = NO_OPTION;
+					}
 					setVisible(false);
 				}
 			});
@@ -193,7 +200,9 @@ public class SDialog extends JDialog {
 			tmp.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					response = CANCEL_OPTION;
+					synchronized(sync){
+						response = CANCEL_OPTION;
+					}
 					setVisible(false);
 				}
 			});
@@ -213,13 +222,29 @@ public class SDialog extends JDialog {
 	 * Temporarily sets this dialog as modal and displays it.
 	 * @return The response
 	 */
-	public int getResponse() {
-		response=-1;
-		center();
-		boolean modal=isModal();
+	public synchronized  int getResponse() {
+		int resp;
+		boolean modal;
+		synchronized(sync){
+			response=-1;
+			center();
+			modal=isModal();
+		}
 		setModal(true);
 		setVisible(true);
+		synchronized(sync){
+			resp= response;
+		}
 		setModal(modal);
-		return response;
+		return resp;
+	}
+	@Override
+	public void setVisible(boolean b){
+		if(!b){
+			synchronized(sync){
+				sync.notify();
+			}
+		}
+		super.setVisible(b);
 	}
 }
