@@ -63,7 +63,7 @@ public class MultipartFormEntity extends AbstractHttpEntity{
 						+"\"; filename=\""+param.getValue().substring(param.getValue().lastIndexOf('/'))
 						+"\"\r\nContent-Type: "+((FileParam)param).getContentType()+"\r\n\r\n").getBytes());
 				InputStream in =StreamFactory.getBufferedInputStream(file);
-				StreamFactory.copy(in,tmp,6000);
+				FileUtil.copy(in,tmp,6000);
 				tmp.write("\r\n".getBytes());
 				FileUtil.close(in);
 			}catch(FileNotFoundException e){
@@ -99,7 +99,7 @@ public class MultipartFormEntity extends AbstractHttpEntity{
 	@Override
 	public void writeTo(OutputStream outstream) throws IOException{
 		//StreamFactory.copy(getContent(),System.out,9000);
-		StreamFactory.copy(getContent(),outstream,9000);
+		FileUtil.copy(getContent(),outstream,9000);
 	}
 
 	@Override
