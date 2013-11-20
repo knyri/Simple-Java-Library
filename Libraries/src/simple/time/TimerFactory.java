@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.time;
 
@@ -30,15 +30,18 @@ public final class TimerFactory {
 						samples[i] = System.currentTimeMillis();
 					}
 				}
-				public long getRemaining() { return Math.max((totalItems-count)*(long)getRate(),0); }
+				@Override
+				public long getRemaining() { return Math.max((long)((totalItems-count)*getRate()),0); }
+				@Override
 				public double getRate() {
 					if (count==0) return 0;
-					
+
 					if (count < sampleSize)
-						return (samples[count%sampleSize]-samples[(count+1)%sampleSize])/count;
+						return count/(double)(samples[count]-samples[0]);
 					else
-						return (samples[count%sampleSize]-samples[(count+1)%sampleSize])/sampleSize;
+						return sampleSize/(double)(samples[count%sampleSize]-samples[(count+1)%sampleSize]);
 				}
+				@Override
 				public void sample() {
 					count++;
 					samples[count%sampleSize] = System.currentTimeMillis();
@@ -52,20 +55,26 @@ public final class TimerFactory {
 					count++;
 					samples[end] = System.currentTimeMillis();*/
 				}
+				@Override
 				public void setTotalItems(int total) { totalItems = total; }
+				@Override
 				public void reset() {
 					samples[0] = System.currentTimeMillis();
 					/*start = end = */count = 0;
 				}
+				@Override
 				public int getSampleCount() {
 					return sampleSize;
 				}
+				@Override
 				public int getTotalSampleCount() {
 					return count;
 				}
+				@Override
 				public int getTotalItems() {
 					return totalItems;
 				}
+				@Override
 				public void debug(Log log) {
 					log.debug("index", count%sampleSize);
 					log.debug("sample size", sampleSize);
@@ -81,27 +90,36 @@ public final class TimerFactory {
 				int totalItems = 0,
 					count = 0;
 				long start = System.currentTimeMillis();
+				@Override
 				public long getRemaining() {
 					return (long)(getRate()*(totalItems-count));
 				}
+				@Override
 				public double getRate() {
-					return count/(System.currentTimeMillis()-start);
+					return count/(double)(System.currentTimeMillis()-start);
 				}
+				@Override
 				public void sample() { count++; }
+				@Override
 				public void setTotalItems(int total) { totalItems = total; }
+				@Override
 				public void reset() {
 					start = System.currentTimeMillis();
 					count = 0;
 				}
+				@Override
 				public int getSampleCount() {
 					return count;
 				}
+				@Override
 				public int getTotalSampleCount() {
 					return count;
 				}
+				@Override
 				public int getTotalItems() {
 					return totalItems;
 				}
+				@Override
 				public void debug(Log log) {
 				}
 			};
