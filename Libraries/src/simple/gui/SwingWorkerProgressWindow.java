@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.gui;
 
@@ -22,7 +22,7 @@ import simple.gui.factory.SwingFactory;
  */
 public class SwingWorkerProgressWindow extends SDialog implements PropertyChangeListener, ActionListener {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5580570673877593545L;
 	private final JProgressBar pbar = new JProgressBar(0,100);
@@ -51,19 +51,19 @@ public class SwingWorkerProgressWindow extends SDialog implements PropertyChange
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
-		if ("progress".equals(pce.getPropertyName())) {
+		if ("progress".equals(pce.getPropertyName()))
             pbar.setValue((Integer)pce.getNewValue());
-        }
-		if ("display".equals(pce.getPropertyName())) {
+		else	if ("display".equals(pce.getPropertyName()))
 			pbar.setString((String)pce.getNewValue());
-		}
 		if (pbar.getValue()==100)
 			setVisible(false);
 	}
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if ("st".equals(ae.getActionCommand()))
 			thread.cancel(true);
