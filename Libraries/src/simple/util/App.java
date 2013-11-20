@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
@@ -63,8 +64,9 @@ public final class App {
 	 * @param loader Class to use to load the file.
 	 * @return A File object referencing the URL returned from {@link java.lang.Class#getResource(String)}.
 	 * @throws FileNotFoundException Occurs if the loader returns a null. Avoids a nasty nondescript NullPointerException.
+	 * @throws URISyntaxException
 	 */
-	public static final File getResourceAsFile(final String location, final Class<?> loader) throws FileNotFoundException {
+	public static final File getResourceAsFile(final String location, final Class<?> loader) throws FileNotFoundException, URISyntaxException {
 		final URL tmp = loader.getClassLoader().getResource(location);
 		if (tmp==null){
 			final File f = new File(location);
@@ -73,7 +75,7 @@ public final class App {
 			else
 				return f;
 		}
-		return new File(tmp.toString());
+		return new File(tmp.toURI());
 	}
 	/**
 	 * Attempts to create a File object that references the location of the file.<br>
@@ -177,5 +179,32 @@ public final class App {
 	 */
 	public static boolean isSet(final long options, final long option) {
 		return (options&option)==option;
+	}
+	public static enum LineEnding {
+		MAC("\r"),
+		UNIX("\n"),
+		LINUX("\n"),
+		WINDOWS("\r\n");
+		private final String ending;
+		LineEnding(String ending) {
+			this.ending = ending;
+		}
+		public boolean isEnd(String ending) {
+			return this.ending.equals(ending);
+		}
+		public String getEnd() {
+			return ending;
+		}
+	};
+	public static final LineEnding getLineEndingType(String line) {
+		int i = line.length()-1;
+		for (;i>0;i--) {
+			if (line.charAt(i)!='\r' && line.charAt(i)!='\n') break;
+		}
+		String ending = line.substring(i);
+		for (LineEnding t : LineEnding.values()) {
+			if (t.isEnd(ending)) return t;
+		}
+		return null;
 	}
 }
