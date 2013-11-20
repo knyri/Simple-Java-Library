@@ -146,7 +146,7 @@ public final class FileUtil{
 	 * @since 4-19-2012
 	 */
 	public static String stripExtension(File file){
-		int idx=file.toString().lastIndexOf('/');
+		int idx=file.toString().lastIndexOf(File.separatorChar);
 		if(idx==-1)
 			idx=file.toString().lastIndexOf('.');
 		else{
