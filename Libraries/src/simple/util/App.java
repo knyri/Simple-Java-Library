@@ -20,7 +20,7 @@ import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
 /**Provides convenience methods for applications.<br>
- * For exceptionless methods, the exception will be logged using
+ * For exception-less methods, the exception will be logged using
  * {@link simple.util.logging.Log}.
  * @since 5/2011
  * @author Ken
@@ -144,17 +144,22 @@ public final class App {
 		return true;
 	}
 	/**Plays the specified sound.
+	 * Any errors are sent to the error log.
 	 * @param file File to be played.
 	 * @param gain How much to increase or decrease the volume(in dB)
 	 * @return true on success. False if an error occurred.
 	 */
-	public static final boolean playSound(final File file, final float gain){
+	public static final boolean playSound(final File file, float gain){
 		try{
 			final Clip clip=AudioSystem.getClip();
 			final AudioInputStream ais = AudioSystem.getAudioInputStream(file);
 			clip.open(ais);
-			final FloatControl gainControl=(FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue(gain);
+			if(gain!=0){
+				final FloatControl gainControl=(FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+				if(gain>gainControl.getMaximum())gain=gainControl.getMaximum();
+				if(gain<gainControl.getMinimum())gain=gainControl.getMinimum();
+				gainControl.setValue(gain);
+			}
 			clip.start();
 		}catch(final Exception e){
 			log.error(e);
@@ -183,7 +188,6 @@ public final class App {
 	public static enum LineEnding {
 		MAC("\r"),
 		UNIX("\n"),
-		LINUX("\n"),
 		WINDOWS("\r\n");
 		private final String ending;
 		LineEnding(String ending) {
@@ -196,6 +200,10 @@ public final class App {
 			return ending;
 		}
 	};
+	/**
+	 * @param line
+	 * @return The LineEnding or null
+	 */
 	public static final LineEnding getLineEndingType(String line) {
 		int i = line.length()-1;
 		for (;i>0;i--) {
