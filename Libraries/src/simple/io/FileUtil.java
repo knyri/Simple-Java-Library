@@ -5,11 +5,14 @@ package simple.io;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Vector;
 
 /**All close(...) methods now log a warning message.
  * @since 4-19-2012
@@ -222,5 +225,131 @@ public final class FileUtil{
 			numBytes -= n;
 		}
 		output.flush();
+	}
+	/**
+	 * @param b1
+	 * @param b2
+	 * @return True of the elements of both are identical.
+	 */
+	public static boolean compareBytes(byte[] b1, byte[] b2) {
+		if (b1.length == b2.length) {
+			for (int i = 0; i<b1.length; i++) {
+				if (b1[i]!=b2[i]) return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * @param b1
+	 * @param b2
+	 * @param offset
+	 * @param length
+	 * @return true if the range is identical
+	 */
+	public static boolean compareBytes(byte[] b1, byte[] b2, int offset, int length) {
+		if (offset < b1.length && offset < b2.length) {
+			if (offset+length > b1.length)
+				length = b1.length - offset;
+			if (offset+length > b2.length)
+				length = b2.length - offset;
+			int max = offset+length;
+			for (; offset<max; offset++) {
+				if (b1[offset]!=b2[offset]) return false;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * Tests two files to see if they are identical on the bit level.
+	 * @param f1
+	 * @param f2
+	 * @return True if both files are exactly identical.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	@SuppressWarnings("resource")
+	public static boolean compareBytes(File f1, File f2) throws FileNotFoundException, IOException {
+		if (f1!=null&&f2!=null&&f1.exists()&&f2.exists())
+			if (f1.length()==f2.length()) {
+				int read = 0;
+				FileInputStream in1 = new FileInputStream(f1),
+						in2 = new FileInputStream(f2);
+				byte[] b1 = new byte[1024];
+				byte[] b2 = new byte[1024];
+				read = in1.read(b1);
+				in2.read(b2);
+				for (;read != -1;) {
+					if (!compareBytes(b1,b2,0,read)) return false;
+					read = in1.read(b1);
+					in2.read(b2);
+				}
+				close(in1);
+				close(in2);
+			} else {
+				return false;
+			}
+		else
+			return false;
+		return true;
+	}
+	/**
+	 * Tests two files to see if they are identical on the bit level.
+	 * @param f1
+	 * @param f2
+	 * @param buffSize
+	 * @return True if both files are exactly identical.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	@SuppressWarnings("resource")
+	public static boolean compareBytes(File f1, File f2, int buffSize) throws FileNotFoundException, IOException {
+		if (f1!=null&&f2!=null&&f1.exists()&&f2.exists())
+			if (f1.length()==f2.length()) {
+				int read = 0;
+				FileInputStream in1 = new FileInputStream(f1),
+						in2 = new FileInputStream(f2);
+				byte[] b1 = new byte[buffSize];
+				byte[] b2 = new byte[buffSize];
+				read = in1.read(b1);
+				in2.read(b2);
+				for (;read != -1;) {
+					if (!compareBytes(b1,b2,0,read)) return false;
+					read = in1.read(b1);
+					in2.read(b2);
+				}
+				close(in1);
+				close(in2);
+			} else {
+				return false;
+			}
+		else
+			return false;
+		return true;
+	}
+	/**Adds all the files to a giant vector. Can add them recursively.
+	 * NOTE: will not add directories. Might add symbolic links.
+	 * @param start Directory to start in.
+	 * @param recursive Whether or not to add files of sub-directories.
+	 * @return A vector containing all the files.
+	 */
+	public static Vector<File> getFiles(File start, boolean recursive) {
+		if (!start.isDirectory()) {return null;}
+		Vector<File> tmp = new Vector<File>();
+		if (start.listFiles()!=null) {
+			for (File cur : start.listFiles()) {
+				if (cur.isDirectory()) {
+					if (recursive) {
+						tmp.addAll(getFiles(cur, true));
+					}
+				} else {
+					tmp.add(cur);
+				}
+			}
+		}
+		return tmp;
 	}
 }
