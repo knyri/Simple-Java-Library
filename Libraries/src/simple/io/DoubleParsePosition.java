@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.io;
 
@@ -85,6 +85,12 @@ public final class DoubleParsePosition implements Cloneable {
 	public final int incStart() {
 		return ++start;
 	}
+	/** same as --this.start
+	 * @return the value of start after decrementing
+	 */
+	public final int decStart() {
+		return --start;
+	}
 	/** same as this.start++
 	 * @return Value of start before incrementing
 	 */
@@ -97,6 +103,12 @@ public final class DoubleParsePosition implements Cloneable {
 	 */
 	public final int incEnd() {
 		return ++end;
+	}
+	/** same as --this.end
+	 * @return the value of end after decrementing
+	 */
+	public final int decEnd() {
+		return --end;
 	}
 	/** same as this.end++
 	 * @return the value of end before incrementing
@@ -157,6 +169,7 @@ public final class DoubleParsePosition implements Cloneable {
 	public final boolean validEnd() {
 		return end>-1;
 	}
+	@Override
 	public String toString() {
 		return lineCount+"["+start+","+end+"]("+mStart+","+mEnd+")";
 	}
@@ -170,10 +183,11 @@ public final class DoubleParsePosition implements Cloneable {
 		target.mEnd = mEnd;
 		target.mStart = mStart;
 	}
+	@Override
 	public DoubleParsePosition clone() {
 		DoubleParsePosition tmp = new DoubleParsePosition();
 		copyInto(tmp);
 		return tmp;
-		
+
 	}
 }
