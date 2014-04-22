@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.net;
 
@@ -88,16 +88,25 @@ public final class Uri {
 	private final int port;
 	/** The type of URI this object represents. */
 	private final UriType type;
-	private boolean qparsed=false;
+	private volatile boolean qparsed=false;
 	/** A breakdown of the query. */
 	private final Hashtable<CIString, String> params = new Hashtable<CIString, String>();
 	private final int hash;
-	
+
+	/**
+	 * Sets the default scheme to use when a URI starting with '//'
+	 * is encountered. The default default scheme is blank.
+	 * Updating the default scheme is not retroactive.
+	 * @param scheme
+	 */
 	public static void setDefaultScheme(String scheme){
 		defaultScheme=scheme.toLowerCase();
 	}
+	/**
+	 * @return The default scheme
+	 */
 	public static String getDefaultScheme(){return defaultScheme;}
-	
+
 	public Uri(final URI uri) {
 		this(uri.toString());
 	}
@@ -203,15 +212,19 @@ public final class Uri {
 						pos.incStart();
 			}
 			pos.resetEnd();
-			// at char past '//'
+			// at char past 'scheme://'
 			if (uri.charAt(pos.start)=='[') {//NOTE:ipv6 host set
 				pos.end = uri.indexOf(']', pos.start);
 				if (!pos.validEnd()) throw new IllegalArgumentException("missing matching ] for ipv6 address");
 				host = uri.substring(pos.start+1, pos.end);
 				domain = "";
-			} else {//ipv4
-				pos.end = uri.indexOf('/', pos.start);//port,path,query,fragment
-				
+				pos.incEnd();
+				if(pos.end<uri.length())
+					pos.decEnd();
+			} else {//ipv4 or hostname
+				pos.end = do_str.indexOfAny(uri,":/",pos.start);
+						//uri.indexOf('/', pos.start);//port,path,query,fragment
+
 				if (scheme.isEmpty()) {//no host set
 					//log.debug("NO host");
 					host = domain = "";
@@ -244,9 +257,9 @@ public final class Uri {
 						fragment = "";
 						return;
 					}
-					pos.resetStart();
 				}
 			}
+			pos.resetStart();
 			/*
 			 * Checking for port ':'
 			 * path '/'
@@ -471,9 +484,14 @@ public final class Uri {
 		}
 	}
 	public final void parseQuery(){
-		if(qparsed)return;
-		parseParams(params,query);
-		qparsed=true;
+		boolean parsed=qparsed;
+		if(parsed)return;
+		synchronized(params){
+			parsed=qparsed;
+			if(parsed)return;
+			parseParams(params,query);
+			qparsed=true;
+		}
 	}
 	public final boolean isQueryParsed(){return qparsed;}
 	/**Convenience method for {@link #getQuery(CIString)}.
@@ -772,7 +790,7 @@ public final class Uri {
 		dump(new Uri("http://host.com/sub1/sub2/d2plxsb"));
 		dump(new Uri("http://host.com/sub1/sub2/sub3/d2plxsb"));
 		dump(new Uri("http://host.com/sub1/sub2/d2plxsb.ext"));
-		
+
 		dump(new Uri("D:\\_Movies\\[KAA]_Chrono_Crusade_01-24.DVD(complete)\\Chrono_Cusade_01[v2].DVD(AAC.H264)[KAA][06C15EBB].mkv"));
 		dump(new Uri("http://darkiron.deviantart.com/gallery/#/d2plxsb"));
 		dump(new Uri("http://darkiron.deviantart.com"));
