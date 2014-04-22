@@ -33,11 +33,11 @@ import javax.swing.JPanel;
 public class SDialog extends JDialog {
 
 	private static final long serialVersionUID = 6842397187711866097L;
-	private final JPanel top;// = SJPanel.makeBoxLayoutPanelX();
-	private final JPanel left;// = SJPanel.makeBoxLayoutPanelY();
-	private final JPanel right;// = SJPanel.makeBoxLayoutPanelY();
-	private final JPanel bottom;// = SJPanel.makeBoxLayoutPanelX();
-	private final JPanel center;// = SJPanel.makeBoxLayoutPanelY();
+	protected final JPanel top;// = SJPanel.makeBoxLayoutPanelX();
+	protected final JPanel left;// = SJPanel.makeBoxLayoutPanelY();
+	protected final JPanel right;// = SJPanel.makeBoxLayoutPanelY();
+	protected final JPanel bottom;// = SJPanel.makeBoxLayoutPanelX();
+	protected final JPanel center;// = SJPanel.makeBoxLayoutPanelY();
 	private volatile int response = 0;
 	private final Object sync=new Object();
 	public static final int YES_OPTION = 1,
