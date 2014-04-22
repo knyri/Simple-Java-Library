@@ -1,7 +1,10 @@
 package simple.gui;
 
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
 import javax.swing.JPanel;
-import java.awt.*;
 
 /**
  * Simplifies the use of GridBagLayout for everyday needs.
@@ -17,6 +20,7 @@ public class GridBagPanel extends JPanel {
 	 * object uses.
 	 */
 	public final GridBagConstraints con = new GridBagConstraints();
+	private final GridBagLayout gb = new GridBagLayout();
 	public static final int FILL_BOTH = GridBagConstraints.BOTH,
 	FILL_VERTICAL = GridBagConstraints.VERTICAL,
 	FILL_HORIZONTAL = GridBagConstraints.HORIZONTAL,
@@ -32,9 +36,9 @@ public class GridBagPanel extends JPanel {
 	ALIGN_SOUTHWEST = GridBagConstraints.SOUTHWEST,
 	WIDTH_REMAINDER = GridBagConstraints.REMAINDER,
 	WIDTH_RELATIVE = GridBagConstraints.RELATIVE;
-	
+
 	public GridBagPanel() {
-		super(new GridBagLayout());
+		setLayout(gb);
 	}
 	/**
 	 * Sets the alignment of the component in its cell.<br>
@@ -58,7 +62,7 @@ public class GridBagPanel extends JPanel {
 	 * VERTICAL: Make the component tall enough to fill its display
 	 * area vertically, but do not change its width.<br>
 	 * BOTH: Make the component fill its display area entirely.<br>
-	 * The default value is NONE 
+	 * The default value is NONE
 	 * @param method
 	 */
 	public void setFillMethod(int method) {
@@ -74,7 +78,8 @@ public class GridBagPanel extends JPanel {
 	public void add(Component c, int col, int row) {
 		con.gridx = col;
 		con.gridy = row;
-		add(c, con);
+		gb.setConstraints(c,con);
+		add(c);
 	}
 	/**
 	 * Adds c to the current row, one column from the current.<br>
@@ -83,7 +88,8 @@ public class GridBagPanel extends JPanel {
 	 */
 	public void addToRow(Component c) {
 		con.gridx++;
-		add(c, con);
+		gb.setConstraints(c,con);
+		add(c);
 	}
 	/**
 	 * Adds c to the current column, one row down.<br>
@@ -92,7 +98,8 @@ public class GridBagPanel extends JPanel {
 	 */
 	public void addToColumn(Component c) {
 		con.gridy++;
-		add(c, con);
+		gb.setConstraints(c,con);
+		add(c);
 	}
 	/**
 	 * Returns the current row.
