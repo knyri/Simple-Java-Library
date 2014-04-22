@@ -129,7 +129,6 @@ public class VerticalLayout implements LayoutManager{
 	public void layoutContainer(Container parent){
 		Insets insets=parent.getInsets();
 		int nComps=parent.getComponentCount(),
-			previousHeight=0,
 			y=insets.top,
 			left=insets.left,
 			right=parent.getWidth()-insets.right,
@@ -145,9 +144,6 @@ public class VerticalLayout implements LayoutManager{
 			Component c=parent.getComponent(i);
 			if(c.isVisible()){
 				Dimension d=c.getPreferredSize();
-				if(i>0){
-					y+=previousHeight+vgap;
-				}
 
 				/* If y is too large,
 				if((y+d.height)>(parent.getHeight()-insets.bottom)){
@@ -169,15 +165,14 @@ public class VerticalLayout implements LayoutManager{
 					break;
 				}
 
-				previousHeight=d.height;
+				y+=d.height+vgap;
 			}
 		}
 	}
 
 	@Override
 	public String toString(){
-		String str="";
-		return getClass().getName()+"[vgap="+vgap+str+"]";
+		return getClass().getName()+"[vgap="+vgap+";alignment="+alignment+"]";
 	}
 
 }
