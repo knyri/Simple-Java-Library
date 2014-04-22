@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util;
 
@@ -55,13 +55,13 @@ public final class FileLoader extends SwingWorker<List<File>, File> {
 						addSubDirs(file2);
 					else {
 						FILES.add(file2);
-						log.debug("fload inb","f2:"+file2);
+						//log.debug("fload inb","f2:"+file2);
 						publish(file2);
 					}
 				}
 			} else {
 				FILES.add(START);
-				log.debug("fload inb","st:"+START);
+				//log.debug("fload inb","st:"+START);
 				publish(START);
 			}
 		} else {
@@ -73,19 +73,19 @@ public final class FileLoader extends SwingWorker<List<File>, File> {
 							addSubDirs(file2);
 						else {
 							FILES.add(file2);
-							log.debug("fload inb","f2:"+file2);
+							//log.debug("fload inb","f2:"+file2);
 							publish(file2);
 						}
 					}
 				} else {
 					FILES.add(file);
-					log.debug("fload inb","f:"+file);
+					//log.debug("fload inb","f:"+file);
 					publish(file);
 				}
 			}
 		}
 		done = true;
-		System.out.println("done");
+		log.debug("done");
 		return FILES;
 	}
 	private void addSubDirs(File dir) {
@@ -96,7 +96,7 @@ public final class FileLoader extends SwingWorker<List<File>, File> {
 				addSubDirs(f);
 			else {
 				FILES.add(f);
-				log.debug("fload asd",f.toString());
+				//log.debug("fload asd",f.toString());
 				publish(f);
 			}
 		}
