@@ -48,41 +48,55 @@ public class VerticalLayout implements LayoutManager{
 		if(align>-1 && align<3)
 			this.alignment=align;
 	}
+	public void setVerticalGap(int gap){
+		if(gap<0)
+			vgap=0;
+		else
+			gap=vgap;
+		sizeUnknown=true;
+	}
 
 	/* Required by LayoutManager. */
 	@Override
 	public void addLayoutComponent(String name,Component comp){
+		sizeUnknown=true;
 	}
 
 	/* Required by LayoutManager. */
 	@Override
 	public void removeLayoutComponent(Component comp){
+		sizeUnknown=true;
 	}
 
 	private void setSizes(Container parent){
 		int nComps=parent.getComponentCount();
 		Dimension d=null;
 
-		// Reset preferred/minimum width and height.
-		preferredWidth=0;
-		preferredHeight=0;
-		minWidth=0;
-		minHeight=0;
+		synchronized(parent.getTreeLock()){
+			// Reset preferred/minimum width and height.
+			preferredWidth=0;
+			preferredHeight=0;
+			minWidth=0;
+			minHeight=0;
+			int visible=-1;
 
-		for(int i=0;i<nComps;i++){
-			Component c=parent.getComponent(i);
-			if(c.isVisible()){
-				d=c.getPreferredSize();
+			for(int i=0;i<nComps;i++){
+				Component c=parent.getComponent(i);
+				if(c.isVisible()){
+					visible++;
+					d=c.getPreferredSize();
 
-				if(i>0)
-					preferredHeight+=vgap;
-				if(d.width>preferredWidth)
-					preferredWidth=d.width;
-				preferredHeight+=d.height;
+					if(d.width>preferredWidth)
+						preferredWidth=d.width;
+					if(c.getMinimumSize().width>minWidth)
+						minWidth=c.getMinimumSize().width;
+					preferredHeight+=d.height;
 
-				minWidth=Math.max(c.getMinimumSize().width,minWidth);
-				minHeight=preferredHeight;
+				}
 			}
+			minHeight=preferredHeight;
+			if(visible>1)
+				preferredHeight+=vgap*visible;
 		}
 	}
 
@@ -128,51 +142,52 @@ public class VerticalLayout implements LayoutManager{
 	@Override
 	public void layoutContainer(Container parent){
 		Insets insets=parent.getInsets();
-		int nComps=parent.getComponentCount(),
-			y=insets.top,
-			left=insets.left,
-			right=parent.getWidth()-insets.right,
-			center=parent.getWidth()/2+insets.left;
+		synchronized(parent.getTreeLock()){
+			int nComps=parent.getComponentCount(),
+				y=insets.top,
+				left=insets.left,
+				right=parent.getWidth()-insets.right,
+				center=parent.getWidth()/2+insets.left;
 
-		// Go through the components' sizes, if neither
-		// preferredLayoutSize nor minimumLayoutSize has
-		// been called.
-		if(sizeUnknown)
-			setSizes(parent);
+			// Go through the components' sizes, if neither
+			// preferredLayoutSize nor minimumLayoutSize has
+			// been called.
+			if(sizeUnknown)
+				setSizes(parent);
 
-		for(int i=0;i<nComps;i++){
-			Component c=parent.getComponent(i);
-			if(c.isVisible()){
-				Dimension d=c.getPreferredSize();
+			for(int i=0;i<nComps;i++){
+				Component c=parent.getComponent(i);
+				if(c.isVisible()){
+					Dimension d=c.getPreferredSize();
 
-				/* If y is too large,
-				if((y+d.height)>(parent.getHeight()-insets.bottom)){
-					// do nothing.
-					// Another choice would be to do what we do to x.
+					/* If y is too large,
+					if((y+d.height)>(parent.getHeight()-insets.bottom)){
+						// do nothing.
+						// Another choice would be to do what we do to x.
+					}
+					//*/
+
+					// Set the component's size and position.
+					switch(alignment){
+					case LEFT:
+						c.setBounds(left,y,d.width,d.height);
+						break;
+					case CENTER:
+						c.setBounds(center-d.width/2,y,d.width,d.height);
+						break;
+					case RIGHT:
+						c.setBounds(right-d.width,y,d.width,d.height);
+						break;
+					}
+
+					y+=d.height+vgap;
 				}
-				//*/
-
-				// Set the component's size and position.
-				switch(alignment){
-				case LEFT:
-					c.setBounds(left,y,d.width,d.height);
-					break;
-				case CENTER:
-					c.setBounds(center-d.width/2,y,d.width,d.height);
-					break;
-				case RIGHT:
-					c.setBounds(right-d.width,y,d.width,d.height);
-					break;
-				}
-
-				y+=d.height+vgap;
 			}
 		}
 	}
 
 	@Override
 	public String toString(){
-		return getClass().getName()+"[vgap="+vgap+";alignment="+alignment+"]";
+		return getClass().getName()+"[vgap="+vgap+" alignment="+alignment+"]";
 	}
-
 }
