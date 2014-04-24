@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.gui.factory;
 
@@ -11,6 +11,7 @@ import java.util.EventObject;
 
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -30,7 +31,7 @@ import javax.swing.filechooser.FileFilter;
  */
 public final class SwingFactory {
 	protected SwingFactory() {}
-	private static JFileChooser mDirChoose   = null;   
+	private static JFileChooser mDirChoose   = null;
     private static JFileChooser mFileChoose  = null;
     /**
      * Opens a JFileChooser and returns the result.
@@ -103,7 +104,7 @@ public final class SwingFactory {
      * Adapted from code by <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param parent Component to center on.
      * @return String of the directory path or null if nothing was selected or box closed abnormally.
-     */  
+     */
     public static File getDirName(Component parent) {
 
         if (mDirChoose == null) {
@@ -125,7 +126,7 @@ public final class SwingFactory {
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param parent Component to center on.
      * @return String of the directory path or null if nothing was selected.
-     */  
+     */
     public static File[] getDirNames(Component parent) {
 
         if (mDirChoose == null) {
@@ -159,7 +160,7 @@ public final class SwingFactory {
     /**
 	 * Calls {@link #makeDefaultJFrame(String, int, int)} with an empty
 	 * title and a width and height of 300.
-	 * 
+	 *
 	 * @return An empty JFrame of size 300x300 that exits when closed.
 	 */
 	public static JFrame makeDefaultJFrame() {
@@ -168,7 +169,7 @@ public final class SwingFactory {
 	/**
 	 * Calls {@link #makeDefaultJFrame(String, int, int)} with the specified
 	 * title and a width and height of 300.
-	 * 
+	 *
 	 * @param title Title for the frame.
 	 * @return An empty JFrame with a set title that exits when closed.
 	 */
@@ -178,7 +179,7 @@ public final class SwingFactory {
 	/**
 	 * Creates a JFrame that exits when closed with the
 	 * specified title, width, and height.
-	 * 
+	 *
 	 * @param title Title for the frame.
 	 * @param width Width of the frame.
 	 * @param height Height of the frame.
@@ -193,7 +194,7 @@ public final class SwingFactory {
 	}
 	/**
 	 * Sets up a frame and displays it.
-	 * 
+	 *
 	 * Calls the following methods on <var>frame</var>:<br>
 	 * <code>
 	 * frame.pack();<br>
@@ -272,6 +273,23 @@ public final class SwingFactory {
 		tmp.addActionListener(al);
 		return tmp;
 	}
+	public static JMenuItem makeJMenuItem(String text, ActionListener al) {
+		JMenuItem tmp = new JMenuItem(text);
+		tmp.addActionListener(al);
+		return tmp;
+	}
+	public static JMenuItem makeJMenuItem(String text, String command, ImageIcon icon, ActionListener al) {
+		JMenuItem tmp = new JMenuItem(text,icon);
+		tmp.setActionCommand(command);
+		tmp.addActionListener(al);
+		return tmp;
+	}
+	public static JMenuItem makeJMenuItem(String text, ImageIcon icon, ActionListener al) {
+		JMenuItem tmp = new JMenuItem(text,icon);
+		tmp.addActionListener(al);
+		return tmp;
+	}
+
 	/**Creates a JMenu with the supplied text and action command and sets the ActionListener.
 	 * @param text Displayed text.
 	 * @param command Text to set as its ActionCommand
@@ -287,7 +305,7 @@ public final class SwingFactory {
 	}
 	/**
 	 * Creates a JButton with common properties already set.
-	 * 
+	 *
 	 * @param display The text to be displayed on the button.
 	 * @param actionCommand The action command to be set with JButton.setActionCommand(String)
 	 * @return JButton with text <var>display</var> and actionCommand <var>actionCommand</var>
@@ -300,7 +318,7 @@ public final class SwingFactory {
 	}
 	/**
 	 * Creates a JButton with common properties already set.
-	 * 
+	 *
 	 * @param display The text to be displayed on the button.
 	 * @param actionCommand The action command to be set with JButton.setActionCommand(String)
 	 * @param al ActionListener to be added to the resulting JButton.
@@ -315,7 +333,7 @@ public final class SwingFactory {
 	}
 	/**
 	 * Creates a JButton with common properties already set.
-	 * 
+	 *
 	 * @param display The text to be displayed on the button.
 	 * @param actionCommand The action command to be set with JButton.setActionCommand(String)
 	 * @param icon
@@ -345,7 +363,7 @@ public final class SwingFactory {
 	}
 	/**
 	 * Retrieves the set action command from an EventObject if it is an AbstractButton or subclass.
-	 * 
+	 *
 	 * @param e EventObject trigger.
 	 * @return if e.getSource() instanceof AbstractButton then AbstractButton.getActionCommand()<br>
 	 * 		null otherwise.
@@ -356,7 +374,7 @@ public final class SwingFactory {
 	}
 	/**
 	 * Calls <code>JComponent.setBorder(new TitledBorder(new EmptyBorder(0,0,0,0),<var>title</var>))</code>.
-	 * 
+	 *
 	 * @param c JComponent to add the TitledBorder to.
 	 * @param title The title to be set.
 	 * @return The JComponent after setting a TitledBorder using an EmptyBorder and giving it title <var>title</var>.

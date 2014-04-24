@@ -1,5 +1,6 @@
 package simple.gui;
 
+import java.awt.AWTError;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -8,16 +9,20 @@ import java.awt.LayoutManager;
 
 /**
  * Lays out components in a vertical column.
+ * The max of the minimum and preferred height and width is used.
+ * Alignments:
+ * LEFT: left aligned. Will respect minimum and preferred sizes.
+ * CENTER: centered. Will respect minimum and preferred sizes.
+ * RIGHT: right aligned. Will respect minimum and preferred sizes.
+ * FULLWIDTH: Takes up the full width. Respects minimum sizes.
+ * 		More specifically, the largest minimum size.
  *
  * @author Ken
  *
  */
 public class VerticalLayout implements LayoutManager{
 	private int vgap;
-	private int minWidth=0,minHeight=0;
-	private int preferredWidth=0,preferredHeight=0;
-	private boolean sizeUnknown=true;
-	public static final int LEFT=0,CENTER=1,RIGHT=2;
+	public static final int LEFT=0,CENTER=1,RIGHT=2,FULLWIDTH=3;
 	private int alignment=0;
 
 	/**
@@ -45,91 +50,79 @@ public class VerticalLayout implements LayoutManager{
 	}
 
 	public void setAlignment(int align){
-		if(align>-1 && align<3)
-			this.alignment=align;
+		this.alignment=align;
 	}
 	public void setVerticalGap(int gap){
 		if(gap<0)
 			vgap=0;
 		else
 			gap=vgap;
-		sizeUnknown=true;
 	}
 
 	/* Required by LayoutManager. */
 	@Override
-	public void addLayoutComponent(String name,Component comp){
-		sizeUnknown=true;
-	}
+	public void addLayoutComponent(String name,Component comp){}
 
 	/* Required by LayoutManager. */
 	@Override
-	public void removeLayoutComponent(Component comp){
-		sizeUnknown=true;
-	}
+	public void removeLayoutComponent(Component comp){}
 
-	private void setSizes(Container parent){
-		int nComps=parent.getComponentCount();
-		Dimension d=null;
-
+	/* Required by LayoutManager. */
+	@Override
+	public Dimension preferredLayoutSize(Container parent){
 		synchronized(parent.getTreeLock()){
-			// Reset preferred/minimum width and height.
-			preferredWidth=0;
-			preferredHeight=0;
-			minWidth=0;
-			minHeight=0;
-			int visible=-1;
+			int nComps=parent.getComponentCount();
+			Insets insets=parent.getInsets();
+			Dimension dim=new Dimension(insets.left+insets.right,insets.top+insets.bottom),
+					d;
+
+			int nVisible=-1;
 
 			for(int i=0;i<nComps;i++){
 				Component c=parent.getComponent(i);
 				if(c.isVisible()){
-					visible++;
+					nVisible++;
 					d=c.getPreferredSize();
 
-					if(d.width>preferredWidth)
-						preferredWidth=d.width;
-					if(c.getMinimumSize().width>minWidth)
-						minWidth=c.getMinimumSize().width;
-					preferredHeight+=d.height;
-
+					if(d.width>dim.width)
+						dim.width=d.width;
+					dim.height+=d.height;
 				}
 			}
-			minHeight=preferredHeight;
-			if(visible>1)
-				preferredHeight+=vgap*visible;
+			if(nVisible>0)
+				dim.height+=vgap*nVisible;
+			return dim;
 		}
 	}
 
 	/* Required by LayoutManager. */
 	@Override
-	public Dimension preferredLayoutSize(Container parent){
-		Dimension dim=new Dimension(0,0);
-
-		setSizes(parent);
-
-		// Always add the container's insets!
-		Insets insets=parent.getInsets();
-		dim.width=preferredWidth+insets.left+insets.right;
-		dim.height=preferredHeight+insets.top+insets.bottom;
-
-		sizeUnknown=false;
-
-		return dim;
-	}
-
-	/* Required by LayoutManager. */
-	@Override
 	public Dimension minimumLayoutSize(Container parent){
-		Dimension dim=new Dimension(0,0);
+		synchronized(parent.getTreeLock()){
+			synchronized(parent.getTreeLock()){
+				int nComps=parent.getComponentCount();
+				Insets insets=parent.getInsets();
+				Dimension dim=new Dimension(insets.left+insets.right,insets.top+insets.bottom),
+						d;
 
-		// Always add the container's insets!
-		Insets insets=parent.getInsets();
-		dim.width=minWidth+insets.left+insets.right;
-		dim.height=minHeight+insets.top+insets.bottom;
+				int nVisible=-1;
 
-		sizeUnknown=false;
+				for(int i=0;i<nComps;i++){
+					Component c=parent.getComponent(i);
+					if(c.isVisible()){
+						nVisible++;
+						d=c.getMinimumSize();
 
-		return dim;
+						if(d.width>dim.width)
+							dim.width=d.width;
+						dim.height+=d.height;
+					}
+				}
+				if(nVisible>0)
+					dim.height+=vgap*nVisible;
+				return dim;
+			}
+		}
 	}
 
 	/* Required by LayoutManager. */
@@ -141,31 +134,22 @@ public class VerticalLayout implements LayoutManager{
 	 */
 	@Override
 	public void layoutContainer(Container parent){
-		Insets insets=parent.getInsets();
 		synchronized(parent.getTreeLock()){
+			Insets insets=parent.getInsets();
 			int nComps=parent.getComponentCount(),
 				y=insets.top,
 				left=insets.left,
-				right=parent.getWidth()-insets.right,
+				right=parent.getWidth(),
 				center=parent.getWidth()/2+insets.left;
-
-			// Go through the components' sizes, if neither
-			// preferredLayoutSize nor minimumLayoutSize has
-			// been called.
-			if(sizeUnknown)
-				setSizes(parent);
+			Dimension pref,min,d=new Dimension(0,0);
 
 			for(int i=0;i<nComps;i++){
 				Component c=parent.getComponent(i);
 				if(c.isVisible()){
-					Dimension d=c.getPreferredSize();
-
-					/* If y is too large,
-					if((y+d.height)>(parent.getHeight()-insets.bottom)){
-						// do nothing.
-						// Another choice would be to do what we do to x.
-					}
-					//*/
+					pref=c.getPreferredSize();
+					min=c.getMinimumSize();
+					d.width=Math.max(pref.width,min.width);
+					d.height=Math.max(pref.height,min.height);
 
 					// Set the component's size and position.
 					switch(alignment){
@@ -178,6 +162,11 @@ public class VerticalLayout implements LayoutManager{
 					case RIGHT:
 						c.setBounds(right-d.width,y,d.width,d.height);
 						break;
+					case FULLWIDTH:
+						c.setBounds(left,y,right,d.height);
+						break;
+						default:
+							throw new AWTError("Unknown Alignment");
 					}
 
 					y+=d.height+vgap;
