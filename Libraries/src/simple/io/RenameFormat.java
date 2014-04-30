@@ -60,7 +60,14 @@ public final class RenameFormat {
 	//Error messages
 	private static final String[] ERR = new String[] {"OK", "Destination already exist", "Source doesn't exist", "Can't Undo: Hasn't been renamed.", "Parse Exception: ", "System error making dirs", "System error renaming"};
 	public static boolean fRESOLVEURLESCAPED=false;
-	public static boolean fURISAFE=false;
+	/**
+	 * URI safe filename
+	 */
+	public static boolean fURISAFEF=false;
+	/**
+	 * URI safe directory
+	 */
+	public static boolean fURISAFED=false;
 	static private int number = 0;
 	private File file;
 	private File undo = null;
@@ -116,6 +123,7 @@ public final class RenameFormat {
 		return (errorNum=RenameFormat.OK);
 	}
 	public String parse() throws ParseException {
+		String pathsplit="\\Q"+File.separator+"\\E";
 		final String path = file.getAbsolutePath(), fileName,ext;
 		String fullName;
 		final StringBuffer buf = new StringBuffer(file.getAbsolutePath().length());
@@ -185,6 +193,8 @@ public final class RenameFormat {
 									end = fileName.length() + end;
 								if (end < begin)
 									throw new ParseException("End index is before begin index.");
+								if(end == begin)
+									throw new ParseException("Beginning and End cannot be equal.");
 								if (end < 0)
 									throw new ParseException("End index comes before the start of the filename by "+(0-end)+".");
 								if (begin < 0)
@@ -233,6 +243,8 @@ public final class RenameFormat {
 									end = fullName.length() + end;
 								if (end < begin)
 									throw new ParseException("End index is before begin index.");
+								if(end == begin)
+									throw new ParseException("Beginning and End cannot be equal.");
 								if (end < 0)
 									throw new ParseException("End index comes before the start of the filename by "+(0-end)+".");
 								if (begin < 0)
@@ -258,7 +270,7 @@ public final class RenameFormat {
 					break;
 				case 'M':
 				//move up directory
-					final String[] sTmp = path.split("\\\\");
+					final String[] sTmp = path.split(pathsplit);
 					end = 1;
 					if (syn.charAt(i+1)=='(') {
 						if (!do_str.isNaN(syn.substring(i+2,syn.indexOf(')',i+1))))
@@ -268,7 +280,7 @@ public final class RenameFormat {
 							throw new ParseException("Missing matching ')' at " + begin);
 					}
 					for(int ind = 0;ind<(sTmp.length-(end+1));ind++) {
-						buf.append(sTmp[ind]+"\\");
+						buf.append(sTmp[ind]+File.separator);
 					}
 					break;
 				case 'E':
@@ -283,23 +295,22 @@ public final class RenameFormat {
 				buf.append(syn.charAt(i));
 			}
 		}
-		if(RenameFormat.fURISAFE){
-			String tmp=buf.toString().toLowerCase();
-			tmp=tmp.replace(' ','-');
-			String tmp2=tmp.substring(tmp.lastIndexOf('.'));
-			tmp=tmp.substring(0,tmp.length()-tmp2.length());
-			tmp=tmp.replace('.','-').replace("--","-");
+		if(RenameFormat.fURISAFED || RenameFormat.fURISAFEF){
+			String dir=buf.toString().toLowerCase();
+			String file=dir.substring(dir.lastIndexOf(File.separatorChar));
+			dir=dir.substring(0,dir.length()-file.length());
+			if(RenameFormat.fURISAFED)
+				dir=dir.replace(' ','-').replace('.','-');
+			if(RenameFormat.fURISAFEF)
+				file=file.replace(' ','-');
 
-			return tmp+tmp2;
+			return (dir+file).replace("--","-");
 		}
 		return buf.toString();
 	}
 	private static String getDir(final String path, final int i) {
 		String[]x = null;
-		if (path.indexOf('\\')!=-1)
-			x = path.split("\\\\");
-		else
-			x = path.split("/");
+		x = path.split("\\Q"+File.separator+"\\E");
 		return x[x.length-i-1];
 	}
 	public void setFormat(final String format) {
@@ -371,16 +382,14 @@ public final class RenameFormat {
 			return "";
 	}
 	public String saveState() {
-		final StringBuffer buf = new StringBuffer();
-		buf.append(file+";");
-		buf.append(undo+";");
-		buf.append(syn+";");
-		buf.append(pe+";");
-		buf.append(errorNum+"\n");
-		return buf.toString();
+		return file+"\t"+
+				undo+"\t"+
+				syn+"\t"+
+				pe+"\t"+
+				errorNum+"\n";
 	}
 	public static RenameFormat loadState(final String state) throws ParseException {
-		final String[] args = state.split(";");
+		final String[] args = state.split("\t");
 		if (args.length!=5)
 			throw new ParseException("Invalid number of parameters. Expected 5.");
 		final RenameFormat temp = new RenameFormat();

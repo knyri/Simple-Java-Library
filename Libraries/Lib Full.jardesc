@@ -11,8 +11,10 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml.html"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.component"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.event"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.audio"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.forms"/>
         <javaElement handleIdentifier="=Libraries/src&lt;"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.io"/>
@@ -35,9 +37,13 @@
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Tag.java"/>
         <file path="/Libraries/src/mimeTypes.conf.xml"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.math"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{MultipartFormEntity.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{InlineLooseParser.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{TagUtil.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{RequestHeader.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http.clientparams"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Client.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{ParserTester.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.system"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.logging"/>
@@ -48,6 +54,7 @@
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{ResponseHeader.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.sql"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{CssParser.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.command"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{CookieHandler.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Site.java"/>
