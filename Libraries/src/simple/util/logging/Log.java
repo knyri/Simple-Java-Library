@@ -72,6 +72,9 @@ public final class Log {
 		else
 			options &= ~level.getValue();
 	}
+	public boolean getPrint(final LogLevel level) {
+		return (options & level.getValue()) == level.getValue();
+	}
 	public void setPrintDebug(final boolean b) {setPrint(LogLevel.DEBUG,b);}
 	public void setPrintError(final boolean b) {setPrint(LogLevel.ERROR,b);}
 	public void setPrintWarning(final boolean b) {setPrint(LogLevel.WARNING,b);}
