@@ -12,4 +12,8 @@ public abstract class ClientParam implements NameValuePair{
 	public String getName(){return name;}
 	@Override
 	public abstract String getValue();
+	@Override
+	public String toString(){
+		return "[name="+name+" value="+value+"]";
+	}
 }
