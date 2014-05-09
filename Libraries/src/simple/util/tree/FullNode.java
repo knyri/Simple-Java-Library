@@ -26,9 +26,9 @@ import simple.CIString;
 /**
  * @author Ken
  *
- * @param <T>
- * @param <K>
- * @param <V>
+ * @param <T> Content type
+ * @param <K> Property key type
+ * @param <V> Property value type
  */
 public class FullNode<T, K, V> {
 	/**
