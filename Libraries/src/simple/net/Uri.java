@@ -266,6 +266,7 @@ public final class Uri {
 			 * query '?' or
 			 * fragment '#'
 			 */
+			if(pos.start==-1)pos.start=0;
 			if (uri.charAt(pos.start)==':') {//NOTE: found port
 				//log.debug("port");
 				pos.incStart();
