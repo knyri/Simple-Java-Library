@@ -3,6 +3,8 @@
  */
 package simple.time;
 
+import java.util.Arrays;
+
 import simple.util.Time;
 import simple.util.logging.Log;
 
@@ -26,9 +28,7 @@ public final class TimerFactory {
 				private int /*start = 0, end = 0, */count = 0;
 				private int totalItems = 0;
 				{
-					for(int i = 0; i < sampleSize; i++) {
-						samples[i] = System.currentTimeMillis();
-					}
+					Arrays.fill(samples,System.currentTimeMillis());
 				}
 				@Override
 				public long getRemaining() { return Math.max((long)((totalItems-count)*getRate()),0); }
