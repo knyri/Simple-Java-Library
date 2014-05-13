@@ -42,6 +42,7 @@ public class FullNode<T, K, V> {
 	private FullNode<T,K,V> parent = null;
 	private CIString nName = null;
 	private T content = null;
+	private final Object sync=new Object();
 	//private static final Log log = LogFactory.getLogFor(FullNode.class);
 	/**
 	 * depth: how deep in the tree<br>
@@ -157,11 +158,13 @@ public class FullNode<T, K, V> {
 	 * Adds a child Node and sets this as the node's parent. Does nothing if <code><var>node</var>==null</code>.
 	 * @param cnode Node to be added as a child.
 	 */
-	public synchronized final void addChild(FullNode<T,K,V> cnode) {
+	public final void addChild(FullNode<T,K,V> cnode) {
 		if (cnode==null) {	return;	}
-		children.addElement(cnode);
-		cnode.setSiblingIndex(children.size()-1);
-		cnode.setParent(this);
+		synchronized(sync){
+			children.addElement(cnode);
+			cnode.setSiblingIndex(children.size()-1);
+			cnode.setParent(this);
+		}
 	}
 	/**
 	 * Gets a child at the index specified.
@@ -182,8 +185,10 @@ public class FullNode<T, K, V> {
 	 * Removes the specified Node from the list of children if it has any.
 	 * @param child Node to be removed.
 	 */
-	public synchronized void removeChild(FullNode<T,K,V> child) {
-		removeChild(children.indexOf(child));
+	public void removeChild(FullNode<T,K,V> child) {
+		synchronized(sync){
+			removeChild(children.indexOf(child));
+		}
 		//children.remove(child);
 		//log.debug(getName()+" removing child "+child.getName());
 	}
@@ -191,11 +196,18 @@ public class FullNode<T, K, V> {
 	 * Removes the child Node at the specified index if getChild(index)!=null.
 	 * @param index Index of Node to be removed.
 	 */
-	public synchronized final void removeChild(int index) {
+	public final void removeChild(int index) {
 		if (index<children.size()&&index>0){
-			children.remove(index).setSiblingIndex(-1).setParent(null);
-			for(;index<children.size();index++)
-				children.get(index).setSiblingIndex(index);
+			synchronized(sync){
+				children.remove(index).setSiblingIndex(-1).setParent(null);
+				for(;index<children.size();index++)
+					children.get(index).setSiblingIndex(index);
+			}
+		}
+	}
+	public final void removeAllChildren(){
+		synchronized(sync){
+			children.clear();
 		}
 	}
 	/**

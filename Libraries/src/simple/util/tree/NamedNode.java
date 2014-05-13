@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util.tree;
 
@@ -15,27 +15,37 @@ public class NamedNode<T> {
 	private final String name;
 	private NamedNode<T> parent = null;
 	private final Hashtable<String, NamedNode<T>> children = new Hashtable<String, NamedNode<T>>();
+	private final Object sync=new Object();
 	public NamedNode(String name) {
 		this.name = name;
 	}
 	public String getName() { return name; }
-	
+
 	public void setParent(NamedNode<T> nParent) { parent = nParent; }
 	public NamedNode<T> getParent() { return parent; }
-	
+
 	public void setContent(T nContent) { content = nContent; }
 	public T getContent() { return content; }
-	
+
 	public void addChild(NamedNode<T> node) {
-		node.setParent(this);
-		children.put(node.getName(), node);
+		synchronized(sync){
+			node.setParent(this);
+			children.put(node.getName(), node);
+		}
 	}
 	public NamedNode<T> getChild(String name) {
 		return children.get(name);
 	}
 	public NamedNode<T> removeChild(String name) {
-		NamedNode<T> tmp = children.remove(name);
-		tmp.setParent(null);
-		return tmp;
+		synchronized(sync){
+			NamedNode<T> tmp = children.remove(name);
+			tmp.setParent(null);
+			return tmp;
+		}
+	}
+	public void removeAllChildren(){
+		synchronized(sync){
+			children.clear();
+		}
 	}
 }
