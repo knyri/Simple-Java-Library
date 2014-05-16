@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Vector;
 
 /**convenience methods for InputStream and OutputStream
  * @author Ken
@@ -45,35 +44,21 @@ public class StreamFactory {
 	 * @param end Byte to stop at.
 	 * @return An array of the bytes read.
 	 * @throws IOException
+	 * @deprecated
+	 * @see StreamUtil#readUntil(InputStream, byte)
 	 */
 	public static byte[] readUntil(final InputStream in, final byte end) throws IOException {
-		final Vector<Byte> buf = new Vector<Byte>();
-		byte[] bbuf = new byte[1];
-		while((in.read(bbuf)!=-1)){
-			buf.addElement(new Byte(bbuf[0]));
-			if (bbuf[0]==end) {
-				break;
-			}
-		}
-		bbuf = new byte[buf.size()];
-		for (int i = 0;i<buf.size(); i++) {
-			bbuf[i] = buf.elementAt(i).byteValue();
-		}
-		return bbuf;
+		return StreamUtil.readUntil(in, end);
 	}
 	/**Reads until the first non-whitespace character is found.
 	 * @param rd
 	 * @return The non-whitespace character or -1
 	 * @throws IOException
+	 * @deprecated
+	 * @see StreamUtil#skipWhitespace(InputStream)
 	 */
 	public static char skipWhitespace(final InputStream rd) throws IOException {
-		int c = rd.read();
-		if (c==-1) return (char)c;
-		do {
-			if (!Character.isWhitespace(c)) break;
-			c = rd.read();
-		} while(c==-1);
-		return (char)c;
+		return StreamUtil.skipWhitespace(rd);
 	}
 
 	/**

@@ -222,6 +222,20 @@ public final class FileUtil{
 		}
 		output.flush();
 	}
+	/**
+	 * Copies from input directly to output.
+	 * @param input Source
+	 * @param output Destination
+	 * @param buffer Buffer to use.
+	 * @throws IOException
+	 */
+	public static void copy(final InputStream input, final OutputStream output, final byte[] buffer ) throws IOException {
+		int n = 0;
+		while( (n=input.read(buffer)) != -1) {
+			output.write(buffer, 0, n);
+		}
+		output.flush();
+	}
 	public static void copy(final InputStream input, final OutputStream output, final int bufferSize, long numBytes ) throws IOException {
 		final byte buffer[] = new byte[bufferSize];
 		int n = 0;

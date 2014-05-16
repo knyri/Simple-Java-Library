@@ -6,9 +6,5 @@
 	<classpathentry kind="lib" path="joda-time-2.1-javadoc.jar"/>
 	<classpathentry kind="lib" path="joda-time-2.1-sources.jar"/>
 	<classpathentry kind="lib" path="joda-time-2.1.jar"/>
-	<classpathentry kind="lib" path="C:/msys/1.0/home/git/Simple-Java-Library/Libraries/tritonus_gsm-0.3.6.jar"/>
-	<classpathentry kind="lib" path="C:/msys/1.0/home/git/Simple-Java-Library/Libraries/tritonus_mp3-0.3.6.jar"/>
-	<classpathentry kind="lib" path="C:/msys/1.0/home/git/Simple-Java-Library/Libraries/tritonus_remaining-0.3.6.jar"/>
-	<classpathentry kind="lib" path="C:/msys/1.0/home/git/Simple-Java-Library/Libraries/tritonus_share-0.3.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
