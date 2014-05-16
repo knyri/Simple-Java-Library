@@ -21,6 +21,15 @@ import java.util.Vector;
  * @author Kenneth Pierce
  */
 public final class FileUtil{
+	private FileUtil(){}
+	static final BlackHoleOutputStream voidos=new BlackHoleOutputStream();
+	static final BlackHoleWriter voidw = new BlackHoleWriter();
+	public static final void discard(InputStream in) throws IOException{
+		copy(in,voidos,4096);
+	}
+	public static final void discard(Reader in) throws IOException{
+		copy(in,voidw,4096);
+	}
 	/**
 	 * Convenience method for <code>formatSize(bytes, 2)</code>.
 	 * @param bytes Number of bytes.

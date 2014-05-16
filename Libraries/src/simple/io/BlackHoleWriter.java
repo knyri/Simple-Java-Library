@@ -13,7 +13,7 @@ import java.io.Writer;
  *
  */
 public class BlackHoleWriter extends Writer{
-	public BlackHoleWriter(Object arg0){}
+	public BlackHoleWriter(){}
 	@Override
 	public void close() throws IOException{}
 	@Override
