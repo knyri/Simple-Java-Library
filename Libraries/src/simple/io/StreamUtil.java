@@ -65,10 +65,8 @@ public final class StreamUtil {
 	public static void skipUntil(final InputStream in, final byte[] end) throws IOException {
 		int off=1,read,stop=end.length-1;
 		while((read=in.read())!=-1){
-			System.out.print(read+" ");
 			if((byte)read!=end[0])continue;
 			while(off<end.length && (read=in.read())!=-1){
-				System.out.print(off);
 				if((byte)read!=end[off]){
 					off=1;
 					break;
