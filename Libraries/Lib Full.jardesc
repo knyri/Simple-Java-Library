@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="D:/Apps/simplelib.jar"/>
+    <jar path="/home/server/simplelib.jar"/>
     <options buildIfNeeded="true" compress="false" descriptionLocation="/Libraries/Lib Full.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -15,7 +15,7 @@
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.component"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.event"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.audio"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.forms"/>
+        <file path="/Libraries/src/parserconstants_html.conf.xml"/>
         <javaElement handleIdentifier="=Libraries/src&lt;"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.io"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.ui"/>
@@ -31,7 +31,6 @@
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.time"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.logging"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.forms.old"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{ParserConstants.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor.impl"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Tag.java"/>

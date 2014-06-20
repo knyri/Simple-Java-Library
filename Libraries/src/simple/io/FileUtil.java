@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 /**All close(...) methods now log a warning message.
@@ -374,5 +376,11 @@ public final class FileUtil{
 			}
 		}
 		return tmp;
+	}
+	public static void close(Statement stm) {
+		try{
+			stm.close();
+		}catch(SQLException e){}
+		
 	}
 }
