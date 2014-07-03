@@ -3,13 +3,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/HTTPClient"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/javalayer.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/joda-time-2.1.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/joda-time-2.1-javadoc.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/joda-time-2.1-sources.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/tritonus_gsm-0.3.6.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/tritonus_mp3-0.3.6.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/tritonus_remaining-0.3.6.jar"/>
-	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/tritonus_share-0.3.6.jar"/>
+	<classpathentry kind="lib" path="/home/server/Documents/Projects/workspace/libs/tritonus-jodatime-javalayer.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

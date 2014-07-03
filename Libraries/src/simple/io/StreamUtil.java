@@ -2,7 +2,7 @@ package simple.io;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public final class StreamUtil {
 	/**
@@ -13,18 +13,16 @@ public final class StreamUtil {
 	 * @throws IOException
 	 */
 	public static byte[] readUntil(final InputStream in, final byte end) throws IOException {
-		final Vector<Byte> buf = new Vector<Byte>();
+		final ArrayList<Byte> buf = new ArrayList<Byte>();
 		byte[] bbuf = new byte[1];
 		while((in.read(bbuf)!=-1)){
-			buf.addElement(new Byte(bbuf[0]));
-			if (bbuf[0]==end) {
+			buf.add(new Byte(bbuf[0]));
+			if (bbuf[0]==end)
 				break;
-			}
 		}
 		bbuf = new byte[buf.size()];
-		for (int i = 0;i<buf.size(); i++) {
-			bbuf[i] = buf.elementAt(i).byteValue();
-		}
+		for (int i = 0;i<buf.size(); i++)
+			bbuf[i] = buf.get(i).byteValue();
 		return bbuf;
 	}
 	/**
@@ -35,25 +33,25 @@ public final class StreamUtil {
 	 * @throws IOException
 	 */
 	public static byte[] readUntil(final InputStream in, final byte[] end) throws IOException {
-		final Vector<Byte> buf = new Vector<Byte>();
+		final ArrayList<Byte> buf = new ArrayList<Byte>();
 		byte[] bbuf = new byte[end.length];
-		int len=0,off=0,i=0,max;
-		while((len=in.read(bbuf))!=-1){
-			buf.addElement(new Byte(bbuf[0]));
-			for(i=0;i<len;i++){
-				max=len-i;
-				for(;off<max;off++){
-					if(bbuf[i+off]!=end[off]){
-						off=0;
-						break;
-					}
+		int off=1,read,stop=end.length-1,i=0;
+		done:
+		while((read=in.read())!=-1){
+			buf.add(new Byte((byte)read));
+			if((byte)read!=end[0])continue;
+			while(off<end.length && (read=in.read())!=-1){
+				if((byte)read!=end[off]){
+					off=1;
+					break;
 				}
+				off++;
+				if(off==stop)break done;
 			}
 		}
 		bbuf = new byte[buf.size()];
-		for (i = 0;i<buf.size(); i++) {
-			bbuf[i] = buf.elementAt(i).byteValue();
-		}
+		for (i = 0;i<buf.size(); i++)
+			bbuf[i] = buf.get(i).byteValue();
 		return bbuf;
 	}
 	/**
