@@ -2,7 +2,7 @@ package simple.util.tree;
 
 import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import simple.CIString;
 
@@ -34,7 +34,7 @@ public class FullNode<T, K, V> {
 	/**
 	 * Vector of Nodes to hold any children.
 	 */
-	protected final Vector<FullNode<T,K,V>> children = new Vector<FullNode<T,K,V>>();
+	protected final LinkedList<FullNode<T,K,V>> children = new LinkedList<FullNode<T,K,V>>();
 	/**
 	 * HashMap to hold properties for this node.
 	 */
@@ -161,7 +161,7 @@ public class FullNode<T, K, V> {
 	public final void addChild(FullNode<T,K,V> cnode) {
 		if (cnode==null) {	return;	}
 		synchronized(sync){
-			children.addElement(cnode);
+			children.add(cnode);
 			cnode.setSiblingIndex(children.size()-1);
 			cnode.setParent(this);
 		}
@@ -174,7 +174,7 @@ public class FullNode<T, K, V> {
 	 */
 	public final FullNode<T,K,V> getChild(int index) {
 		if (index>=children.size()||index<0) {	return null;	}
-		return children.elementAt(index);
+		return children.get(index);
 	}
 	/**
 	 * @return The number of children this node has.

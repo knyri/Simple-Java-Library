@@ -7,7 +7,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import simple.CIString;
-import simple.io.ReadWriterFactory;
+import simple.io.RWUtil;
 import simple.ml.InlineLooseParser;
 import simple.ml.Page;
 import simple.ml.Tag;
@@ -99,7 +99,7 @@ public final class MimeTypes {
 		try {
 			EMPTYVECTOR.add("");
 			final Page page = InlineLooseParser.parse(
-					ReadWriterFactory.readFully(new InputStreamReader(
+					RWUtil.readFully(new InputStreamReader(
 							MimeTypes.class.getClassLoader().getResource("mimeTypes.conf.xml").openStream())));
 			log.debug(page);
 			add(page.getTag("mime.image;0"), image);

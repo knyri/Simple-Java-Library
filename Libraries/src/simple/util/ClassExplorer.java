@@ -183,6 +183,7 @@ public class ClassExplorer {
 				buf.writeln("\t"+feild[i].toString());
 			}
 		}
+		FileUtil.close(buf);
 		return buf.toString();
 	}
 	public static void main(final String[] args) {

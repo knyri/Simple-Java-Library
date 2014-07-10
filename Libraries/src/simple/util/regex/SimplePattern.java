@@ -1,6 +1,6 @@
 package simple.util.regex;
 
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
 /**
  * Provides a simpler to use Pattern.<br>
@@ -10,13 +10,13 @@ import java.util.regex.*;
  */
 public class SimplePattern {
 	static char NULL = (char)0;
-	public static Pattern compile(String regex) {
+	public static Pattern compile(String regex) throws Exception {
 		return Pattern.compile(parse(regex));
 	}
-	public static boolean matches(String regex, String test) {
+	public static boolean matches(String regex, String test) throws Exception {
 		return Pattern.matches(parse(regex), test);
 	}
-	private static String parse(String regex) {
+	private static String parse(String regex) throws Exception {
 		StringBuffer buf = new StringBuffer(regex.length()+15);
 		char[] ca = regex.toCharArray();
 		char c = NULL;
@@ -59,9 +59,10 @@ public class SimplePattern {
 			default:
 				buf.append(c);
 			}
-				
+
 			prev = ca[i];
 		}
+		if(depth!=0)throw new Exception("Brackets don't match.");
 		return buf.toString();
 	}
 }

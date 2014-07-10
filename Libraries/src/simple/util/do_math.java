@@ -5,7 +5,6 @@ package simple.util;
  * @author Kenneth Pierce
  */
 public final class do_math {
-	private static final char[] HEX = new char[] {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	public static long sum(int[] x) {
 		long sum = 0;
 		for(int i = 0;i<x.length;i++) {

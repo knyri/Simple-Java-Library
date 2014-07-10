@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.text.ParseException;
 
 import simple.io.DoubleParsePosition;
+import simple.io.RWUtil;
 import simple.io.ReadWriterFactory;
 import simple.util.do_str;
 import simple.util.logging.Log;
@@ -53,7 +54,7 @@ public class CssParser{
 			pos.reset();
 			//log.debug("---- LOOP ----");
 			if (buf.length()==0) {
-				retc = ReadWriterFactory.skipWhitespace(bin);
+				retc = RWUtil.skipWhitespace(bin);
 				c= (char)retc;
 				//log.debug("retc="+retc+":c='"+c+"'");
 				if (retc==-1) {
@@ -65,7 +66,7 @@ public class CssParser{
 				c = buf.charAt(0);
 			}
 			if (c!='<') {
-				buf.append(ReadWriterFactory.readUntil(bin, '<'));
+				buf.append(RWUtil.readUntil(bin, '<'));
 				if (buf.charAt(buf.length()-1)=='<') {
 					buf.deleteCharAt(buf.length()-1);
 				}
@@ -80,7 +81,7 @@ public class CssParser{
 				buf.append('<');
 				continue;
 			}
-			buf.append(ReadWriterFactory.readUntil(bin, '>'));
+			buf.append(RWUtil.readUntil(bin, '>'));
 			if(buf.charAt(1)=='<' || do_str.isWhiteSpace(buf.charAt(1))){
 				//un-escaped <
 				int index=1;
@@ -101,7 +102,7 @@ public class CssParser{
 			//log.warning(buf);
 			if (buf.length()>3 && buf.substring(0, 4).equals("<!--")) {
 				if (!buf.substring(buf.length()-3).equals("-->")) {
-					buf.append(ReadWriterFactory.readUntil(bin,"-->"));
+					buf.append(RWUtil.readUntil(bin,"-->"));
 				}
 				log.debug("HTML comment");
 				if (cur==null) {
@@ -119,7 +120,7 @@ public class CssParser{
 					final String ttmp=buf.substring(0,9);
 					if(ttmp.equals("<!CDATA[[")){//NOTE: SGML CDATA
 						if (!buf.substring(buf.length()-4).equals("]]>")) {
-							buf.append(ReadWriterFactory.readUntil(bin,"]]>"));
+							buf.append(RWUtil.readUntil(bin,"]]>"));
 						}
 						log.debug("SGML CDATA");
 						if (cur==null) {
@@ -208,7 +209,7 @@ public class CssParser{
 					while(do_str.isWhiteSpace(buf.charAt(pos.end))){
 						pos.end++;
 						if (pos.end == buf.length()) {
-							tmp = ReadWriterFactory.readUntil(bin, '>');
+							tmp = RWUtil.readUntil(bin, '>');
 							if (tmp.isEmpty()) {
 								log.debug(buf);
 								throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
@@ -221,7 +222,7 @@ public class CssParser{
 					while(!do_str.isWhiteSpace(buf.charAt(pos.end)) && buf.charAt(pos.end)!='>'){
 						pos.end++;
 						if (pos.end == buf.length()) {
-							tmp = ReadWriterFactory.readUntil(bin, '>');
+							tmp = RWUtil.readUntil(bin, '>');
 							if (tmp.isEmpty()) {
 								log.debug(buf);
 								throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
@@ -234,7 +235,7 @@ public class CssParser{
 				}
 				pos.end++;
 				if (pos.end == buf.length()) {
-					tmp = ReadWriterFactory.readUntil(bin, '>');
+					tmp = RWUtil.readUntil(bin, '>');
 					if (tmp.isEmpty()) {
 						log.debug(buf);
 						throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
@@ -265,7 +266,7 @@ public class CssParser{
 			if (pconst.isPcdataTag(tag.getName())) {//check for tags filled with gibberish to us
 				try {
 					buf.setLength(0);
-					buf.append(ReadWriterFactory.readUntil(bin, "</"+tag.getName()+">", true));
+					buf.append(RWUtil.readUntil(bin, "</"+tag.getName()+">", true));
 				} catch (final EOFException e) {
 					throw new ParseException("Missing end tag for PCDATA tag "+tag.getName()+" found at "+pos,pos.start);
 				}

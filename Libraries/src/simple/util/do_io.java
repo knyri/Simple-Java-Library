@@ -1,6 +1,26 @@
 package simple.util;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Hashtable;
@@ -19,6 +39,7 @@ import simple.util.logging.LogFactory;
  * @author Kenneth Pierce
  * @deprecated {@link simple.util.App},{@link simple.io.FilterFactory},{@link simple.io.StreamFactory},{@link simple.io.ReadWriterFactory}
  */
+@Deprecated
 public final class do_io {
 	//private static final int num_threads = Runtime.getRuntime().availableProcessors();
 	public static int _jobBufferSize = 8192;
@@ -31,6 +52,7 @@ public final class do_io {
 			_out = out;
 			_bufferSize = do_io._jobBufferSize;
 		}
+		@Override
 		public void run() {
 			try {
 				do_io.copy(_in, _out, _bufferSize);
@@ -48,6 +70,7 @@ public final class do_io {
 			_out = out;
 			_bufferSize = _jobBufferSize;
 		}
+		@Override
 		public void run() {
 			try {
 				copy(_in, _out, _bufferSize);
@@ -62,6 +85,7 @@ public final class do_io {
 	 * @return
 	 * @deprecated {@link simple.io.FilterFactory}
 	 */
+	@Deprecated
 	public static File[] listFiles(String dir, String ext) {
 		File file = new File(dir);
 		return file.listFiles(createFilenameFilter(ext));
@@ -73,12 +97,14 @@ public final class do_io {
 	 * @return
 	 * @deprecated {@link simple.io.FilterFactory}
 	 */
+	@Deprecated
 	public static FilenameFilter createFilenameFilter(String list) {
 		final String key = list.toLowerCase();
 		FilenameFilter ff = fnfcache.get(key);
 		if (ff==null)
 			ff = new FilenameFilter() {
 					final String flist = key;
+					@Override
 					public boolean accept(File dir,String file) {
 						String ext = file.substring(file.lastIndexOf('.')+1);
 						return flist.contains(ext);
@@ -93,6 +119,7 @@ public final class do_io {
 	 * @return
 	 * @deprecated {@link simple.io.FilterFactory}
 	 */
+	@Deprecated
 	public static FileFilter createFileFilter(String list) {
 		final String key = list.toLowerCase();
 		FileFilter ff = ffcache.get(key);
@@ -105,7 +132,7 @@ public final class do_io {
 						ext = ext.substring(ext.lastIndexOf('.')+1);
 						return flist.contains(ext);
 					}
-		
+
 					@Override
 					public String getDescription() {
 						return flist;
@@ -115,7 +142,7 @@ public final class do_io {
 				ffcache.put(key, ff);
 		return ff;
 	}
-	
+
 	/**Reads until the first non-whitespace character is found.
 	 * @param rd
 	 * @return The non-whitespace character or -1
@@ -486,7 +513,11 @@ public final class do_io {
 				read = in1.read(b1);
 				in2.read(b2);
 				for (;read != -1;) {
-					if (!compareBytes(b1,b2,0,read)) return false;
+					if (!compareBytes(b1,b2,0,read)){
+						in1.close();
+						in2.close();
+						return false;
+					}
 					read = in1.read(b1);
 					in2.read(b2);
 				}
@@ -519,7 +550,11 @@ public final class do_io {
 				read = in1.read(b1);
 				in2.read(b2);
 				for (;read != -1;) {
-					if (!compareBytes(b1,b2,0,read)) return false;
+					if (!compareBytes(b1,b2,0,read)){
+						in1.close();
+						in2.close();
+						return false;
+					}
 					read = in1.read(b1);
 					in2.read(b2);
 				}
@@ -612,6 +647,7 @@ public final class do_io {
 	 * This should never occur.
 	 * @deprecated {@link simple.util.App}
 	 */
+	@Deprecated
 	public static File getResourceAsFile(String location) throws URISyntaxException, FileNotFoundException {
 		return getResourceAsFile(location, do_io.class);
 	}
@@ -629,6 +665,7 @@ public final class do_io {
 	 * @throws FileNotFoundException Occurs if the loader returns a null. Avoids a nasty nondescript NullPointerException.
 	 * @deprecated {@link simple.util.App}
 	 */
+	@Deprecated
 	public static File getResourceAsFile(String location, Class<?> loader) throws FileNotFoundException {
 		URL tmp = loader.getClassLoader().getResource(location);
 		if (tmp==null) throw new FileNotFoundException("The file "+location+" could not be found.");
@@ -641,6 +678,7 @@ public final class do_io {
 	 * @throws IOException
 	 * @deprecated {@link simple.util.App}
 	 */
+	@Deprecated
 	public static BufferedInputStream getResourceForReading(String location, Class<?> loader) throws IOException {
 		URL tmp = loader.getClassLoader().getResource(location);
 		if (tmp==null) throw new FileNotFoundException("The file "+location+" could not be found.");
@@ -654,6 +692,7 @@ public final class do_io {
 	 * @throws URISyntaxException
 	 * @deprecated {@link simple.util.App}
 	 */
+	@Deprecated
 	public static final PrintStream openOutputResource(String location, Class<?> loader) throws FileNotFoundException, URISyntaxException {
 		if (loader!=null)
 			return openOutputFile(getResourceAsFile(location, loader));
@@ -668,6 +707,7 @@ public final class do_io {
 	 * @throws URISyntaxException
 	 * @deprecated use {@link App#getResourceAsFile(String, Class)}
 	 */
+	@Deprecated
 	public static final FileReader openInputResource(String location, Class<?> loader) throws FileNotFoundException, URISyntaxException {
 		if (loader!=null)
 			return openInputFile(getResourceAsFile(location, loader));
@@ -680,6 +720,7 @@ public final class do_io {
 	 * @throws FileNotFoundException
 	 * @deprecated {@link simple.util.App}
 	 */
+	@Deprecated
 	public static final PrintStream openOutputFile(File file) throws FileNotFoundException {
 		return new PrintStream(new FileOutputStream(file));
 	}
@@ -689,6 +730,7 @@ public final class do_io {
 	 * @throws FileNotFoundException
 	 * @deprecated {@link simple.util.App}
 	 */
+	@Deprecated
 	public static final FileReader openInputFile(File file) throws FileNotFoundException {
 		return new FileReader(file);
 	}
@@ -726,10 +768,12 @@ public final class do_io {
 	 * @return
 	 * @deprecated {@link simple.io.FilterFactory}
 	 */
+	@Deprecated
 	public static FileFilter createFileFilter(final String ext, final String desc) {
 		return new javax.swing.filechooser.FileFilter() {
 			final String extention = ext.intern();
 			final String description = desc.intern();
+			@Override
 			public boolean accept(File file) {return file.getName().endsWith(extention) || file.isDirectory();}
 			@Override
 			public String getDescription() {return description;}
@@ -741,10 +785,12 @@ public final class do_io {
 	 * @return
 	 * @deprecated {@link simple.io.FilterFactory}
 	 */
+	@Deprecated
 	public static FilenameFilter createFilenameFilter(final File dir, final String ext) {
 		return new FilenameFilter() {
 			final File directory = dir;
 			final String extention = ext;
+			@Override
 			public boolean accept(File dir, String name) {
 				if (directory != null) {
 					if (dir.equals(directory))

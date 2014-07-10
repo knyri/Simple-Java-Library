@@ -73,12 +73,8 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 				while (children.size() > 0) {
 					getParent().addChild(children.remove(0));
 				}
-				/*for (int i = 0; i < children.size(); i++) {
-					getParent().addChild(children.elementAt(i));
-				}*/
 			}
 			children.clear();
-			children.trimToSize();
 		}
 	}
 	/** Finds the child by name. Children with the same name can be
@@ -237,6 +233,9 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 			return true;
 		}
 		return false;
+	}
+	public Tag getLastChild(){
+		return (Tag)children.peekLast();
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util.hash;
 
@@ -57,7 +57,7 @@ public final class MD5 {
 		log.debug("padding remaining",paddingRemaining);
 		for (;iterations > 0; iterations--) {
 			log.debug("-- loop --");
-			read = in.read(rbuf);//read 
+			read = in.read(rbuf);//read
 			log.debug(read+" blocks read");
 			if (read < 64) {
 				if (read == -1) read = 0;
@@ -91,6 +91,7 @@ public final class MD5 {
 			}
 			transform(state, rbuf);
 		}
+		in.close();
 		return HexUtil.getHex(new byte[] {(byte)(state[0]>>24), (byte)(state[0]>>16), (byte)(state[0]>>8), (byte)state[0],
 				(byte)(state[1]>>24), (byte)(state[1]>>16), (byte)(state[1]>>8), (byte)state[1],
 				(byte)(state[2]>>24), (byte)(state[2]>>16), (byte)(state[2]>>8), (byte)state[2],
@@ -117,7 +118,7 @@ public final class MD5 {
 		d = R1(d,a,b,c,blocks[ 9],12,0x8b44f7af);
 		c = R1(c,d,a,b,blocks[10],17,0xffff5bb1);
 		b = R1(b,c,d,a,blocks[11],22,0x895cd7be);
-		
+
 		a = R1(a,b,c,d,blocks[12], 7,0x6b901122);
 		d = R1(d,a,b,c,blocks[13],12,0xfd987193);
 		c = R1(c,d,a,b,blocks[14],17,0xa679438e);
@@ -130,17 +131,17 @@ public final class MD5 {
 		d = R2(d,a,b,c,blocks[ 6], 9,0xc040b340);
 		c = R2(c,d,a,b,blocks[11],14,0x265e5a51);
 		b = R2(b,c,d,a,blocks[ 0],20,0xe9b6c7aa);
-		
+
 		a = R2(a,b,c,d,blocks[ 5], 5,0xd62f105d);
 		d = R2(d,a,b,c,blocks[10], 9,0x2441453);
 		c = R2(c,d,a,b,blocks[15],14,0xd8a1e681);
 		b = R2(b,c,d,a,blocks[ 4],20,0xe7d3fbc8);
-		
+
 		a = R2(a,b,c,d,blocks[ 9], 5,0x21e1cde6);
 		d = R2(d,a,b,c,blocks[14], 9,0xc33707d6);
 		c = R2(c,d,a,b,blocks[ 3],14,0xf4d50d87);
 		b = R2(b,c,d,a,blocks[ 8],20,0x455a14ed);
-		
+
 		a = R2(a,b,c,d,blocks[13], 5,0xa9e3e905);
 		d = R2(d,a,b,c,blocks[ 2], 9,0xfcefa3f8);
 		c = R2(c,d,a,b,blocks[ 7],14,0x676f02d9);
@@ -152,17 +153,17 @@ public final class MD5 {
 		d = R3(d,a,b,c,blocks[ 8],11,0x8771f681);
 		c = R3(c,d,a,b,blocks[11],16,0x6d9d6122);
 		b = R3(b,c,d,a,blocks[14],23,0xfde5380c);
-		
+
 		a = R3(a,b,c,d,blocks[ 1], 4,0xa4beea44);
 		d = R3(d,a,b,c,blocks[ 4],11,0x4bdecfa9);
 		c = R3(c,d,a,b,blocks[ 7],16,0xf6bb4b60);
 		b = R3(b,c,d,a,blocks[10],23,0xbebfbc70);
-		
+
 		a = R3(a,b,c,d,blocks[13], 4,0x289b7ec6);
 		d = R3(d,a,b,c,blocks[ 0],11,0xeaa127fa);
 		c = R3(c,d,a,b,blocks[ 3],16,0xd4ef3085);
 		b = R3(b,c,d,a,blocks[ 6],23,0x4881d05);
-		
+
 		a = R3(a,b,c,d,blocks[ 9], 4,0xd9d4d039);
 		d = R3(d,a,b,c,blocks[12],11,0xe6db99e5);
 		c = R3(c,d,a,b,blocks[15],16,0x1fa27cf8);
@@ -174,17 +175,17 @@ public final class MD5 {
 		d = R4(d,a,b,c,blocks[ 7],10, 0x432aff97);
 		c = R4(c,d,a,b,blocks[14],15, 0xab9423a7);
 		b = R4(b,c,d,a,blocks[ 5],21, 0xfc93a039);
-		
+
 		a = R4(a,b,c,d,blocks[12], 6, 0x655b59c3);
 		d = R4(d,a,b,c,blocks[ 3],10, 0x8f0ccc92);
 		c = R4(c,d,a,b,blocks[10],15, 0xffeff47d);
 		b = R4(b,c,d,a,blocks[ 1],21, 0x85845dd1);
-		
+
 		a = R4(a,b,c,d,blocks[ 8], 6, 0x6fa87e4f);
 		d = R4(d,a,b,c,blocks[15],10, 0xfe2ce6e0);
 		c = R4(c,d,a,b,blocks[ 6],15, 0xa3014314);
 		b = R4(b,c,d,a,blocks[13],21, 0x4e0811a1);
-		
+
 		a = R4(a,b,c,d,blocks[ 4], 6, 0xf7537e82);
 		d = R4(d,a,b,c,blocks[11],10, 0xbd3af235);
 		c = R4(c,d,a,b,blocks[ 2],15, 0x2ad7d2bb);

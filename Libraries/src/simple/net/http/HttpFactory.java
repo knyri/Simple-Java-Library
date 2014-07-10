@@ -32,6 +32,7 @@ public final class HttpFactory {
 	 * @throws IOException
 	 */
 	public static final boolean readPage(final URL link, final URL referer, final StringBuilder store) throws IOException {
+		@SuppressWarnings("unused")
 		int max_count,
 			//used to see if we got all the content
 			cur_count;

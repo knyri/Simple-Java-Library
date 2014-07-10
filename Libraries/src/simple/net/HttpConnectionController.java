@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.net;
 
@@ -35,7 +35,7 @@ import HTTPClient.ProtocolNotSuppException;
  * Relies heavily on the HTTPClient package.
  * <br>
  * Created: Jun 19, 2008
- * 
+ *
  * @author Kenneth Pierce
  */
 public class HttpConnectionController {
@@ -427,7 +427,7 @@ public class HttpConnectionController {
 	 * Returns a buffered InputStream to the site. Will automatically convert to
 	 * a GZIPInputStream or DeflaterInputStream as needed. Cannot handle
 	 * "compress" yet.
-	 * 
+	 *
 	 * @return a buffered input stream from the server.
 	 */
 	public InputStream getInputStream() {
@@ -526,6 +526,7 @@ public class HttpConnectionController {
 	 * @param os
 	 * @return true on success.
 	 */
+	@SuppressWarnings("resource")
 	public boolean readInto(final OutputStream os) {
 		if (!connect)
 			if (!connect())
@@ -566,6 +567,7 @@ public class HttpConnectionController {
 		return false;
 	}
 
+	@SuppressWarnings("resource")
 	public boolean readInto(final Writer wr) {
 		if (!connect)
 			if (!connect())
