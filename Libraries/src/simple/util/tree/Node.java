@@ -3,8 +3,8 @@
  */
 package simple.util.tree;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 
 
 /** Simple node where all child nodes must contain the same content. Node names
@@ -19,7 +19,7 @@ public class Node<T> implements Iterable<Node<T>> {
 	/** The parent node */
 	private Node<T> parent = null;
 	/** Container of children */
-	private final Vector<Node<T>> children = new Vector<Node<T>>();
+	private final ArrayList<Node<T>> children = new ArrayList<Node<T>>();
 	private final Object sync=new Object();
 	/** Sync on this object when iterating over the child nodes.
 	 * @return The sync object
