@@ -1,20 +1,20 @@
 /**
- * 
+ *
  */
 package simple.util;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import simple.CIString;
 
-/**Hashtable that uses case insensitive keys.
+/**HashMap that uses case insensitive keys.
  * <hr>
  * Depends on {@link simple.CIString}
  * <br>Created: Dec 5, 2010
  * @author Kenneth Pierce
  * @param <V> Type for the stored value
  */
-public final class CIHashtable<V> extends Hashtable<CIString, V> {
+public final class CIHashtable<V> extends HashMap<CIString, V> {
 	private static final long serialVersionUID = -6151304735728618108L;
 	/**Convenience method for {@link #get(Object)}.
 	 * @param key
