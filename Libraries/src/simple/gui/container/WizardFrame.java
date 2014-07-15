@@ -5,7 +5,10 @@ import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,7 +24,7 @@ import simple.gui.factory.SwingFactory;
  * This is a JDialog frame that is used in combination with
  * {@link simple.gui.container.WizardPanel} to create a step-by-step
  * wizard.<br>
- * 
+ *
  * What the frame looks like:<br>
  * <pre>
  * ___________________________
@@ -46,8 +49,8 @@ public class WizardFrame extends JDialog implements ActionListener {
 	private final CardLayout cl = new CardLayout();
 	private final JPanel panels = new JPanel(cl);
 	private int index = 0;
-	private final Vector<WizardPanel> panelMap = new Vector<WizardPanel>();
-	private final Vector<ActionListener> listeners = new Vector<ActionListener>();
+	private final List<WizardPanel> panelMap = new ArrayList<WizardPanel>();
+	private final List<ActionListener> listeners = Collections.synchronizedList(new LinkedList<ActionListener>());
 	/**
 	 * Creates a blank wizard with the next and back buttons displayed
 	 * and a default size of 600x500.
@@ -83,10 +86,13 @@ public class WizardFrame extends JDialog implements ActionListener {
 		listeners.remove(al);
 	}
 	private synchronized void fireActionEvent(ActionEvent ae) {
-		for (ActionListener al : listeners) {
-			al.actionPerformed(ae);
+		synchronized(listeners){
+			for (ActionListener al : listeners) {
+				al.actionPerformed(ae);
+			}
 		}
 	}
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (!isReady()) return;
 		String cmd = SwingFactory.getActionCommand(e);
@@ -152,6 +158,7 @@ public class WizardFrame extends JDialog implements ActionListener {
 	public boolean isReady() {
 		return (panelMap.size()>0);
 	}
+	@Override
 	public void setVisible(boolean b) {
 		if (isReady())
 			next.setEnabled(true);

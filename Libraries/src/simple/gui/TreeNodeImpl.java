@@ -1,7 +1,8 @@
 package simple.gui;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
@@ -12,7 +13,7 @@ import javax.swing.tree.TreeNode;
  * @author Kenneth Pierce
  */
 public class TreeNodeImpl implements TreeNode {
-	private Vector<TreeNode> children = new Vector<TreeNode>();
+	private List<TreeNode> children = new ArrayList<TreeNode>();
 	private TreeNodeImpl parent = null;
 	private boolean canAdopt = true;
 	private String name = "";
@@ -44,36 +45,39 @@ public class TreeNodeImpl implements TreeNode {
 		this();
 		setAllowsChildren(canAdopt);
 	}
+	@Override
 	public TreeNode getChildAt(int childIndex) {
 		if (childIndex >= children.size() || childIndex < 0)
 			return null;
-		return children.elementAt(childIndex);
+		return children.get(childIndex);
 	}
 
+	@Override
 	public int getChildCount() {
 		return children.size();
 	}
 
+	@Override
 	public TreeNode getParent() {
 		return parent;
 	}
 
+	@Override
 	public int getIndex(TreeNode node) {
 		if (node == null) return -1;
 		return children.indexOf(node);
 	}
 
+	@Override
 	public boolean getAllowsChildren() {
 		return canAdopt;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return (children.size()==0);
 	}
 
-	public Enumeration<TreeNode> children() {
-		return children.elements();
-	}
 	/* *******************************
 	 * ***** Custom Methods **********
 	 * *******************************
@@ -95,7 +99,7 @@ public class TreeNodeImpl implements TreeNode {
 	 */
 	public void addChild(TreeNode child) {
 		if (canAdopt)
-			children.addElement(child);
+			children.add(child);
 	}
 	/**Adds a child to this TreeNode at the index. Has no effect
 	 * if it does not allow children.
@@ -104,7 +108,7 @@ public class TreeNodeImpl implements TreeNode {
 	 */
 	public void insertChild(TreeNode child, int index) {
 		if (canAdopt)
-			children.insertElementAt(child, index);
+			children.add(index,child);
 	}
 	/**
 	 * Removes a child from this TreeNode. Has no effect if it
@@ -140,7 +144,13 @@ public class TreeNodeImpl implements TreeNode {
 	 * Returns the node's name.
 	 * @return Returns the same as getName()
 	 */
+	@Override
 	public String toString() {
 		return name;
+	}
+	@Override
+	public Enumeration<TreeNode> children(){
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

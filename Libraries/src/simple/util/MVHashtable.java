@@ -1,19 +1,19 @@
 /**
- * 
+ *
  */
 package simple.util;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 
 /**Allows multiple values to be stored for each key. Identical values can be
- * stored for a key if, and only if, the hash is different. 
+ * stored for a key if, and only if, the hash is different.
  * <br>Created: Nov 3, 2010
  * @author Kenneth Pierce
  * @param <K> Type of the key.
  * @param <V> Type of the stored values.
  */
-public final class MVHashtable<K, V> extends Hashtable<K, HashSet<V>> {
+public final class MVHashtable<K, V> extends HashMap<K, HashSet<V>> {
 	private static final long serialVersionUID = -6236840157697527805L;
 	public synchronized void add(K key, V value) {
 		HashSet<V> tmp = get(key);

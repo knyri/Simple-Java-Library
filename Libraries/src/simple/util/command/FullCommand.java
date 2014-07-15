@@ -1,6 +1,7 @@
 package simple.util.command;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Advanced version of Command. Will eventually be able to handle optional arguments,
@@ -11,7 +12,7 @@ import java.util.Vector;
  * @version 0
  */
 public class FullCommand extends Command {
-	Vector<Vector<Parameter>> params = new Vector<Vector<Parameter>>();
+	List<List<Parameter>> params = new ArrayList<List<Parameter>>();
 	public FullCommand(final String CMD) {
 		super(CMD);
 		ParseCommand();
@@ -20,7 +21,7 @@ public class FullCommand extends Command {
 		final String cmd = getCmd();
 		int nest = 0;
 		StringBuilder buf = new StringBuilder();
-		final Vector<Parameter> paramSet = new Vector<Parameter>();
+		final List<Parameter> paramSet = new ArrayList<Parameter>();
 /*
 [ ] Optional
  |  One of
@@ -32,11 +33,11 @@ public class FullCommand extends Command {
 				break;
 				case ']':
 					nest--;
-					paramSet.addElement(new Parameter(new String(buf), true));
+					paramSet.add(new Parameter(new String(buf), true));
 					buf = new StringBuilder();
 				break;
 				case '|':
-					paramSet.addElement(new Parameter(new String(buf), (nest>0)));
+					paramSet.add(new Parameter(new String(buf), (nest>0)));
 					buf = new StringBuilder();
 				break;
 				default:

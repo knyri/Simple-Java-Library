@@ -4,6 +4,7 @@
 package simple.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -92,9 +93,7 @@ public final class do_array {
 	 * @return The vector with the added elements.
 	 */
 	public static <E> Vector<E> addToVector(Vector<E> vec, E[] add) {
-		for (int i =0;i<add.length;i++) {
-			vec.addElement(add[i]);
-		}
+		Collections.addAll(vec,add);
 		return vec;
 	}
 	/**
@@ -104,19 +103,7 @@ public final class do_array {
 	 * @return An Enumeration for the array.
 	 */
 	public static <E> Enumeration<E> enumeration(final E[] e) {
-		return new Enumeration<E>() {
-			final E[] elem = e;
-			int pos = 0;
-			@Override
-			public boolean hasMoreElements() {
-				if (pos==elem.length) return false;
-				return true;
-			}
-			@Override
-			public E nextElement() {
-				return e[pos++];
-			}
-		};
+		return Collections.enumeration(Arrays.asList(e));
 	}
 	/**
 	 * Takes an array and creates a typed Vector containing it.

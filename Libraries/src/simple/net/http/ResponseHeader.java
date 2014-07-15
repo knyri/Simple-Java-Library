@@ -1,6 +1,7 @@
 package simple.net.http;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Assists creation of an HTTP header.
@@ -8,7 +9,7 @@ import java.util.Hashtable;
  * @author KP
  */
 public class ResponseHeader {
-	Hashtable<String,String> props = new Hashtable<String,String>();
+	HashMap<String,String> props = new HashMap<String,String>();
 	String[] head=new String[]{"","",""};
 	ResponseHeader(){}
 	public ResponseHeader(final String header) {
@@ -60,10 +61,10 @@ public class ResponseHeader {
 		props.remove(name);
 	}*/
 	public Enumeration<String> getPropertyNames() {
-		return props.keys();
+		return Collections.enumeration(props.keySet());
 	}
 	public Enumeration<String> getPropertyValues() {
-		return props.elements();
+		return Collections.enumeration(props.values());
 	}
 	public boolean isValid() {
 		return true;//TODO: implement this

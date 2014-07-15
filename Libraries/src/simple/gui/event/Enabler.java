@@ -1,12 +1,14 @@
 /**
- * 
+ *
  */
 package simple.gui.event;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**Enables/disables a GUI component based on the requirements.
  * <hr>
@@ -14,7 +16,7 @@ import java.util.Vector;
  * @author Kenneth Pierce
  */
 public class Enabler implements ActionListener {
-	private final Vector<Requirement> reqs = new Vector<Requirement>();
+	private final List<Requirement> reqs = Collections.synchronizedList(new LinkedList<Requirement>());
 	private final Component target;
 	private boolean enabled = true;
 
@@ -25,11 +27,14 @@ public class Enabler implements ActionListener {
 	 * @param arg0
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		for (Requirement req : reqs) {
-			if (!req.isMet()) {
-				target.setEnabled(false);
-				return;
+		synchronized(reqs){
+			for (Requirement req : reqs) {
+				if (!req.isMet()) {
+					target.setEnabled(false);
+					return;
+				}
 			}
 		}
 		target.setEnabled(true);

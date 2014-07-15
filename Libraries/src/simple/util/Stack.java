@@ -1,15 +1,15 @@
 /**
- * 
+ *
  */
 package simple.util;
-import java.util.Vector;
+import java.util.LinkedList;
 
 /**FILO queue
  * <br>Created: Feb 20, 2008
  * @author Kenneth Pierce
  */
 public class Stack<E> {
-	private final Vector<E> stack = new Vector<E>();
+	private final LinkedList<E> stack = new LinkedList<E>();
 	public synchronized void push(E ele) {
 		//System.out.println("Push "+ele);
 		stack.add(ele);
@@ -18,10 +18,10 @@ public class Stack<E> {
 		//System.out.println("Pop "+stack.lastElement());
 		if (stack.isEmpty())
 			return null;
-		return stack.remove(stack.size()-1);
+		return stack.removeLast();
 	}
 	public E peek() {
-		return stack.lastElement();
+		return stack.peekLast();
 	}
 	public int size() {
 		return stack.size();

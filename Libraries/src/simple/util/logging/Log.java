@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import simple.io.WriterOutputStream;
@@ -32,7 +32,7 @@ public final class Log {
 	LERROR = LogLevel.ERROR.getValue(),
 	LWARNING = LogLevel.WARNING.getValue(),
 	LINFORMATION = LogLevel.INFORMATION.getValue();
-	private final Hashtable<String, Byte> section = new Hashtable<String, Byte>();
+	private final HashMap<String, Byte> section = new HashMap<String, Byte>();
 	/**<dl>
 	 * <dt>debug</dt><dd>0x1</dd>
 	 * <dt>error</dt><dd>0x2</dd>

@@ -1,6 +1,7 @@
 package simple.net.http;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Parses an HTTP header.<br>
@@ -9,11 +10,11 @@ import java.util.Hashtable;
  * @author KP
  */
 public class RequestHeader {
-	Hashtable<String, String> props = new Hashtable<String, String>();
-	Hashtable<String, String> params = new Hashtable<String, String>();
+	HashMap<String, String> props = new HashMap<String, String>();
+	HashMap<String, String> params = new HashMap<String, String>();
 	String[] head;
 	/**
-	 * 
+	 *
 	 */
 	public RequestHeader(){}
 	public String getMethod() {
@@ -35,19 +36,19 @@ public class RequestHeader {
 		return props.get(name);
 	}
 	public Enumeration<String> getPropertyNames() {
-		return props.keys();
+		return Collections.enumeration(props.keySet());
 	}
 	public Enumeration<String> getPropertyValues() {
-		return props.elements();
+		return Collections.enumeration(props.values());
 	}
 	public String getParameter(final String name) {
 		return params.get(name);
 	}
 	public Enumeration<String> getParameterNames() {
-		return params.keys();
+		return Collections.enumeration(params.keySet());
 	}
 	public Enumeration<String> getParameterValues() {
-		return params.elements();
+		return Collections.enumeration(params.values());
 	}
 	public boolean isValid() {
 		return (head.length==3);

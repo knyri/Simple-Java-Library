@@ -3,8 +3,10 @@ package simple.HTML;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import simple.CIString;
 import simple.io.RWUtil;
@@ -31,14 +33,15 @@ import simple.util.logging.LogFactory;
  * @author Kenneth Pierce
  */
 public final class MimeTypes {
-	private static final Vector<String> EMPTYVECTOR = new Vector<String>(1,0);
-	private static final Hashtable<String, Vector<String>> video = new Hashtable<String, Vector<String>>();
-	private static final Hashtable<String, Vector<String>> audio = new Hashtable<String, Vector<String>>();
-	private static final Hashtable<String, Vector<String>> image = new Hashtable<String, Vector<String>>();
-	private static final Hashtable<String, Vector<String>> other = new Hashtable<String, Vector<String>>();
-	private static final Hashtable<String, Vector<String>> archive = new Hashtable<String, Vector<String>>();
-	private static final Hashtable<String, Vector<String>> document = new Hashtable<String, Vector<String>>();
-	private static final Hashtable<String, Vector<String>> extTomime = new Hashtable<String, Vector<String>>();
+	private static final List<String> EMPTYVECTOR = new LinkedList<String>();
+	private static final HashMap<String, LinkedList<String>>
+			video = new HashMap<String, LinkedList<String>>(),
+			audio = new HashMap<String, LinkedList<String>>(),
+			image = new HashMap<String, LinkedList<String>>(),
+			other = new HashMap<String, LinkedList<String>>(),
+			archive = new HashMap<String, LinkedList<String>>(),
+			document = new HashMap<String, LinkedList<String>>(),
+			extTomime = new HashMap<String, LinkedList<String>>();
 	private static final CIString mime = new CIString("mime"), ext = new CIString("ext");
 	private static boolean loaded = false;
 	private static final Log log = LogFactory.getLogFor(MimeTypes.class);
@@ -60,8 +63,8 @@ public final class MimeTypes {
 		return loaded;
 	}
 	public static String getMimeType(final Uri e) throws IOException {
-		final Vector<String> list = getMime(e);
-		if (list.firstElement().isEmpty()) {
+		final List<String> list = getMime(e);
+		if (list.get(0).isEmpty()) {
 			log.debug("Server connection for MIME", e);
 			final HttpURLConnection con = (HttpURLConnection)e.openConnection();
 			String type;
@@ -71,11 +74,11 @@ public final class MimeTypes {
 			con.disconnect();
 			return type;
 		}
-		return list.firstElement();
+		return list.get(0);
 	}
 	public static String getMimeType(final Uri e, final String referer) throws IOException {
-		final Vector<String> list = getMime(e);
-		if (list.firstElement().isEmpty()) {
+		final List<String> list = getMime(e);
+		if (list.get(0).isEmpty()) {
 			log.debug("Server connection for MIME", e);
 			final HttpURLConnection con = (HttpURLConnection)e.openConnection();
 			String type;
@@ -86,13 +89,11 @@ public final class MimeTypes {
 			con.disconnect();
 			return type;
 		}
-		return list.firstElement();
+		return list.get(0);
 	}
-	protected static Vector<String> toVector(final String[] list) {
-		final Vector<String> tmp = new Vector<String>();
-		for (final String item : list) {
-			tmp.add(item);
-		}
+	protected static LinkedList<String> toVector(final String[] list) {
+		final LinkedList<String> tmp = new LinkedList<String>();
+		Collections.addAll(tmp,list);
 		return tmp;
 	}
 	protected static boolean loadTypes() {
@@ -117,10 +118,10 @@ public final class MimeTypes {
 		}
 		return true;
 	}
-	protected static void add(final Tag tags, final Hashtable<String, Vector<String>> list) {
+	protected static void add(final Tag tags, final HashMap<String, LinkedList<String>> list) {
 		String mimetmp;
 		String[] exttmp;
-		Vector<String> vectmp;
+		LinkedList<String> vectmp;
 		for (final Tag tag : tags) {
 			mimetmp = tag.getProperty(mime).toLowerCase().intern();
 			exttmp = tag.getProperty(ext).toLowerCase().split(" ");
@@ -130,7 +131,7 @@ public final class MimeTypes {
 					vectmp = extTomime.get(exttmp[j]);
 					vectmp.add(mimetmp);
 				} else {
-					vectmp = new Vector<String>();
+					vectmp = new LinkedList<String>();
 					vectmp.add(mimetmp);
 					extTomime.put(exttmp[j], vectmp);
 				}
@@ -182,9 +183,8 @@ public final class MimeTypes {
 		mime = mime.toLowerCase();
 		return archive.containsKey(mime);
 	}
-	@SuppressWarnings("unchecked")
-	public static Vector<String> getExt(final String mime) {
-		Vector<String> ext = null;
+	public static List<String> getExt(final String mime) {
+		List<String> ext = null;
 		ext = image.get(mime);
 		if (ext!=null)
 			return ext;
@@ -203,7 +203,7 @@ public final class MimeTypes {
 		ext = archive.get(mime);
 		if (ext!=null)
 			return ext;
-		return (Vector<String>) EMPTYVECTOR.clone();
+		return EMPTYVECTOR;
 	}
 	/**Get's the MIME type from the raw header value. Some strange servers
 	 * include extra after the mime.
@@ -225,34 +225,32 @@ public final class MimeTypes {
 	 * @param url The URL to check.
 	 * @return A Vector of MIME types. The Vector may be empty.
 	 */
-	@SuppressWarnings("unchecked")
-	public static Vector<String> getMime(final Uri url) {
+	public static List<String> getMime(final Uri url) {
 		String ext = url.getFile();
 		ext = ext.substring(ext.lastIndexOf(".")+1);
-		final Vector<String> tmp = extTomime.get(ext.toLowerCase());
+		final List<String> tmp = extTomime.get(ext.toLowerCase());
 		if (tmp == null)
-			return (Vector<String>) EMPTYVECTOR.clone();
+			return EMPTYVECTOR;
 		return tmp;
 	}
 	/** Returns a vector of matching MIME types.
 	 * @param ext The extension or file name.
 	 * @return A vector of matching MIME types or an empty vector if none were found.
 	 */
-	@SuppressWarnings("unchecked")
-	public static Vector<String> getMime(String ext) {
+	public static List<String> getMime(String ext) {
 		final int ind = ext.indexOf('.');
 		if (ind > -1) {
 			ext = ext.substring(ind+1);
 		}
-		final Vector<String> tmp = extTomime.get(ext.toLowerCase());
+		final List<String> tmp = extTomime.get(ext.toLowerCase());
 		if (tmp == null)
-			return (Vector<String>) EMPTYVECTOR.clone();
+			return EMPTYVECTOR;
 		return tmp;
 	}
 	public static void main(final String[] args) {
 		new MimeTypes();
 	}
-	private static String dumpHashtable(final Hashtable<String, Vector<String>> table) {
+	private static String dumpHashMap(final HashMap<String, LinkedList<String>> table) {
 		final StringBuilder buf = new StringBuilder(500);
 		for (final String ext : table.keySet()) {
 			buf.append(ext);
@@ -267,24 +265,24 @@ public final class MimeTypes {
 		return buf.toString();
 	}
 	public static String dumpMIMES() {
-		return dumpHashtable(MimeTypes.extTomime);
+		return dumpHashMap(MimeTypes.extTomime);
 	}
 	public static String dumpArchiveMimes() {
-		return dumpHashtable(MimeTypes.archive);
+		return dumpHashMap(MimeTypes.archive);
 	}
 	public static String dumpAudioMimes() {
-		return dumpHashtable(MimeTypes.audio);
+		return dumpHashMap(MimeTypes.audio);
 	}
 	public static String dumpDocumentMimes() {
-		return dumpHashtable(MimeTypes.document);
+		return dumpHashMap(MimeTypes.document);
 	}
 	public static String dumpImageMimes() {
-		return dumpHashtable(MimeTypes.image);
+		return dumpHashMap(MimeTypes.image);
 	}
 	public static String dumpOtherMimes() {
-		return dumpHashtable(MimeTypes.other);
+		return dumpHashMap(MimeTypes.other);
 	}
 	public static String dumpVideoMimes() {
-		return dumpHashtable(MimeTypes.video);
+		return dumpHashMap(MimeTypes.video);
 	}
 }

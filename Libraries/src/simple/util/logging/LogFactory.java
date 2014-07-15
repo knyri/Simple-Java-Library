@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 import simple.io.FileUtil;
@@ -37,7 +37,7 @@ public final class LogFactory {
 		public String getErrorString(final int code) {
 			return null;
 		}};
-		private static Hashtable<Class<?>, Log> logCache = new Hashtable<Class<?>, Log>();
+		private static HashMap<Class<?>, Log> logCache = new HashMap<Class<?>, Log>();
 		//private static final Log _log = new Log(LogFactory.class);
 		private static PrintStream globalStream = System.out;
 		private static byte logOptions = (byte)0xFF;

@@ -1,6 +1,7 @@
 package simple.util.command;
 
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 import simple.util.do_str;
 
@@ -13,7 +14,7 @@ import simple.util.do_str;
  * @version .7
  */
 public class Command {
-	private Vector<String> args = null;
+	private List<String> args = null;
 	private String CMD;
 	/**
 	 * @param cmd Root command.(E.G. cd, copy, del, deltree, etc.)
@@ -36,7 +37,7 @@ public class Command {
 			return;
 		}
 		if (start < 0) {start = 0;}
-		args = new Vector<String>();
+		args = new LinkedList<String>();
 		char[] cmdC = command.substring(start).trim().toCharArray();
 		StringBuilder arg = new StringBuilder();
 		boolean sq = false,
@@ -46,7 +47,7 @@ public class Command {
 				if (dq) {
 					if (cmdC[i]=='"') {
 						dq = false;
-						args.addElement(arg.toString());
+						args.add(arg.toString());
 						arg.delete(0, arg.length());
 					} else if (cmdC[i]=='\\' && cmdC[i+1]=='"') {
 						i++;
@@ -55,7 +56,7 @@ public class Command {
 				} else if (sq) {
 					if (cmdC[i]=='\'') {
 						sq = false;
-						args.addElement(arg.toString());
+						args.add(arg.toString());
 						arg.delete(0, arg.length());
 					} else if (cmdC[i]=='\\' && cmdC[i+1]=='\'') {
 						i++;
@@ -69,15 +70,14 @@ public class Command {
 			} else if (cmdC[i] == '\'') {
 				sq = true;
 			} else if (cmdC[i] == ' ' || cmdC[i] == ',' || cmdC[i] == ';') {
-				args.addElement(arg.toString());
+				args.add(arg.toString());
 				arg.delete(0, arg.length());
 				while(cmdC[i+1] == ' ' || cmdC[i+1] == '\t' || cmdC[i+1] == '\n' || cmdC[i+1] == '\r') i++;
 			} else {
 				arg.append(cmdC[i]);
 			}
 		}
-		args.addElement(arg.toString());
-		args.trimToSize();
+		args.add(arg.toString());
 	}
 	/**
 	 * Takes the arguments and formats them according to <var>to</var>.<br>
@@ -87,15 +87,15 @@ public class Command {
 	 * System.out.println(c.format("%s %S, %s"));
 	 * </pre>
 	 * Will output: "arga ARGB, argc d"
-	 * 
+	 *
 	 * @param to String containing the format to use.
 	 * @return Formatted version.
 	 */
 	public String format(String to) {
 		if (args==null) {return to;}
 		for (int i = 0;i<args.size();i++) {
-			to = to.replaceFirst("%S",args.elementAt(i).toUpperCase());
-			to = to.replaceFirst("%s",args.elementAt(i));
+			to = to.replaceFirst("%S",args.get(i).toUpperCase());
+			to = to.replaceFirst("%s",args.get(i));
 		}
 		return to;
 	}
@@ -114,7 +114,7 @@ public class Command {
 	 */
 	public String getArg(int i) {
 		if (argCount()==0) {return null;}
-		return args.elementAt(i);
+		return args.get(i);
 	}
 	/**
 	 * @return A String array of all the arguments.

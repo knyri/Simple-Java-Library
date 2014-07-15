@@ -4,6 +4,8 @@
 package simple.gui;
 
 import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.event.TreeModelListener;
@@ -17,7 +19,7 @@ import javax.swing.tree.TreePath;
  */
 public class SimpleJTreeModel implements TreeModel {
 	private final Root root;
-	final Vector<TreeModelListener> listeners = new Vector<TreeModelListener>();
+	final List<TreeModelListener> listeners = new LinkedList<TreeModelListener>();
 	public SimpleJTreeModel() {
 		root = new Root("Root", "root");
 	}
@@ -27,6 +29,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#addTreeModelListener(javax.swing.event.TreeModelListener)
 	 */
+	@Override
 	public void addTreeModelListener(final TreeModelListener tml) {
 		listeners.add(tml);
 	}
@@ -34,6 +37,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getChild(java.lang.Object, int)
 	 */
+	@Override
 	public Node getChild(final Object parent, final int index) {
 		return null;
 	}
@@ -41,6 +45,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getChildCount(java.lang.Object)
 	 */
+	@Override
 	public int getChildCount(final Object parent) {
 		return 0;
 	}
@@ -48,6 +53,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getIndexOfChild(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int getIndexOfChild(final Object parent, final Object child) {
 		return 0;
 	}
@@ -55,6 +61,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#getRoot()
 	 */
+	@Override
 	public Root getRoot() {
 		return root;
 	}
@@ -62,6 +69,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#isLeaf(java.lang.Object)
 	 */
+	@Override
 	public boolean isLeaf(final Object node) {
 		if (node instanceof BasicNode)
 			return ((BasicNode)node).isLeaf;
@@ -71,6 +79,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#removeTreeModelListener(javax.swing.event.TreeModelListener)
 	 */
+	@Override
 	public void removeTreeModelListener(final TreeModelListener tml) {
 		listeners.remove(tml);
 	}
@@ -78,6 +87,7 @@ public class SimpleJTreeModel implements TreeModel {
 	/* (non-Javadoc)
 	 * @see javax.swing.tree.TreeModel#valueForPathChanged(javax.swing.tree.TreePath, java.lang.Object)
 	 */
+	@Override
 	public void valueForPathChanged(final TreePath path, final Object newValue) {
 	}
 	private static class BasicNode implements TreeNode {
@@ -121,6 +131,7 @@ public class SimpleJTreeModel implements TreeModel {
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#children()
 		 */
+		@Override
 		public Enumeration<BasicNode> children() {
 			if (getAllowsChildren())
 				return children.elements();
@@ -129,12 +140,14 @@ public class SimpleJTreeModel implements TreeModel {
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#getAllowsChildren()
 		 */
+		@Override
 		public boolean getAllowsChildren() {
 			return !isLeaf;
 		}
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#getChildAt(int)
 		 */
+		@Override
 		public TreeNode getChildAt(final int index) {
 			if (getAllowsChildren())
 				return children.elementAt(index);
@@ -143,6 +156,7 @@ public class SimpleJTreeModel implements TreeModel {
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#getChildCount()
 		 */
+		@Override
 		public int getChildCount() {
 			if (getAllowsChildren())
 				return children.size();
@@ -151,6 +165,7 @@ public class SimpleJTreeModel implements TreeModel {
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#getIndex(javax.swing.tree.TreeNode)
 		 */
+		@Override
 		public int getIndex(final TreeNode child) {
 			if (getAllowsChildren())
 				return children.indexOf(child);
@@ -159,12 +174,14 @@ public class SimpleJTreeModel implements TreeModel {
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#getParent()
 		 */
+		@Override
 		public TreeNode getParent() {
 			return parent;
 		}
 		/* (non-Javadoc)
 		 * @see javax.swing.tree.TreeNode#isLeaf()
 		 */
+		@Override
 		public boolean isLeaf() {
 			return isLeaf;
 		}

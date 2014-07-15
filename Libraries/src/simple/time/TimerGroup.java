@@ -1,9 +1,9 @@
 /**
- * 
+ *
  */
 package simple.time;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Simple class to maintain several timers at once.
@@ -11,9 +11,9 @@ import java.util.Hashtable;
  * @author Kenneth Pierce
  */
 public class TimerGroup {
-	private final Hashtable<String, Timer> timers = new Hashtable<String, Timer>();
-	private final Hashtable<String, Long> lap = new Hashtable<String, Long>();
-	
+	private final HashMap<String, Timer> timers = new HashMap<String, Timer>();
+	private final HashMap<String, Long> lap = new HashMap<String, Long>();
+
 	public TimerGroup() {};
 	public Timer addTimer(String name) {
 		return timers.put(name, new Timer());

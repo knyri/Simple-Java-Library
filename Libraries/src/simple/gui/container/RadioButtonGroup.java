@@ -1,11 +1,15 @@
 package simple.gui.container;
-import javax.swing.JRadioButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 import java.awt.ItemSelectable;
-import java.util.Vector;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.JRadioButton;
 
 /**
  * Simple spinoff of ButtonGroup.<br>
@@ -17,11 +21,11 @@ import java.util.Vector;
  */
 public class RadioButtonGroup implements ActionListener, ItemSelectable {
 //simpler ButtonGroup spinoff
-	Vector<JRadioButton> group = new Vector<JRadioButton>();
-	Vector<ItemListener> ils = new Vector<ItemListener>();
-	ItemEvent ieD = new ItemEvent(this, ItemEvent.ITEM_FIRST, null, ItemEvent.DESELECTED);
-	ItemEvent ieS = new ItemEvent(this, ItemEvent.ITEM_FIRST, null, ItemEvent.SELECTED);
-	JRadioButton selected;
+	private final List<JRadioButton> group = new ArrayList<JRadioButton>();
+	private final List<ItemListener> ils = Collections.synchronizedList(new LinkedList<ItemListener>());
+	private ItemEvent ieD = new ItemEvent(this, ItemEvent.ITEM_FIRST, null, ItemEvent.DESELECTED);
+	private ItemEvent ieS = new ItemEvent(this, ItemEvent.ITEM_FIRST, null, ItemEvent.SELECTED);
+	private JRadioButton selected;
 	public RadioButtonGroup() {}
 	/**
 	 * Adds <var>rb</var> to the group and checks to see if it is
@@ -34,9 +38,11 @@ public class RadioButtonGroup implements ActionListener, ItemSelectable {
 		if (rb.isSelected()) {setSelected(rb);}
 		rb.addActionListener(this);
 	}
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		setSelected((JRadioButton)e.getSource());
 	}
+	@Override
 	public void addItemListener(ItemListener il) {
 		ils.add(il);
 	}
@@ -46,8 +52,8 @@ public class RadioButtonGroup implements ActionListener, ItemSelectable {
 	public JRadioButton getSelected() {return selected;}
 	/**
 	 * Sets the radiobutton at index <var>i</var> as selected. Does nothing if i &lt; 0 or &gt;
-	 * the number of radiobuttons. 
-	 * 
+	 * the number of radiobuttons.
+	 *
 	 * @param i Index of JRadioButton to be selected.
 	 */
 	public void setSelected(int i) {
@@ -61,7 +67,7 @@ public class RadioButtonGroup implements ActionListener, ItemSelectable {
 	}
 	/**
 	 * Sets <var>rb</var> as the currently selected radio button.
-	 * 
+	 *
 	 * @param rb
 	 */
 	public void setSelected(JRadioButton rb) {
@@ -76,13 +82,17 @@ public class RadioButtonGroup implements ActionListener, ItemSelectable {
 		notifyItemListeners(ieS);
 	}
 	private void notifyItemListeners(ItemEvent ie) {
-		for (int i = 0; i < ils.size(); i++) {
-			ils.get(i).itemStateChanged(ie);
+		synchronized(ils){
+			for(ItemListener il : ils){
+				il.itemStateChanged(ie);
+			}
 		}
 	}
+	@Override
 	public Object[] getSelectedObjects() {
 		return new Object[] {selected};
 	}
+	@Override
 	public void removeItemListener(ItemListener arg0) {
 		ils.remove(arg0);
 	}

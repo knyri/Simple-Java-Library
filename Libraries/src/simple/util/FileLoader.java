@@ -4,9 +4,9 @@
 package simple.util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.SwingWorker;
 
@@ -22,7 +22,7 @@ public final class FileLoader extends SwingWorker<List<File>, File> {
 	private static final Log log = LogFactory.getLogFor(FileLoader.class);
 	private final File START;
 	private final List<File> LIST;
-	private final Vector<File> FILES = new Vector<File>();
+	private final List<File> FILES = new ArrayList<File>();
 	private boolean recursive = false;
 	private int fcount = 0;
 	private boolean done = false;

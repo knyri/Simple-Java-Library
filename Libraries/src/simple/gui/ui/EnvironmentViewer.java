@@ -1,9 +1,18 @@
 package simple.gui.ui;
 
-import javax.swing.*;
-import javax.swing.table.*;
 import java.awt.BorderLayout;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+
 import simple.util.do_str;
 
 /** Simple JPanel that shows the running environment.
@@ -28,8 +37,8 @@ public class EnvironmentViewer extends JPanel {
 	//============= The data model for out table ===========
 	private static final class DataModel extends AbstractTableModel {
 		private static final long serialVersionUID = 4182721113153773335L;
-		Vector<String> attr = new Vector<String>();
-		Vector<String> valu = new Vector<String>();
+		List<String> attr = new ArrayList<String>();
+		List<String> valu = new ArrayList<String>();
 		public DataModel(Map<String, String> vals) {
 			for(Map.Entry<String, String> cur : vals.entrySet()) {
 				addElement(cur.getKey(), cur.getValue());
@@ -42,26 +51,31 @@ public class EnvironmentViewer extends JPanel {
 			}
 			sort();
 		}
+		@Override
 		public int getRowCount() {
 			return attr.size();
 		}
+		@Override
 		public int getColumnCount() {
 			return 2;
 		}
+		@Override
 		public String getValueAt(int row, int column) {
 			String val = null;
 			switch (column){
 			case 0:
-				val = attr.elementAt(row);
+				val = attr.get(row);
 				break;
 			case 1:
-				val = valu.elementAt(row);
+				val = valu.get(row);
 			}
 			return val;
 		}
+		@Override
 		public Class<?> getColumnClass(int col) {
 			return String.class;
 		}
+		@Override
 		public String getColumnName(int col) {
 			String name = null;
 			switch (col) {
@@ -80,12 +94,12 @@ public class EnvironmentViewer extends JPanel {
 			while (change) {
 				change = false;
 				for(int i = 0; i<attr.size()-1; i++) {
-					if (do_str.compareIgnoreCase(attr.elementAt(i), attr.elementAt(i+1))==-1) {
-						tmp = attr.elementAt(i);
+					if (do_str.compareIgnoreCase(attr.get(i), attr.get(i+1))==-1) {
+						tmp = attr.get(i);
 						attr.set(i, attr.get(i+1));
 						attr.set(i+1, tmp);
-						
-						tmp = valu.elementAt(i);
+
+						tmp = valu.get(i);
 						valu.set(i, valu.get(i+1));
 						valu.set(i+1, tmp);
 						change = true;
@@ -95,8 +109,8 @@ public class EnvironmentViewer extends JPanel {
 			fireTableRowsUpdated(0, attr.size()-1);
 		}
 		public void addElement(String attribute, String value) {
-			attr.addElement(attribute);
-			valu.addElement(value);
+			attr.add(attribute);
+			valu.add(value);
 		}
 	}
 	public static void main(String[] args) {

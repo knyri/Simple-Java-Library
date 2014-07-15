@@ -1,12 +1,14 @@
 /**
- * 
+ *
  */
 package simple.gui.container;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,7 +27,7 @@ import simple.gui.event.ButtonPanelListener;
  */
 public class ButtonGrid extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private final Vector<ButtonPanelListener> listeners = new Vector<ButtonPanelListener>();
+	private final List<ButtonPanelListener> listeners = Collections.synchronizedList(new LinkedList<ButtonPanelListener>());
 	public static final int X_AXIS = BoxLayout.X_AXIS, Y_AXIS = BoxLayout.Y_AXIS;
 	/** Lays buttons out on the specified axis.<br>
 	 * uses a BoxLayout
@@ -48,10 +50,13 @@ public class ButtonGrid extends JPanel implements ActionListener {
 	public void addButtonListener(ButtonPanelListener ls) {
 		listeners.add(ls);
 	}
+	@Override
 	public synchronized void actionPerformed(ActionEvent e) {
 		ButtonPanelEvent event = new ButtonPanelEvent(e);
-		for (ButtonPanelListener cur : listeners) {
-			cur.actionPerformed(event);
+		synchronized(listeners){
+			for (ButtonPanelListener cur : listeners) {
+				cur.actionPerformed(event);
+			}
 		}
 	}
 	public void add(JButton button) {

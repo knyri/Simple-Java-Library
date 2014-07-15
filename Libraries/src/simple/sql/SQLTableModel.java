@@ -1,7 +1,8 @@
 package simple.sql;
 
-import java.util.Vector;
-import javax.swing.table.*;
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
 
 /** Table model for working with SQL.
  * <br>Created: 2004
@@ -9,41 +10,48 @@ import javax.swing.table.*;
  */
 public class SQLTableModel extends AbstractTableModel {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private Vector<Vector<Object>> values;
-	private Vector<String> colNames;
+	private List<List<Object>> values;
+	private List<String> colNames;
 	private boolean[][] changed;
 	/**
 	 * @param values
 	 * @param colNames
 	 */
-	public SQLTableModel(Vector<Vector<Object>> values, Vector<String> colNames) {
+	public SQLTableModel(List<List<Object>> values, List<String> colNames) {
 		this.values = values;
 		this.colNames = colNames;
 	}
-	public String getColumnName(int col)	{	return colNames.elementAt(col);	}
+	@Override
+	public String getColumnName(int col)	{	return colNames.get(col);	}
+	@Override
 	public Class<?> getColumnClass(int col)	{
-		Vector<Object> vTmp = values.elementAt(0);
-		if (vTmp.elementAt(col)==null) {	return Object.class;	}
-		return vTmp.elementAt(col).getClass();
+		List<Object> vTmp = values.get(0);
+		if (vTmp.get(col)==null) {	return Object.class;	}
+		return vTmp.get(col).getClass();
 	}
+	@Override
 	public int getColumnCount()				{
 		if (getRowCount()==0)
 			return 0;
 		else
-			return values.elementAt(0).size();
+			return values.get(0).size();
 	}
+	@Override
 	public int getRowCount()					{	return values.size();	}
 	/**
 	 * @return Always returns true.
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col)	{	return true;	}
-	public Object getValueAt(int row, int col)		{	return values.elementAt(row).elementAt(col);	}
+	@Override
+	public Object getValueAt(int row, int col)		{	return values.get(row).get(col);	}
+	@Override
 	public void setValueAt(Object value, int row, int col)	{
-		values.elementAt(row).setElementAt((String)value,col);
+		values.get(row).set(col,value);
 		changed[row][col] = true;
 	}
 }

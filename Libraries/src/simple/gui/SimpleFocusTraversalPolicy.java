@@ -6,7 +6,8 @@ package simple.gui;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Basic Focus Traversal Policy using a Vector.
@@ -14,9 +15,9 @@ import java.util.Vector;
  *
  */
 public class SimpleFocusTraversalPolicy extends FocusTraversalPolicy {
-	private final Vector<Component> order;
-	public SimpleFocusTraversalPolicy(Vector<Component> order) {
-		this.order = new Vector<Component>(order.size());
+	private final List<Component> order;
+	public SimpleFocusTraversalPolicy(List<Component> order) {
+		this.order = Collections.synchronizedList(order);
 		this.order.addAll(order);
 	}
 	@Override
@@ -34,7 +35,7 @@ public class SimpleFocusTraversalPolicy extends FocusTraversalPolicy {
 	@Override
 	public Component getDefaultComponent(Container focusCycleRoot){return order.get(0);}
 	@Override
-	public Component getLastComponent(Container focusCycleRoot) {return order.lastElement();}
+	public Component getLastComponent(Container focusCycleRoot) {return order.get(order.size()-1);}
 	@Override
 	public Component getFirstComponent(Container focusCycleRoot) {return order.get(0);}
 }

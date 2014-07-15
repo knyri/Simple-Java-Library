@@ -14,7 +14,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 /**All close(...) methods now log a warning message.
  * @since 4-19-2012
@@ -361,9 +362,9 @@ public final class FileUtil{
 	 * @param recursive Whether or not to add files of sub-directories.
 	 * @return A vector containing all the files.
 	 */
-	public static Vector<File> getFiles(File start, boolean recursive) {
+	public static List<File> getFiles(File start, boolean recursive) {
 		if (!start.isDirectory()) {return null;}
-		Vector<File> tmp = new Vector<File>();
+		List<File> tmp = new LinkedList<File>();
 		if (start.listFiles()!=null) {
 			for (File cur : start.listFiles()) {
 				if (cur.isDirectory()) {
@@ -381,6 +382,6 @@ public final class FileUtil{
 		try{
 			stm.close();
 		}catch(SQLException e){}
-		
+
 	}
 }

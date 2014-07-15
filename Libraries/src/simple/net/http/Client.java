@@ -7,7 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -54,7 +54,7 @@ import simple.util.logging.LogFactory;
  */
 public final class Client{
 	private static final Log log=LogFactory.getLogFor(Client.class);
-	private final Hashtable<String,DefaultHttpClient> cache=new Hashtable<String,DefaultHttpClient>();
+	private final HashMap<String,DefaultHttpClient> cache=new HashMap<String,DefaultHttpClient>();
 	private final BasicCookieStore cookies=new BasicCookieStore();
 	private final HttpHost proxy;
 	public static final Header[] defaults=new Header[]{

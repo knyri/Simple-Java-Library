@@ -1,8 +1,9 @@
 /**
- * 
+ *
  */
 package simple.util.command;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -15,7 +16,7 @@ public final class cmd_util {
 	 * @param raw The arguments
 	 * @return A vector containing the arguments in left to right order
 	 */
-	public static Vector<String> parseArguments(CharSequence raw) {
+	public static List<String> parseArguments(CharSequence raw) {
 		boolean sq = false, dq = false;
 		StringBuilder buf = new StringBuilder(75);
 		Vector<String> args = new Vector<String>();

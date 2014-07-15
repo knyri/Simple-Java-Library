@@ -3,12 +3,11 @@
  */
 package simple.ml;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.LinkedList;
 
 import simple.CIString;
-import simple.util.do_array;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
@@ -27,9 +26,9 @@ import simple.util.logging.LogFactory;
  */
 public class Page implements Iterable<Tag> {
 	private static final Log log = LogFactory.getLogFor(Page.class);
-	private final Hashtable<String,Tag> roots = new Hashtable<String,Tag>();
+	private final HashMap<String,Tag> roots = new HashMap<String,Tag>();
 	/** Cache of all tags by their entity name(not the full canonical name) */
-	private final Hashtable<CIString, Vector<Tag>> cache = new Hashtable<CIString, Vector<Tag>>();
+	private final HashMap<CIString, LinkedList<Tag>> cache = new HashMap<CIString, LinkedList<Tag>>();
 	public Page() {}
 	/**Adds a tag to the page.
 	 * @param tag Tag to be added.
@@ -69,14 +68,14 @@ public class Page implements Iterable<Tag> {
 	 * @param name Name of the tags wanted.
 	 * @return A Vector containing the tags.
 	 */
-	public Vector<Tag> getTags(final String name) {
+	public LinkedList<Tag> getTags(final String name) {
 		return cache.get(name);
 	}
 	/** Finds and returns all the tags with this name.
 	 * @param name Name of the tags wanted.
 	 * @return A Vector containing the tags.
 	 */
-	public Vector<Tag> getTags(final CIString name) {
+	public LinkedList<Tag> getTags(final CIString name) {
 		return cache.get(name);
 	}
 	/** Rebuilds the tag cache. Should be called after a full parsing of the
@@ -84,11 +83,11 @@ public class Page implements Iterable<Tag> {
 	public void rebuildCache() {
 		log.information("building tag cache");
 		cache.clear();
-		Vector<Tag> tmp;
-		for (final Tag tag : do_array.iterable(roots.elements())) {
+		LinkedList<Tag> tmp;
+		for (final Tag tag : roots.values()) {
 			tmp = cache.get(tag.getName());
 			if (tmp==null) {
-				tmp = new Vector<Tag>();
+				tmp = new LinkedList<Tag>();
 				cache.put(tag.getName(), tmp);
 			}
 			tmp.add(tag);
@@ -102,11 +101,11 @@ public class Page implements Iterable<Tag> {
 	private void addToCache(final Tag tag) {
 		if (tag.isSelfClosing()) return;
 		if (!tag.hasChild()) return;
-		Vector<Tag> tmp;
+		LinkedList<Tag> tmp;
 		for (final Tag child : tag) {
 			tmp = cache.get(child.getName());
 			if (tmp==null) {
-				tmp = new Vector<Tag>();
+				tmp = new LinkedList<Tag>();
 				cache.put(child.getName(), tmp);
 			}
 			//log.debug(tag.toStringTagOnly());
@@ -141,8 +140,8 @@ public class Page implements Iterable<Tag> {
 	 */
 	@Override
 	public Iterator<Tag> iterator() {
-		final Vector<Tag> tags = new Vector<Tag>(50,50);
-		for(final Vector<Tag> taglist: do_array.iterable(cache.elements())) {
+		final LinkedList<Tag> tags = new LinkedList<Tag>();
+		for(final LinkedList<Tag> taglist: cache.values()) {
 			tags.addAll(taglist);
 		}
 		return tags.iterator();
