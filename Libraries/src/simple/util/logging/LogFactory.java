@@ -7,10 +7,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Calendar;
 import java.util.Hashtable;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+import java.util.TimeZone;
 
 import simple.io.FileUtil;
 
@@ -54,12 +53,12 @@ public final class LogFactory {
 			}
 		}
 		public static final String getTimeStamp() {
-			LocalTime time=LocalTime.now();
-			return ((time.getHourOfDay()<10?"0":"") + time.getHourOfDay() + (time.getMinuteOfHour()<10?"0":"") + time.getMinuteOfHour()  + (time.getSecondOfMinute()<10?"0":"") + time.getSecondOfMinute());
+			Calendar t=Calendar.getInstance(TimeZone.getDefault());
+			return String.format("%1$tH%1$tM%1$tS",t);
 		}
 		public static final String getDateStamp() {
-			LocalDate now=LocalDate.now();
-			return (now.getYear() + (now.getMonthOfYear()<10?"0":"")+now.getMonthOfYear() + (now.getDayOfMonth()<10?"0":"")+now.getDayOfMonth());
+			Calendar t=Calendar.getInstance(TimeZone.getDefault());
+			return String.format("%1$tY%1$tm%1$td",t);
 		}
 		public static final void setPrintTimeStamp(boolean print){
 			printTime=print;
