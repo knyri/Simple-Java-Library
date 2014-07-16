@@ -27,8 +27,7 @@ public final class TimeUtil{
 		if ((System.currentTimeMillis()-TimeUtil.calLife)>1000) {
 			TimeUtil.cal=Calendar.getInstance();
 		}
-		final int hour=TimeUtil.cal.get(Calendar.HOUR_OF_DAY),minute=TimeUtil.cal.get(Calendar.MINUTE),second=TimeUtil.cal.get(Calendar.SECOND);
-		return ((hour<10?"0":"")+hour+":"+(minute<10?"0":"")+minute+":"+(second<10?"0":"")+second);
+		return String.format("%1$tH:%1$tM:%1$tS",cal);
 	}
 	/** Formats the time "h hour(s), m minute(s), s second(s)".
 	 * If h or m is 0 then that section is ommitted.
