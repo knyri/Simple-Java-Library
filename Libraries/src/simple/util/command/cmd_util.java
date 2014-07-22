@@ -3,8 +3,8 @@
  */
 package simple.util.command;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * <br>Created: Nov 23, 2010
@@ -19,7 +19,7 @@ public final class cmd_util {
 	public static List<String> parseArguments(CharSequence raw) {
 		boolean sq = false, dq = false;
 		StringBuilder buf = new StringBuilder(75);
-		Vector<String> args = new Vector<String>();
+		ArrayList<String> args = new ArrayList<String>();
 		for (int i = 0; i < raw.length(); i++) {
 			if (raw.charAt(i) == '\\') {
 				/* if the next character is a quote and the quote flag is set,
