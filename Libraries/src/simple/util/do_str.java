@@ -795,6 +795,15 @@ public final class do_str {
 	public static final boolean isWhiteSpace(final char c) {
 		return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
 	}
+	public static final String capitalize(String str){
+		char[] chars=str.toCharArray();
+		chars[0]=Character.toTitleCase(chars[0]);
+		for(int i =0;i<chars.length;i++){
+			if(Character.isWhitespace(chars[i]) && (i+1)<chars.length)
+				chars[i+1]=Character.toTitleCase(chars[i+1]);
+		}
+		return new String(chars);
+	}
 	/**
 	 * @deprecated Use {@link #wrapString(String,int,boolean)} instead
 	 */

@@ -50,13 +50,14 @@ import simple.util.do_str;
  * @author Kenneth Pierce
  */
 public final class RenameFormat {
-	public static final int OK = 0;
-	public static final int BADTARGET = 1;
-	public static final int BADSOURCE = 2;
-	public static final int CANTUNDO = 3;
-	public static final int PARSEEXCEPTION = 4;
-	public static final int IOERRORMKDIR = 5;
-	public static final int IOERRORRENAME = 6;
+	public static final int
+		OK = 0,
+		BADTARGET = 1,
+		BADSOURCE = 2,
+		CANTUNDO = 3,
+		PARSEEXCEPTION = 4,
+		IOERRORMKDIR = 5,
+		IOERRORRENAME = 6;
 	//Error messages
 	private static final String[] ERR = new String[] {"OK", "Destination already exist", "Source doesn't exist", "Can't Undo: Hasn't been renamed.", "Parse Exception: ", "System error making dirs", "System error renaming"};
 	public static boolean fRESOLVEURLESCAPED=false;
@@ -69,13 +70,29 @@ public final class RenameFormat {
 	 */
 	public static boolean fURISAFED=false;
 	static private int number = 0;
-	private File file;
-	private File undo = null;
+	private File
+		file,
+		undo = null;
 	private boolean canundo = false;
-	private String syn;
-	private String destName = null;
+	private String
+		syn,
+		destName = null;
 	private ParseException pe = null;
 	private int errorNum = -1;
+	private int transformations=0;
+	public static final int
+		TRANS_PATH_UC=1,
+		TRANS_PATH_UCF=2,
+		TRANS_PATH_LC=4,
+		TRANS_FILE_UC=8,
+		TRANS_FILE_UCF=16,
+		TRANS_FILE_LC=32;
+	public void setTransformations(int trans){
+		this.transformations=trans;
+	}
+	public int getTransformations(){
+		return this.transformations;
+	}
 	private RenameFormat() {}
 	public RenameFormat(final File fil, final String syntax) {
 		file = fil;
@@ -295,18 +312,33 @@ public final class RenameFormat {
 				buf.append(syn.charAt(i));
 			}
 		}
+		String dir=buf.toString();
+		String file=dir.substring(dir.lastIndexOf(File.separatorChar));
+		dir=dir.substring(0,dir.length()-file.length());
 		if(RenameFormat.fURISAFED || RenameFormat.fURISAFEF){
-			String dir=buf.toString().toLowerCase();
-			String file=dir.substring(dir.lastIndexOf(File.separatorChar));
-			dir=dir.substring(0,dir.length()-file.length());
 			if(RenameFormat.fURISAFED)
-				dir=dir.replace(' ','-').replace('.','-');
+				dir=dir.toLowerCase().replace(' ','-').replace('.','-');
 			if(RenameFormat.fURISAFEF)
-				file=file.replace(' ','-');
+				file=file.toLowerCase().replace(' ','-');
 
 			return (dir+file).replace("--","-");
+		}else{
+			if((transformations&TRANS_PATH_LC)==TRANS_PATH_LC){
+				dir=dir.toLowerCase();
+			}else if((transformations&TRANS_PATH_UC)==TRANS_PATH_UC){
+				dir=dir.toUpperCase();
+			}else if((transformations&TRANS_PATH_UCF)==TRANS_PATH_UCF){
+				dir=do_str.capitalize(dir);
+			}
+			if((transformations&TRANS_FILE_LC)==TRANS_FILE_LC){
+				file=file.toLowerCase();
+			}else if((transformations&TRANS_FILE_UC)==TRANS_FILE_UC){
+				file=file.toUpperCase();
+			}else if((transformations&TRANS_FILE_UCF)==TRANS_FILE_UCF){
+				file=do_str.capitalize(file);
+			}
+			return dir+file;
 		}
-		return buf.toString();
 	}
 	private static String getDir(final String path, final int i) {
 		String[]x = null;
