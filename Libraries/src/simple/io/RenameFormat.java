@@ -79,20 +79,13 @@ public final class RenameFormat {
 		destName = null;
 	private ParseException pe = null;
 	private int errorNum = -1;
-	private int transformations=0;
-	public static final int
+	private static final int
 		TRANS_PATH_UC=1,
 		TRANS_PATH_UCF=2,
 		TRANS_PATH_LC=4,
 		TRANS_FILE_UC=8,
 		TRANS_FILE_UCF=16,
 		TRANS_FILE_LC=32;
-	public void setTransformations(int trans){
-		this.transformations=trans;
-	}
-	public int getTransformations(){
-		return this.transformations;
-	}
 	private RenameFormat() {}
 	public RenameFormat(final File fil, final String syntax) {
 		file = fil;
@@ -120,7 +113,7 @@ public final class RenameFormat {
 			undo.mkdirs();
 		}
 		undo = new File(destName);
-		if (undo.exists()) {return (errorNum=RenameFormat.BADTARGET);}
+		if (undo.exists() && !file.equals(undo)) {return (errorNum=RenameFormat.BADTARGET);}
 		if (!file.renameTo(undo)) {return (errorNum=RenameFormat.IOERRORRENAME);}
 		canundo = true;
 		return (errorNum=RenameFormat.OK);
@@ -136,7 +129,7 @@ public final class RenameFormat {
 			}
 		}
 		undo = new File(destName);
-		if (undo.exists()) {return (errorNum=RenameFormat.BADTARGET);}
+		if (undo.exists() && !file.equals(undo)) {return (errorNum=RenameFormat.BADTARGET);}
 		return (errorNum=RenameFormat.OK);
 	}
 	public String parse() throws ParseException {
@@ -155,7 +148,14 @@ public final class RenameFormat {
 			final StringBuilder resolved=new StringBuilder(fullName.length());
 			int lend=0;
 			for(int i=0;i<fullName.length();i++){
-				if(fullName.charAt(i)!='%'){resolved.append(fullName.charAt(i));continue;}
+				if(fullName.charAt(i)=='-'){
+					resolved.append(' ');
+					continue;
+				}
+				if(fullName.charAt(i)!='%'){
+					resolved.append(fullName.charAt(i));
+					continue;
+				}
 				lend=i+3;i++;
 				if((i+2)>fullName.length())continue;
 				if(fullName.charAt(lend)=='%')
@@ -176,7 +176,32 @@ public final class RenameFormat {
 			ext = path.substring(extDot);
 		}
 		begin = end = 0;
-		for (int i = 0;i<syn.length();i++) {
+		int i=0,transformations=0;
+		//check for transformations
+		if(syn.charAt(0)=='&'){
+			i=1;
+			if(do_str.startsWith(syn,"DUCF",i)){
+				transformations+=TRANS_PATH_UCF;
+				i=4;
+			}else if(do_str.startsWith(syn,"DUC",i)){
+				transformations+=TRANS_PATH_UC;
+				i=3;
+			}else if(do_str.startsWith(syn,"DLC",i)){
+				transformations+=TRANS_PATH_LC;
+				i=3;
+			}
+			if(do_str.startsWith(syn,"FUCF",i)){
+				transformations+=TRANS_FILE_UCF;
+				i+=4;
+			}else if(do_str.startsWith(syn,"FUC",i)){
+				transformations+=TRANS_FILE_UC;
+				i+=3;
+			}else if(do_str.startsWith(syn,"FLC",i)){
+				transformations+=TRANS_FILE_LC;
+				i+=3;
+			}
+		}
+		for (;i<syn.length();i++) {
 			if (syn.charAt(i)=='$') {
 				switch(syn.charAt(++i)) {
 				case 'D'://$M$D(1)$N.jpg
@@ -313,8 +338,9 @@ public final class RenameFormat {
 			}
 		}
 		String dir=buf.toString();
-		String file=dir.substring(dir.lastIndexOf(File.separatorChar));
+		String file=dir.substring(dir.lastIndexOf(File.separatorChar)+1);
 		dir=dir.substring(0,dir.length()-file.length());
+//System.out.println(dir+" --- "+file);
 		if(RenameFormat.fURISAFED || RenameFormat.fURISAFEF){
 			if(RenameFormat.fURISAFED)
 				dir=dir.toLowerCase().replace(' ','-').replace('.','-');
@@ -328,7 +354,12 @@ public final class RenameFormat {
 			}else if((transformations&TRANS_PATH_UC)==TRANS_PATH_UC){
 				dir=dir.toUpperCase();
 			}else if((transformations&TRANS_PATH_UCF)==TRANS_PATH_UCF){
-				dir=do_str.capitalize(dir);
+				String[] dirp=dir.split(pathsplit);
+				StringBuilder dirb=new StringBuilder(dir.length());
+				for(String dirt : dirp){
+					dirb.append(do_str.capitalize(dirt)+File.separator);
+				}
+				dir=dirb.toString();
 			}
 			if((transformations&TRANS_FILE_LC)==TRANS_FILE_LC){
 				file=file.toLowerCase();
@@ -341,8 +372,7 @@ public final class RenameFormat {
 		}
 	}
 	private static String getDir(final String path, final int i) {
-		String[]x = null;
-		x = path.split("\\Q"+File.separator+"\\E");
+		String[]x =  path.split("\\Q"+File.separator+"\\E");
 		return x[x.length-i-1];
 	}
 	public void setFormat(final String format) {
@@ -358,7 +388,13 @@ public final class RenameFormat {
 	public int undo() {
 		if (!canundo) return (errorNum=RenameFormat.CANTUNDO);
 		if (!undo.exists()) return (errorNum=RenameFormat.BADSOURCE);
-		if (file.exists()) return (errorNum=RenameFormat.BADTARGET);
+		/*
+		 * !file.equals(undo) is a check for case insensitive file systems.
+		 * Relying on the fact that file.equals(undo) will be true on case insensitive
+		 * systems and false on case sensitive systems if the only change was a
+		 * case transformation..
+		 */
+		if (file.exists() && !file.equals(undo)) return (errorNum=RenameFormat.BADTARGET);
 		file.getParentFile().mkdirs();
 		undo.renameTo(file);
 		canundo = false;

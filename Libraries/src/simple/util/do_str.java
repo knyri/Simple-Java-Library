@@ -796,6 +796,7 @@ public final class do_str {
 		return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
 	}
 	public static final String capitalize(String str){
+		if(str==null || str.isEmpty())return str;
 		char[] chars=str.toCharArray();
 		chars[0]=Character.toTitleCase(chars[0]);
 		for(int i =0;i<chars.length;i++){
