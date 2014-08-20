@@ -179,27 +179,39 @@ public final class RenameFormat {
 		int i=0,transformations=0;
 		//check for transformations
 		if(syn.charAt(0)=='&'){
-			i=1;
-			if(do_str.startsWith(syn,"DUCF",i)){
-				transformations+=TRANS_PATH_UCF;
-				i=4;
-			}else if(do_str.startsWith(syn,"DUC",i)){
-				transformations+=TRANS_PATH_UC;
-				i=3;
-			}else if(do_str.startsWith(syn,"DLC",i)){
-				transformations+=TRANS_PATH_LC;
-				i=3;
-			}
-			if(do_str.startsWith(syn,"FUCF",i)){
-				transformations+=TRANS_FILE_UCF;
-				i+=4;
-			}else if(do_str.startsWith(syn,"FUC",i)){
-				transformations+=TRANS_FILE_UC;
-				i+=3;
-			}else if(do_str.startsWith(syn,"FLC",i)){
-				transformations+=TRANS_FILE_LC;
-				i+=3;
-			}
+			out:
+			do{
+				i++;
+				switch(syn.charAt(i)){
+					case 'D':
+						if(do_str.startsWith(syn,"DUCF",i)){
+							transformations+=TRANS_PATH_UCF;
+							i+=4;
+						}else if(do_str.startsWith(syn,"DUC",i)){
+							transformations+=TRANS_PATH_UC;
+							i+=3;
+						}else if(do_str.startsWith(syn,"DLC",i)){
+							transformations+=TRANS_PATH_LC;
+							i+=3;
+						}
+					break;
+					case 'F':
+						if(do_str.startsWith(syn,"FUCF",i)){
+							transformations+=TRANS_FILE_UCF;
+							i+=4;
+						}else if(do_str.startsWith(syn,"FUC",i)){
+							transformations+=TRANS_FILE_UC;
+							i+=3;
+						}else if(do_str.startsWith(syn,"FLC",i)){
+							transformations+=TRANS_FILE_LC;
+							i+=3;
+						}
+					break;
+					default:
+						i--;
+						break out;
+				}
+			}while(syn.charAt(i)=='&');
 		}
 		for (;i<syn.length();i++) {
 			if (syn.charAt(i)=='$') {
