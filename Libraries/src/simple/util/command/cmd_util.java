@@ -48,7 +48,7 @@ public final class cmd_util {
 					buf.setLength(0);//clear the buffer
 					if (raw.charAt(i+1)==' ') i++;//increment if the next char is an argument separator
 				} else sq = true;
-			} else if (!dq && !sq && raw.charAt(i) == ' '){
+			} else if (!dq && !sq && Character.isWhitespace(raw.charAt(i))){
 				args.add(buf.toString());
 				buf.setLength(0);
 			} else {

@@ -4,59 +4,107 @@
     <options buildIfNeeded="true" compress="false" descriptionLocation="/Libraries/Lib Full.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
-    <manifest generateManifest="false" manifestLocation="/Libraries/Lib Full" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+    <manifest generateManifest="true" manifestLocation="/Libraries/Lib Full" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
         <sealing sealJar="false">
             <packagesToSeal/>
             <packagesToUnSeal/>
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml.html"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.component"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.event"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.client"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.audio"/>
-        <file path="/Libraries/src/parserconstants_html.conf.xml"/>
         <javaElement handleIdentifier="=Libraries/src&lt;"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.io"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.ui"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.cookie"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.cookie"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.client.entity"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.container"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;HTTPClient.http"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.file"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Cookie2.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.HTML"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor"/>
+        <file path="/HTTPClient/.classpath"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Page.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.tree"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Cookie.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.net"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.auth"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.auth.params"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.time"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.logging"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;HTTPClient.https"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.io"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.message"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.conn"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.codec.language"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{ParserConstants.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor.impl"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Tag.java"/>
-        <file path="/Libraries/src/mimeTypes.conf.xml"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.codec.net"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;HTTPClient"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.math"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.codec"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{MultipartFormEntity.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{InlineLooseParser.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{TagUtil.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{RequestHeader.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http.clientparams"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Client.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{ParserTester.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.system"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.client.params"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.client.methods"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;HTTPClient.shttp"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.logging"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.regex"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.conn"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;notmine"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.conn.routing"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.util"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.client.protocol"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;se.datadosen.util"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.params"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.cookie.params"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.annotation"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{ResponseHeader.java"/>
+        <file path="/HTTPClient/.project"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.sql"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.conn.tsccm"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.hash"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml.html"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.component"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.conn.scheme"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.event"/>
+        <file path="/Libraries/src/parserconstants_html.conf.xml"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.ui"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.logging.impl"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.protocol"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.logging"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.HTML"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.io"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Cookie.java"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.entity"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.logging"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.client.utils"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.conn.util"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.codec.digest"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.monitor.impl"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{Tag.java"/>
+        <file path="/Libraries/src/mimeTypes.conf.xml"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.entity"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.impl.client"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{RequestHeader.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http.clientparams"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Client.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.system"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.xml"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui.factory"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.conn.params"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{HttpFactory.java"/>
+        <javaElement handleIdentifier="=Libraries/src&lt;se.datadosen.component"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.gui"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{ResponseHeader.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.sql"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.ml{CssParser.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.util.command"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{CookieHandler.java"/>
         <javaElement handleIdentifier="=Libraries/src&lt;simple.net.http{Site.java"/>
-        <javaElement handleIdentifier="=Libraries/src&lt;simple.util.hash"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.auth"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.http.conn.ssl"/>
+        <javaElement handleIdentifier="=HTTPClient/&lt;org.apache.commons.codec.binary"/>
     </selectedElements>
 </jardesc>

@@ -52,7 +52,7 @@ public class MultipartFormEntity extends AbstractHttpEntity{
 		}else if(param instanceof FileParam){
 			File file=new File(param.getValue().replace('/',File.separatorChar));
 			ByteArrayOutputStream tmp=new ByteArrayOutputStream(10000000);
-			if(!file.exists())throw new IllegalArgumentException("File does not exists! "+file);
+			if(!file.exists())throw new IllegalArgumentException("File does not exists! "+file.getAbsolutePath());
 			if(file.length()>15000000){
 				tooBig=true;
 				content=null;
