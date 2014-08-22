@@ -4,6 +4,7 @@
 package simple.util;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * <hr>
@@ -11,8 +12,11 @@ import java.util.Calendar;
  * @author Kenneth Pierce
  */
 public final class TimeUtil{
-	private static Calendar cal = Calendar.getInstance();
+	private static final Calendar cal = Calendar.getInstance();
 	private static long calLife = System.currentTimeMillis();
+	public static void setTimeZone(TimeZone tz){
+		cal.setTimeZone(tz);
+	}
 	/** Formats the time h:m:s. where h is 0-23.
 	 * @param milliseconds
 	 * @return the formatted time
@@ -24,8 +28,8 @@ public final class TimeUtil{
 		return ((hour<10?"0":"")+hour+":"+(minute<10?"0":"")+minute+":"+(second<10?"0":"")+second);
 	}
 	public static final String getTime() {
-		if ((System.currentTimeMillis()-TimeUtil.calLife)>1000) {
-			TimeUtil.cal=Calendar.getInstance();
+		if((System.currentTimeMillis()-TimeUtil.calLife)>1000) {
+			TimeUtil.cal.setTimeInMillis(System.currentTimeMillis());
 		}
 		return String.format("%1$tH:%1$tM:%1$tS",cal);
 	}
@@ -37,19 +41,26 @@ public final class TimeUtil{
 	public static final String getTimeLong(final long milliseconds) {
 		if (milliseconds <= 0)
 			return "0 seconds";
-		final StringBuffer buf = new StringBuffer(32);
+		final StringBuilder buf = new StringBuilder(32);
 		final long totalSeconds	= milliseconds/1000,
-		totalMinutes	= totalSeconds/60,
-		totalHours		= totalMinutes/60;
-		if (totalHours%24 > 0) {
-			buf.append((totalHours % 24)+((totalHours%24 > 1)?" hours":" hour"));
+			totalMinutes	= totalSeconds/60,
+			totalHours		= totalMinutes/60;
+		final int
+			hours=(int)(totalHours%24),
+			minutes=(int)(totalMinutes % 60),
+			seconds=(int)(totalSeconds % 60);
+		boolean sep=false;
+		if (hours > 0) {
+			buf.append(hours+((hours > 1)?" hours":" hour"));
+			sep=true;
 		}
-		if (totalMinutes%60 > 0) {
-			buf.append(((totalHours%24 > 0)?", ":"")+(totalMinutes % 60)+((totalMinutes%60 > 1)?" minutes":" minute"));
+		if (minutes > 0) {
+			buf.append((sep?", ":"")+minutes+((minutes > 1)?" minutes":" minute"));
+			sep=true;
 		}
-		if (totalSeconds%60 > 0) {
-			buf.append(((totalMinutes%60 > 0)?", ":"")+(totalSeconds % 60)+((totalSeconds%60 > 1)?" seconds":" second"));
-		}
+		if (seconds > 0)
+			buf.append((sep?", ":"")+seconds+((seconds > 1)?" seconds":" second"));
+
 		return buf.toString();
 	}
 	/** Formats the time "h:m:s.ms".
@@ -63,7 +74,7 @@ public final class TimeUtil{
 		final long totalSeconds	= milliseconds/1000,
 		totalMinutes	= totalSeconds/60,
 		totalHours		= totalMinutes/60;
-		return (totalHours % 24)+":"+(totalMinutes % 60)+":"+((totalSeconds % 60)+(milliseconds / 1000.0));
+		return (totalHours % 24)+":"+(totalMinutes % 60)+":"+((totalSeconds % 60)+(milliseconds / 1000d));
 	}
 	/** Formats the time "h hour(s), m minute(s), s second(s), ms millisecond(s)".
 	 * If h, m, or s are 0 then that section is ommitted.
@@ -73,22 +84,31 @@ public final class TimeUtil{
 	public static final String getTimeLongPrecise(final long milliseconds) {
 		if (milliseconds <= 0)
 			return "0 milleseconds";
-		final StringBuffer buf = new StringBuffer(50);
+		final StringBuilder buf = new StringBuilder(50);
 		final long totalSeconds	= milliseconds/1000,
-		totalMinutes	= totalSeconds/60,
-		totalHours		= totalMinutes/60;
-		if (totalHours%24 > 0) {
-			buf.append((totalHours % 24)+((totalHours%24 > 1)?" hours":" hour"));
+			totalMinutes	= totalSeconds/60,
+			totalHours		= totalMinutes/60;
+		final int
+			hours=(int)(totalHours%24),
+			minutes=(int)(totalMinutes % 60),
+			seconds=(int)(totalSeconds % 60),
+			millisecond=(int)(milliseconds%1000);
+		boolean sep=false;
+		if (hours > 0) {
+			buf.append(hours+((hours > 1)?" hours":" hour"));
+			sep=true;
 		}
-		if (totalMinutes%60 > 0) {
-			buf.append(((totalHours%24 > 0)?", ":"")+(totalMinutes % 60)+((totalMinutes%60 > 1)?" minutes":" minute"));
+		if (minutes > 0) {
+			buf.append((sep?", ":"")+minutes+((minutes > 1)?" minutes":" minute"));
+			sep=true;
 		}
-		if (totalSeconds%60 > 0) {
-			buf.append(((totalMinutes%60 > 0)?", ":"")+(totalSeconds % 60)+((totalSeconds%60 > 1)?" seconds":" second"));
+		if (seconds > 0){
+			buf.append((sep?", ":"")+seconds+((seconds > 1)?" seconds":" second"));
+			sep=true;
 		}
-		if (milliseconds%1000 > 0) {
-			buf.append(((totalSeconds%60 > 0)?", ":"")+(milliseconds % 60)+((milliseconds%1000 > 1)?" milliseconds":" millisecond"));
-		}
+		if (millisecond > 0)
+			buf.append(((sep)?", ":"")+millisecond+((millisecond > 1)?" milliseconds":" millisecond"));
+
 		return buf.toString();
 	}
 }

@@ -1,7 +1,7 @@
 package simple.util;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,7 +74,7 @@ public class UrlUtil {
 		}
 		return buf.toString();
 	}
-	private static final Hashtable<String, Character> HtmlAscii = new Hashtable<String, Character>();
+	private static final HashMap<String, Character> HtmlAscii = new HashMap<String, Character>();
 	static {
 		HtmlAscii.put("nbsp", (char)160);
 		HtmlAscii.put("iexcl", (char)161);
@@ -243,7 +243,7 @@ public class UrlUtil {
 		default:
 			while (s.charAt(offset) != ' ') {	url.append(s.charAt(offset++));	}
 		}
-		
+
 		return url.toString();
 	}
 	/** Creates a URL from the provided information.
