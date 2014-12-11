@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.filechooser.FileFilter;
 
-import simple.util.ArrayIterator;
-
 /**Simple version of a mask to filter files.
  * <br>depends on simple.util.ArrayIterator
  * <br>Created: ??
@@ -23,14 +21,12 @@ public class SFileFilter extends FileFilter implements FilenameFilter {
 
 	public SFileFilter() {}
 	public SFileFilter(String[] accept) {
-		ArrayIterator<String> iter = new ArrayIterator<String>(accept);
-		while (iter.hasNext())
-			add(Pattern.compile("[a-z0-9]"+iter.next()));
+		for(String item : accept)
+			add(Pattern.compile("[a-z0-9]"+item));
 	}
 	public SFileFilter(Pattern[] accept) {
-		ArrayIterator<Pattern> iter = new ArrayIterator<Pattern>(accept);
-		while(iter.hasNext())
-			add(iter.next());
+		for(Pattern pat : accept)
+			add(pat);
 	}
 
 	@Override

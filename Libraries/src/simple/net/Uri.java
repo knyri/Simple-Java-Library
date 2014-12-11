@@ -10,10 +10,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import simple.CIString;
 import simple.io.DoubleParsePosition;
@@ -90,7 +90,7 @@ public final class Uri {
 	private final UriType type;
 	private volatile boolean qparsed=false;
 	/** A breakdown of the query. */
-	private final Hashtable<CIString, String> params = new Hashtable<CIString, String>();
+	private final HashMap<CIString, String> params = new HashMap<CIString, String>();
 	private final int hash;
 
 	/**
@@ -120,7 +120,7 @@ public final class Uri {
 	 * @param uri
 	 * @param defaultScheme Used if the URI starts with "//". Is to address a new fad on the net(2012-07-08).
 	 */
-	public Uri(String uri,String defaultScheme) {
+	public Uri(String uri,String defaultScheme){
 		if(uri.startsWith("//") && !defaultScheme.isEmpty()){
 			uri=defaultScheme+":"+uri;
 		}
@@ -279,7 +279,7 @@ public final class Uri {
 					query = "";
 					fragment = "";
 					return;
-				} else {
+				}else{
 					port = Integer.parseInt(uri.substring(pos.start, pos.end));
 				}
 				pos.resetStart();
@@ -456,7 +456,7 @@ public final class Uri {
 	/**
 	 * @return the query parameters
 	 */
-	public final Hashtable<CIString, String> getParams() {
+	public final HashMap<CIString, String> getParams() {
 		return params;
 	}
 	public final URL toURL() throws MalformedURLException {
@@ -465,7 +465,7 @@ public final class Uri {
 	public final URI toURI() throws URISyntaxException {
 		return new URI(this.originalUri);
 	}
-	private static final void parseParams(final Hashtable<CIString, String> store, final String query){
+	private static final void parseParams(final HashMap<CIString, String> store, final String query){
 		final DoubleParsePosition pos = new DoubleParsePosition();
 		String[] tmp = null;
 		while((pos.end = query.indexOf("&", pos.start))!=-1) {
@@ -532,8 +532,8 @@ public final class Uri {
 	/**Gets the query names.
 	 * @return An enumeration of the query names.
 	 */
-	public Enumeration<CIString> getQueryKeys() {
-		return params.keys();
+	public Set<CIString> getQueryKeys() {
+		return params.keySet();
 	}
 	/**Gets the query values.
 	 * @return A collection of the query values.
