@@ -23,6 +23,7 @@ import simple.io.WriterOutputStream;
  * @author Kenneth Pierce
  */
 public final class Log {
+	private ErrorCodeResolver ecr=LogFactory.DEFAULTECR;
 	private PrintStream _out;
 	private final String _cName;
 	private boolean _printTime = false,
@@ -198,26 +199,32 @@ public final class Log {
 		return _log(type,ref,msg,',',options);
 	}
 	//Error Code Resolver code
+	public final void setECR(ErrorCodeResolver ecr){
+		this.ecr=ecr;
+	}
+	public final ErrorCodeResolver getECR(){
+		return ecr;
+	}
 	/**
 	 * @param type
-	 * @param msg can be null. Will pull the ECR assigned to LogFactory.
+	 * @param msg can be null. Will pull the ECR assigned to this Log.
 	 * @param code
 	 * @return true on error
 	 */
 	public final boolean log(final LogLevel type, ErrorCodeResolver msg, final int code) {
 		if ((options&type.getValue()) == type.getValue()) {
 			if (msg == null)
-				msg = LogFactory.getECR();
+				msg = ecr;
 			_out.println(_getPreMessage(type)+_cName+": "+"("+code+")"+msg.getErrorString(code));
 		}
 		return _out.checkError();
 	}
-	/**Shortcut for <code>log(LogLevel.ERROR, LogFactory.getECR(), errorCode)</code>
+	/**Shortcut for <code>log(LogLevel.ERROR, ErrorCodeResolver, errorCode)</code>
 	 * @param errorCode
 	 * @return true on error
 	 */
 	public final boolean log(final int errorCode) {
-		return log(LogLevel.ERROR, LogFactory.getECR(), errorCode);
+		return log(LogLevel.ERROR, ecr, errorCode);
 	}
 	//workhorse loggers
 	private final boolean _log(final LogLevel type, final Object msg,byte options) {

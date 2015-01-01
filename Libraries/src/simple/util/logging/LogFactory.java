@@ -15,7 +15,7 @@ import java.util.TimerTask;
 
 import simple.io.FileUtil;
 
-/**Factory for getting and setting logs for specific classes.<br>
+/**Factory for getting and setting logs for specific classes. Default stream is System.out.<br>
  * Getting a log: {@link #getLogFor(Class)}, {@link #getLogFor(Object)}<br>
  * Standard way of getting a log: <br>
  * Setting a log: <code>private static final {@link simple.util.logging.Log Log} log = LogFactory.getLogFor(&lt;your class&gt;.class)</code>
@@ -34,15 +34,6 @@ import simple.io.FileUtil;
  * @see simple.util.logging.Log
  */
 public final class LogFactory {
-	/**
-	 * Probably need to remove this at some point. 2015-1-1
-	 */
-	private static ErrorCodeResolver ecr = new ErrorCodeResolver() {
-		@Override
-		public String getErrorString(final int code) {
-			return null;
-		}
-	};
 	private static HashMap<Class<?>, Log> logCache = new HashMap<Class<?>, Log>();
 	//private static final Log _log = new Log(LogFactory.class);
 	private static PrintStream globalStream = System.out;
@@ -172,7 +163,7 @@ public final class LogFactory {
 		//_log.information("setLogFor: "+clazz.getCanonicalName());
 	}
 	/**
-	 * Get the logs associated with the class
+	 * Get the logs associated with the class. The log is created if it doesn't exist.
 	 * @param clazz Class you want the Log for
 	 * @return The log for the class
 	 */
@@ -188,6 +179,7 @@ public final class LogFactory {
 					}
 					log.setPrintTime(printTime);
 					log.setPrintDate(printDate);
+					log.setECR(ecr);
 					setLogFor(clazz, log);
 				}
 			}
@@ -202,21 +194,28 @@ public final class LogFactory {
 	public static final Log getLogFor(final Object obj) {
 		return getLogFor(obj.getClass());
 	}
-	/**Gets the currently assigned error code resolver.
-	 * Will eventually be removed. Shouldn't be on a static class.
-	 * 2015-1-1
-	 * @return The error code resolver
-	 */
-	public static final ErrorCodeResolver getECR() {
-		return ecr;
-	}
+
+	/* *************************
+	 * Error Code Resolver
+	 * *************************/
+
+	protected static final ErrorCodeResolver DEFAULTECR=new ErrorCodeResolver() {
+		@Override
+		public String getErrorString(final int code) {
+			return null;
+		}
+	};
+	private static ErrorCodeResolver ecr = DEFAULTECR;
 	/**Sets the error code resolver.
-	 * will eventually be removed. Shouldn't be on a static class.
-	 * 2015-1-1
 	 * @param ecr The new error code resolver
 	 */
 	public static final void setECR(final ErrorCodeResolver ecr) {
-		LogFactory.ecr = ecr;
+		synchronized(logCache){
+			LogFactory.ecr = ecr;
+			for (final Log log : logCache.values()) {
+				log.setECR(ecr);
+			}
+		}
 	}
 	/**Gets the String associated with the code from the error code resolver.
 	 * Short for <code>LogFactory.getECR().getErrorString(code)</code>.
