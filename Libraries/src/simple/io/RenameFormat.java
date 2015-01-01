@@ -145,36 +145,49 @@ public final class RenameFormat {
 		final int extDot = (end < lastSlash)?-1:end;
 		fullName = path.substring(lastSlash+1);
 		if(RenameFormat.fRESOLVEURLESCAPED){
+			//Resolve escaped URL characters
 			final StringBuilder resolved=new StringBuilder(fullName.length());
 			int lend=0;
 			for(int i=0;i<fullName.length();i++){
-				if(fullName.charAt(i)=='-'){
+				switch(fullName.charAt(i)){
+				case '-':
+				case '_':
+					//dashes and underscores to spaces
 					resolved.append(' ');
-					continue;
-				}
-				if(fullName.charAt(i)!='%'){
-					resolved.append(fullName.charAt(i));
-					continue;
-				}
-				lend=i+3;i++;
-				if((i+2)>fullName.length())continue;
-				if(fullName.charAt(lend)=='%')
-					while(fullName.charAt(lend+3)=='%'){
-						lend+=3;
-						if((lend+3)>fullName.length())break;
+					break;
+				case '%':
+					lend=i+3;
+					i++;
+					if((i+2)>fullName.length()){
+						//Last is malformed, skip it
+						resolved.append('%');
+						continue;
 					}
-				resolved.append(new String(HexUtil.fromHex(fullName.substring(i,lend).replace("%",""))));
-				i=lend-1;
+					if(fullName.charAt(lend)=='%')
+						while(fullName.charAt(lend+3)=='%'){
+							//check for and append back to back encoded characters
+							lend+=3;
+							if((lend+3)>fullName.length())break;
+						}
+					//resolve all found
+					resolved.append(new String(HexUtil.fromHex(fullName.substring(i,lend).replace("%",""))));
+					i=lend-1;
+					break;
+					default:
+						resolved.append(fullName.charAt(i));
+				}
 			}
 			fullName=resolved.toString();
 		}
 		if (extDot == -1) {
+			//no extension
 			fileName = fullName;
 			ext = "";
 		} else {
 			fileName = fullName.substring(0, fullName.length()-(path.length()-extDot));
 			ext = path.substring(extDot);
 		}
+		//initialize
 		begin = end = 0;
 		int i=0,transformations=0;
 		//check for transformations
@@ -208,12 +221,14 @@ public final class RenameFormat {
 						}
 					break;
 					default:
+						//no transformations; reset index
 						i--;
 						break out;
 				}
 			}while(syn.charAt(i)=='&');
 		}
 		for (;i<syn.length();i++) {
+			// parse tokens
 			if (syn.charAt(i)=='$') {
 				switch(syn.charAt(++i)) {
 				case 'D'://$M$D(1)$N.jpg
@@ -241,10 +256,14 @@ public final class RenameFormat {
 							if (!do_str.isNaN(sTmp[0])&&!do_str.isNaN(sTmp[1])) {
 								begin = Integer.parseInt(sTmp[0]);
 								end = Integer.parseInt(sTmp[1]);
+
+								//Check for negative indices
 								if (begin < 0)
 									begin = fileName.length() + begin;
 								if (end < 0)
 									end = fileName.length() + end;
+
+								// Error checking
 								if (end < begin)
 									throw new ParseException("End index is before begin index.");
 								if(end == begin)
@@ -253,15 +272,29 @@ public final class RenameFormat {
 									throw new ParseException("End index comes before the start of the filename by "+(0-end)+".");
 								if (begin < 0)
 									throw new ParseException("Begin index comes before the start of the filename by "+(0-begin)+".");
-								buf.append(fileName.substring(begin, end));
+								if(begin >= fileName.length())
+									throw new ParseException("Begin index exceeds the length of the file name by "+(begin-fileName.length())+".");
+
+								if(end >= fileName.length())
+									// be lenient with this error
+									buf.append(fileName.substring(begin));
+								else
+									buf.append(fileName.substring(begin, end));
 							}
 						} else {
 							if (!do_str.isNaN(sTmp[0])) {
 								begin = Integer.parseInt(sTmp[0]);
+
+								// Correct for a negative index
 								if (begin < 0)
 									begin = fileName.length() - 1 + begin;
+
+								// Error checks
 								if (begin < 0)
 									throw new ParseException("Begin index comes before the start of the filename by "+(0-begin)+".");
+								if(begin >= fileName.length())
+									throw new ParseException("Begin index exceeds the length of the file name by "+(begin-fileName.length())+".");
+
 								buf.append(fileName.substring(begin));
 							}
 						}
@@ -291,10 +324,14 @@ public final class RenameFormat {
 							if (!do_str.isNaN(sTmp[0])&&!do_str.isNaN(sTmp[1])) {
 								begin = Integer.parseInt(sTmp[0]);
 								end = Integer.parseInt(sTmp[1]);
+
+								//fix negative indices
 								if (begin < 0)
 									begin = fullName.length() - 1 + begin;
 								if (end < 0)
 									end = fullName.length() + end;
+
+								//error checking
 								if (end < begin)
 									throw new ParseException("End index is before begin index.");
 								if(end == begin)
@@ -303,15 +340,29 @@ public final class RenameFormat {
 									throw new ParseException("End index comes before the start of the filename by "+(0-end)+".");
 								if (begin < 0)
 									throw new ParseException("Begin index comes before the start of the filename by "+(0-begin)+".");
-								buf.append(fullName.substring(begin, end));
+								if(begin >= fullName.length())
+									throw new ParseException("Begin index exceeds the length of the filename by "+(begin- fullName.length())+".");
+
+								if(end >= fullName.length())
+									// Be lenient with this error
+									buf.append(fullName.substring(begin));
+								else
+									buf.append(fullName.substring(begin, end));
 							}
 						} else {
 							if (!do_str.isNaN(sTmp[0])) {
 								begin = Integer.parseInt(sTmp[0]);
+
+								//fix negative index
 								if (begin < 0)
 									begin = fullName.length() - 1 + begin;
+
+								//error checking
 								if (begin < 0)
 									throw new ParseException("Begin index comes before the start of the filename by "+(0-begin)+".");
+								if(begin >= fullName.length())
+									throw new ParseException("Begin index exceeds the length of the filename by "+(fullName.length()-begin)+".");
+
 								buf.append(fullName.substring(begin));
 							}
 						}
