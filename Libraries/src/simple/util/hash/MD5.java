@@ -10,8 +10,6 @@ import java.io.IOException;
 
 //import simple.util.BitArray;
 import simple.util.HexUtil;
-import simple.util.logging.Log;
-import simple.util.logging.LogFactory;
 
 /**Work in progress. It will produce a consistent hash, but not the correct MD5 one.
  * <hr>
@@ -19,7 +17,6 @@ import simple.util.logging.LogFactory;
  * @author Kenneth Pierce
  */
 public final class MD5 {
-	private static final Log log = LogFactory.getLogFor(MD5.class);
 	/**Generates a MD5 hash of a file.
 	 * @param file File to generate the hash for
 	 * @return The MD5 hash
@@ -141,7 +138,6 @@ public final class MD5 {
 				d=state[3];
 			final int ibuf[]=new int[16];
 			Util.decode( ibuf, buf, offset );
-			log.debug("ibuf",ibuf);
 
 			a = R1(a, b, c, d, ibuf[ 0], 7,  0xd76aa478);
 			d = R1(d, a, b, c, ibuf[ 1], 12,  0xe8c7b756);
@@ -277,12 +273,5 @@ public final class MD5 {
 					});
 			return hash;
 		}
-	}
-	public static void main(String[] arg) throws IOException {
-		log.debug( hash("") ); //d41d8cd98f00b204e9800998ecf8427e
-		log.debug( hash("a") ); //0cc175b9c0f1b6a831c399e269772661
-		log.debug( hash("abc") ); //900150983cd24fb0d6963f7d28e17f72
-
-		System.exit(0);
 	}
 }
