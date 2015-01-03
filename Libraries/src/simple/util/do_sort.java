@@ -3,6 +3,7 @@ package simple.util;
 import java.io.File;
 
 /**
+ * Not sure if I use these. Created as an assignment for a database management class.
  * <br>Created: Feb 13, 2008
  * @author Kenneth Pierce
  */
@@ -464,4 +465,5 @@ public final class do_sort {
 		}
 	}
 //	========= end msort ===============
+	private do_sort(){}
 }

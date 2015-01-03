@@ -17,7 +17,7 @@ import java.util.Vector;
  * @author Kenneth Pierce
  */
 public final class do_array {
-	protected do_array() {}
+	private do_array() {}
 	/**Converts an Enumeration into something use-able by a for-loop.
 	 * @param <E>
 	 * @param e The enumeration to convert

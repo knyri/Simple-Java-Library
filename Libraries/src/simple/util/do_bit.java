@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util;
 
@@ -48,4 +48,29 @@ public final class do_bit {
 	public static final boolean isSet(long options,byte mask){
 		return (options&mask)==mask;
 	}
+	public static final String toString(byte b){
+		char c[] = new char[8];
+		for(byte i=0;i<8;i++)
+			c[7-i] = (((b >> i)& 0x1) == 1)?'1':'0';
+		return new String(c);
+	}
+	public static final String toString(int b){
+		char c[] = new char[32];
+		for(byte i=0;i<32;i++)
+			c[31-i] = (((b >> i)& 0x1) == 1)?'1':'0';
+		return new String(c);
+	}
+	public static final String toString(short b){
+		char c[] = new char[16];
+		for(byte i=0;i<16;i++)
+			c[15-i] = (((b >> i)& 0x1) == 1)?'1':'0';
+		return new String(c);
+	}
+	public static final String toString(long b){
+		char c[] = new char[64];
+		for(byte i=0;i<64;i++)
+			c[63-i] = (((b >> i)& 0x1) == 1)?'1':'0';
+		return new String(c);
+	}
+	private do_bit(){}
 }

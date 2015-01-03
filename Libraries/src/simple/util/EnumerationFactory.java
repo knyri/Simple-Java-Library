@@ -6,7 +6,8 @@ package simple.util;
 import java.util.Enumeration;
 
 /**
- * Convenience factory for creating Enumerations
+ * Convenience factory for creating Enumerations.
+ * Mostly obsolete thanks to the new for.
  * @author Kenneth Pierce
  *
  */

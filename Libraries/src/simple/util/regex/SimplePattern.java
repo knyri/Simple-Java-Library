@@ -7,9 +7,11 @@ import java.util.regex.Pattern;
  * Main difference: a pattern of "*" will now match what ".*" can match.
  * <br>Created: 2004
  * @author KP
+ * @deprecated 2015-1-1
  */
+@Deprecated
 public class SimplePattern {
-	static char NULL = (char)0;
+	private final static char NULL = (char)0;
 	public static Pattern compile(String regex) throws Exception {
 		return Pattern.compile(parse(regex));
 	}
@@ -17,7 +19,7 @@ public class SimplePattern {
 		return Pattern.matches(parse(regex), test);
 	}
 	private static String parse(String regex) throws Exception {
-		StringBuffer buf = new StringBuffer(regex.length()+15);
+		StringBuilder buf = new StringBuilder(regex.length()+15);
 		char[] ca = regex.toCharArray();
 		char c = NULL;
 		char prev = NULL;

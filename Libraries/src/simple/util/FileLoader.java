@@ -14,6 +14,7 @@ import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
 /**A SwingWorker to load files in the background.
+ * TODO: Probably needs a rewrite
  * <br>Created: Feb 24, 2009
  * @author Kenneth Pierce
  * @see simple.gui.SwingWorkerProgressWindow

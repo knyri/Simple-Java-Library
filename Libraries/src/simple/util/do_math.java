@@ -53,4 +53,5 @@ public final class do_math {
 			ans *= n;
 		return ans;
 	}
+	private do_math(){}
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util;
 
@@ -11,11 +11,12 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 /**
+ * Used? 2015-1-1
  * <br>Created: Jun 19, 2008
  * @author Kenneth Pierce
  */
 public final class do_net {
-	protected do_net() {};
+	private do_net() {};
 	/**Converts the input stream to the appropriate inflater if needed.
 	 * @param con
 	 * @return an input stream

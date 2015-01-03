@@ -21,7 +21,7 @@ public final class do_str {
 	LINUX_LINE_ENDING = do_str.UNIX_LINE_ENDING,
 	MAC_LINE_ENDING = do_str.UNIX_LINE_ENDING,
 	WINDOWS_LINE_ENDING = "\r\n";
-	protected do_str() {}
+	private do_str() {}
 	/**Returns the indexOf if it does not equal -1 or the default value if it does.
 	 * This is for those situations where a -1 result is not optimal.
 	 * @param indexOf The result of an indexOf(..) or anything that returns -1 for failure.

@@ -4,22 +4,42 @@ package simple.util;
 do_gui's purpose is simply to make my life easier
 by doing repetative gui things for me.
 */
-import javax.swing.*;
-import javax.swing.border.*;
-import java.util.EventObject;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.net.URL;
-import java.util.HashMap;
 import java.io.File;
+import java.net.URL;
+import java.util.EventObject;
+import java.util.HashMap;
 
+import javax.swing.AbstractButton;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
 //import simple.debug;
 
 /**
@@ -36,10 +56,11 @@ import javax.swing.SwingUtilities;
  * <br>Created: 2004
  * @deprecated See description for replacement classes
  * @author Kenneth Pierce
- * @version 1.3 
+ * @version 1.3
  */
+@Deprecated
 public final class do_gui {
-	protected do_gui() {}
+	private do_gui() {}
 	/**
 	 * These are the message types and determines what icon will be displayed.
 	 * <ul>
@@ -104,7 +125,7 @@ public final class do_gui {
 	//Simple Y/N/C
 	/**
 	 * Displays a JOptionPane dialog box that asks a question and returns the user's selection.
-	 * 
+	 *
 	 * @param mess Question to be displayed.
 	 * @param title Title of the Dialog box.
 	 * @param mOptions One of {@link #moYN}, {@link #moOC}, {@link #moYNC}.
@@ -117,7 +138,7 @@ public final class do_gui {
 	/**
 	 * Displays a JOptionPane dialog box that displays a message.
 	 * Calls {@link javax.swing.JOptionPane#showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int)}.
-	 * 
+	 *
 	 * @param mess Message to be displayed.
 	 * @param title Title of the dialog box.
 	 * @param mType One of {@link simple.util.do_gui#mINF mINF},
@@ -132,7 +153,7 @@ public final class do_gui {
 	/**
 	 * Prompts the user for text input.
 	 * Calls (@link javax.swing.JOptionPane#showInputDialog(java.lang.Object, java.lang.Object)}.
-	 * 
+	 *
 	 * @param message Message to be displayed.
 	 * @param initValue Initial value of the text box.
 	 * @return Contents of the input box.
@@ -143,7 +164,7 @@ public final class do_gui {
 	/**
 	 * Prompts the used for text input.
 	 * Calls {@link javax.swing.JOptionPane#showInputDialog(java.lang.Object)}
-	 * 
+	 *
 	 * @param message Message to be displayed.
 	 * @return Contents of the input box.
 	 */
@@ -153,7 +174,7 @@ public final class do_gui {
 	//add titled borders
 	/**
 	 * Calls <code>JComponent.setBorder(new TitledBorder(new EmptyBorder(0,0,0,0),<var>title</var>))</code>.
-	 * 
+	 *
 	 * @param c JComponent to add the TitledBorder to.
 	 * @param title The title to be set.
 	 * @return The JComponent after setting a TitledBorder using an EmptyBorder and giving it title <var>title</var>.
@@ -173,6 +194,7 @@ public final class do_gui {
 	 * @see javax.swing.border.TitledBorder
 	 * @see javax.swing.BorderFactory
 	 */
+	@Deprecated
 	public static JComponent addTitledBorder (JComponent c, String title, byte borderType) {
 		Border b = null;
 		switch (borderType) {
@@ -192,13 +214,14 @@ public final class do_gui {
 	/**
 	 * Adds a border to any JComponent. It is recommended to wrap the JComponent
 	 * in a JPanel first.
-	 * 
+	 *
 	 * @param c JComponent to add the border to.
 	 * @param borderType One of {@link #EmptyBorder}, {@link #WhiteBorder}, {@link #BlackBorder}
 	 * @return <var>c</var> with a border.
 	 * @deprecated See {@link javax.swing.BorderFactory}
 	 * @see javax.swing.BorderFactory
 	 */
+	@Deprecated
 	public static JComponent addBorder (JComponent c, byte borderType) {
 		switch (borderType) {
 		case EmptyBorder:
@@ -214,11 +237,11 @@ public final class do_gui {
 		return c;
 	}
 	//create labeled panels
-	
+
 	/**
 	 * Used to create a preformatted JPanel with a JLabel bound to the left using a BorderLayout. Used by
 	 * {@link simple.forms.Form Form} to create the labeled text boxes.
-	 * 
+	 *
 	 * @param title Text to be displayed on the left.
 	 * @return A new JPanel with a JLabel on the left with <var>title</var> set as its text.
 	 */
@@ -230,7 +253,7 @@ public final class do_gui {
 	/**
 	 * Variant of {@link #makeLabeledPanel(String)}. Lets you decide whether
 	 * the text is displayed on the left or the right.
-	 * 
+	 *
 	 * @param title Text to be displayed.
 	 * @param orient One of {@link #LEFT} or {@link #RIGHT}.
 	 * @return A new JPanel with a JLabel at <var>orient</var> with <var>title</var> set as its text.
@@ -243,7 +266,7 @@ public final class do_gui {
 	/**
 	 * Extended version of {@link #makeLabeledPanel(String)}.<br>
 	 * Creates new JPanel and adds a JLabel on the left with text <var>title</var> and the JComponent <var>c</var>.
-	 * 
+	 *
 	 * @param c JComonent to be added.
 	 * @param title Text to be displayed on the left.
 	 * @return The created JPanel.
@@ -256,7 +279,7 @@ public final class do_gui {
 	}
 	/**
 	 * Creates new JPanel and adds a JLabel on the left with text <var>title</var> and the JComponent <var>c</var>.
-	 *  
+	 *
 	 * @param c JComponent to be added.
 	 * @param title Text to be displayed on the left.
 	 * @return The created JPanel.
@@ -271,7 +294,7 @@ public final class do_gui {
 	 * Extended version of {@link #makeLabeledPanel(String, String)}.
 	 * Variant of {@link #makeLabeledPanel(JComponent, String)}.
 	 * Allows you to set the orient of the JLabel.
-	 * 
+	 *
 	 * @param c JComponent to be added.
 	 * @param title Text to be displayed.
 	 * @param orient One of {@link #LEFT} or {@link #RIGHT}.
@@ -286,7 +309,7 @@ public final class do_gui {
 	/**
 	 * Variant of {@link #makeLabeledPanel2(JComponent, String)}.
 	 * Extended version of (@link #getLabeledPanel2(JComponent, String)}.
-	 * 
+	 *
 	 * @param c JComponent to be added.
 	 * @param title Text to be displayed.
 	 * @param orient
@@ -300,13 +323,13 @@ public final class do_gui {
 		} else {
 			return makeLabeledPanel2(c, title);
 		}
-		
+
 		return tmp;
 	}
 	//create titled panels
 	/**
 	 * Creates an empty JPanel with a TitledBorder.
-	 * 
+	 *
 	 * @param title Title to be displayed.
 	 * @return An empty JPanel with a TitledBorder.
 	 */
@@ -317,7 +340,7 @@ public final class do_gui {
 	}
 	/**
 	 * Variant of {@link #addTitledBorder(JComponent, String)}.
-	 * 
+	 *
 	 * @param c JComponent to be added.
 	 * @param title Title to be displayed.
 	 * @return A JPanel with a TitledBorder and <var>c</var> added to it.
@@ -330,7 +353,7 @@ public final class do_gui {
 	}
 	/**
 	 * Variant of {@link #makeTitledPanel(JComponent, String)}.
-	 * 
+	 *
 	 * @param c Array of JComponents to be added.
 	 * @param title Title to be displayed.
 	 * @return The resulting JPanel.
@@ -345,7 +368,7 @@ public final class do_gui {
 	}
 	/**
 	 * Creates an empty JPanel with a TitledBorder and sets the LayoutManager to <var>m</var>.
-	 * 
+	 *
 	 * @param title Title to be displayed.
 	 * @param m LayoutManager to use.
 	 * @return The resulting JPanel.
@@ -373,7 +396,7 @@ public final class do_gui {
 	/**
 	 * Creates a JPanel with BoxLayout as its LayoutManager. Adds a
 	 * TitledBorder to the JPanel and adds each element of <var>c</var>.
-	 * 
+	 *
 	 * @param c Array of JComponents to be added.
 	 * @param title Title to be displayed.
 	 * @param axis One of (@link javax.swing.BoxLayout#PAGE_AXIS}, (@link javax.swing.BoxLayout#X_AXIS}, (@link javax.swing.BoxLayout#Y_AXIS}, (@link javax.swing.BoxLayout#PAGE_AXIS}.
@@ -392,7 +415,7 @@ public final class do_gui {
 	}
 	/**
 	 * Creates a JPanel and adds components on the X_AXIS(Horizontal).
-	 * 
+	 *
 	 * @param c Array of JComponents to be added.
 	 * @return BoxLayout JPanel with JComponents on the X_AXIS.
 	 * @see javax.swing.BoxLayout
@@ -404,10 +427,10 @@ public final class do_gui {
 		}
 		return tmp;
 	}
-	
+
 	/**
 	 * Creates a JPanel and adds components on the Y_AXIS(Vertical).
-	 * 
+	 *
 	 * @param c Array of JComponents to be added.
 	 * @return BoxLayout JPanel with JComponents on the Y_AXIS.
 	 * @see javax.swing.BoxLayout
@@ -422,7 +445,7 @@ public final class do_gui {
 	/**
 	 * Creates a JPanel with a BoxLayout manager that aligns<br>
 	 * added components on the Y_AXIS(Vertical).
-	 * 
+	 *
 	 * @return BoxLayout JPanel with vertical alignment.
 	 * @see javax.swing.BoxLayout
 	 */
@@ -432,21 +455,21 @@ public final class do_gui {
 	/**
 	 * Creates a JPanel with a BoxLayout manager that aligns<br>
 	 * added components on the X_AXIS(Horizontal).
-	 * 
+	 *
 	 * @return BoxLayout JPanel with horizontal alignment.
 	 * @see javax.swing.BoxLayout
 	 */
 	public static JPanel makeBoxLayoutPanelX() {
 		return makeBoxLayoutPanel(X_AXIS);
 	}
-	
+
 	public static JPanel makeBoxLayoutPanel(int axis) {
 		return makeBoxLayoutPanel(null, axis);
 	}
 	/**
 	 * Applies a BoxLayout manager that aligns<br>
 	 * added components on the Y_AXIS(Vertical).
-	 * 
+	 *
 	 * @param panel The JPanel to apply this to.
 	 * @return BoxLayout JPanel with vertical alignment.
 	 * @see javax.swing.BoxLayout
@@ -457,7 +480,7 @@ public final class do_gui {
 	/**
 	 * Applies a BoxLayout manager that aligns<br>
 	 * added components on the X_AXIS(Horizontal).
-	 * 
+	 *
 	 * @param panel The JPanel to apply this to.
 	 * @return BoxLayout JPanel with horizontal alignment.
 	 * @see javax.swing.BoxLayout
@@ -465,7 +488,7 @@ public final class do_gui {
 	public static JPanel makeBoxLayoutPanelX(JPanel panel) {
 		return makeBoxLayoutPanel(panel, X_AXIS);
 	}
-	
+
 	public static JPanel makeBoxLayoutPanel(JPanel panel, int axis) {
 		if (panel == null) {
 			panel = new JPanel();
@@ -525,7 +548,7 @@ public final class do_gui {
 	//simple JPanel wrappers
 	/**
 	 * Useful to avoid the nasty effects of BoxLayout and GridLayout on preferred sizes.
-	 * 
+	 *
 	 * @param c
 	 * @return <var>c</var> in a JPanel.
 	 */
@@ -548,7 +571,7 @@ public final class do_gui {
 	}
 	/**
 	 * Creates a JPanel with GridLayout <var>m</var> and adds the elements of <var>c</var>.
-	 * 
+	 *
 	 * @param c Array of JComponents to be added.
 	 * @param m GridLayout to be used.
 	 * @return The resulting JPanel.
@@ -563,7 +586,7 @@ public final class do_gui {
 	/**
 	 * Creates a JPanel with a LayoutManager of GridLayout with the specified number of columns and rows
 	 * and adds the items of c to the JPanel.
-	 * @param c Array of JComponents to add to the JPanel 
+	 * @param c Array of JComponents to add to the JPanel
 	 * @param cols Number of columns
 	 * @param rows Number of rows.
 	 * @return A JPanel with a GridLayout.
@@ -574,7 +597,7 @@ public final class do_gui {
 	/**
 	 * Mainly useful for GridBagLayout.<br>
 	 * c.length must equal args.length.
-	 * 
+	 *
 	 * @param c Array of JComponents to be added.
 	 * @param m LayoutManager to use.
 	 * @param args Arguments to use when adding elements in <var>c</var>.
@@ -592,7 +615,7 @@ public final class do_gui {
 	//JButton creation
 	/**
 	 * Creates a JButton with common properties already set.
-	 * 
+	 *
 	 * @param display The text to be displayed on the button.
 	 * @param actionCommand The action command to be set with JButton.setActionCommand(String)
 	 * @return JButton with text <var>display</var> and actionCommand <var>actionCommand</var>
@@ -605,7 +628,7 @@ public final class do_gui {
 	}
 	/**
 	 * Creates a JButton with common properties already set.
-	 * 
+	 *
 	 * @param display The text to be displayed on the button.
 	 * @param actionCommand The action command to be set with JButton.setActionCommand(String)
 	 * @param al ActionListener to be added to the resulting JButton.
@@ -634,7 +657,7 @@ public final class do_gui {
 	}
 	/**
 	 * Retrieves the set action command from an EventObject if it is an AbstractButton or subclass.
-	 * 
+	 *
 	 * @param e EventObject trigger.
 	 * @return if e.getSource() instanceof AbstractButton then AbstractButton.getActionCommand()<br>
 	 * 		null otherwise.
@@ -646,7 +669,7 @@ public final class do_gui {
 	//Jframes
 	/**
 	 * Creates a default JFrame of size 300x300 that exits when closed.
-	 * 
+	 *
 	 * @return An empty JFrame of size 300x300 that exits when closed.
 	 */
 	public static JFrame makeDefaultJFrame() {
@@ -657,7 +680,7 @@ public final class do_gui {
 	}
 	/**
 	 * Calls {@link #makeDefaultJFrame()} and sets the title.
-	 * 
+	 *
 	 * @param title Title for the frame.
 	 * @return An empty JFrame with a set title that exits when closed.
 	 */
@@ -668,7 +691,7 @@ public final class do_gui {
 	}
 	/**
 	 * Sets up a frame and displays it.
-	 * 
+	 *
 	 * Calls the following methods on <var>frame</var>:<br>
 	 * <code>
 	 * frame.pack();<br>
@@ -691,11 +714,11 @@ public final class do_gui {
 		return frame;
 	}
 //------------------------------------------------------------------------------------------------
-	private static JFileChooser mDirChoose   = null;    
+	private static JFileChooser mDirChoose   = null;
     private static JFileChooser mFileChoose  = null;
-    
+
     private final static HashMap<String, ImageIcon> ICON_CACHE = new HashMap<String, ImageIcon>();
-    
+
     /**
      * Creates an image icon. Sucessful image loads are cached in a HaspMap.
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
@@ -703,15 +726,15 @@ public final class do_gui {
      * @return An ImageIcon of the image or null if it was not found.
      */
     public static ImageIcon createImageIcon(String imgResource) {
-        
+
         synchronized(ICON_CACHE) {
-            
+
             // already cached
-            ImageIcon icon = (ImageIcon)ICON_CACHE.get(imgResource);
+            ImageIcon icon = ICON_CACHE.get(imgResource);
             if(icon != null) {
                 return icon;
             }
-            
+
             // load image
             URL imgUrl = do_gui.class.getClassLoader().getResource(imgResource);
             if(imgUrl != null) {
@@ -721,12 +744,12 @@ public final class do_gui {
                 catch(Exception ex) {
                 }
             }
-            
+
             // cache the loaded image
             if(icon != null) {
                 ICON_CACHE.put(imgResource, icon);
             }
-            
+
             return icon;
         }
     }
@@ -761,12 +784,12 @@ public final class do_gui {
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param comp Component to start with.
      * @return Component that has no parent.
-     */    
+     */
     public static Component getTopFrame(Component comp) {
         Component frameComp = comp;
         while( (frameComp != null) && !(frameComp instanceof java.awt.Frame) ) {
             frameComp = frameComp.getParent();
-        }        
+        }
         return frameComp;
     }
     /**
@@ -848,13 +871,13 @@ public final class do_gui {
      * @return True is yes, false if no or closed with no selection.
      */
     public static boolean getConfirmation(Component parent, String str) {
-        int res = JOptionPane.showConfirmDialog(parent, 
+        int res = JOptionPane.showConfirmDialog(parent,
                                                 str,
                                                 "Confirmation",
-                                                JOptionPane.YES_NO_OPTION, 
-                                                JOptionPane.QUESTION_MESSAGE 
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE
                                                );
-        return(res == JOptionPane.YES_OPTION); 
+        return(res == JOptionPane.YES_OPTION);
     }
     /**
      * Opens a JFileChooser and returns the result.
@@ -927,7 +950,7 @@ public final class do_gui {
      * Adapted from code by <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param parent Component to center on.
      * @return String of the directory path or null if nothing was selected or box closed abnormally.
-     */  
+     */
     public static File getDirName(Component parent) {
 
         if (mDirChoose == null) {
@@ -949,7 +972,7 @@ public final class do_gui {
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param parent Component to center on.
      * @return String of the directory path or null if nothing was selected.
-     */  
+     */
     public static File[] getDirNames(Component parent) {
 
         if (mDirChoose == null) {
