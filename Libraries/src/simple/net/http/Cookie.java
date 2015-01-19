@@ -6,7 +6,8 @@ package simple.net.http;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 import simple.CIString;
 import simple.util.App;
@@ -36,7 +37,7 @@ public class Cookie {
 	public void unsetFlag(final int flag) {
 		flags ^= flag;
 	}
-	public static Vector<Cookie> parse(String cookie) {
+	public static List<Cookie> parse(String cookie) {
 		//max-age: in seconds
 		//commentURL must be in quotes
 		//port list must be in quotes, comma separated
@@ -47,7 +48,7 @@ public class Cookie {
 		if (cookie.startsWith("Set-Cookie:")) {
 			cookie = cookie.substring(11);
 		}
-		final Vector<Cookie> cookies = new Vector<Cookie>();
+		final List<Cookie> cookies = new LinkedList<Cookie>();
 		final DateFormat df = DateFormat.getDateInstance();
 		while (end!=-1 && end!=cookie.length()) {
 			beg = end;
@@ -113,7 +114,7 @@ public class Cookie {
 			cookies.add(cTmp);
 			beg = end = semi+1;
 		}//end while
-		return null;
+		return cookies;
 	}
 	public void setName(final String name) {
 		this.name = new CIString(name);

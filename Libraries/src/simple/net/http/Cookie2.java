@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package simple.net.http;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 import simple.util.do_str;
 import simple.util.logging.Log;
@@ -23,7 +24,7 @@ public class Cookie2 extends Cookie {
 	private String port;
 	public static final int F_DISCARD = 1, F_HTTPONLY = 4;
 	public Cookie2() {}
-	public static Vector<Cookie> parse(String cookie) {
+	public static List<Cookie> parse(String cookie) {
 		//max-age: in seconds
 		//commentURL must be in quotes
 		//port list must be in quotes, comma separated
@@ -34,7 +35,7 @@ public class Cookie2 extends Cookie {
 		if (cookie.startsWith("Set-Cookie2:")) {
 			cookie = cookie.substring(11);
 		}
-		Vector<Cookie2> cookies = new Vector<Cookie2>();
+		List<Cookie> cookies = new LinkedList<Cookie>();
 		DateFormat df = DateFormat.getDateInstance();
 		while (end!=-1 && end!=cookie.length()) {
 			beg = end;
@@ -47,7 +48,7 @@ public class Cookie2 extends Cookie {
 				semi = cookie.indexOf(';',beg+1);
 				if (semi>comma) semi = comma;
 				else if (semi==-1) semi = cookie.length();//semi is always the absolute end
-				
+
 				end = cookie.indexOf('=');
 				if (end==-1) {
 					name = cookie.trim();
@@ -100,7 +101,7 @@ public class Cookie2 extends Cookie {
 			cookies.add(cTmp);
 			beg = end = semi+1;
 		}//end while
-		return null;
+		return cookies;
 	}
 	public void setCommentUrl(String commenturl) {
 		this.commenturl = commenturl;
@@ -114,9 +115,11 @@ public class Cookie2 extends Cookie {
 	public String getPort() {
 		return port;
 	}
+	@Override
 	public String toString() {
 		return toResponseString();
 	}
+	@Override
 	public String toRequestString() {
 		StringBuilder ret = new StringBuilder("$Version="+getVersion()+";"+getName()+"=\""+getValue()+'"');
 		if (getPath()!=null) { ret.append(";$Path=\""+getPath()+'"'); }
@@ -124,6 +127,7 @@ public class Cookie2 extends Cookie {
 		if (getPort()!=null) { ret.append("$Port=\""+getPort()+'"'); }
 		return ret.toString();
 	}
+	@Override
 	public String toResponseString() {
 		StringBuilder ret = new StringBuilder(getName()+"=\""+getValue()+'"');
 		if (getComment()!=null) { ret.append(";Comment=\""+getComment()+'"'); }
