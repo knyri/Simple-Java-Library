@@ -3,11 +3,15 @@
  */
 package simple.net.http;
 
-import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -30,17 +34,16 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
-import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
 
+import simple.io.FileUtil;
 import simple.net.Uri;
 import simple.net.http.clientparams.ClientParam;
 import simple.util.logging.Log;
@@ -54,9 +57,11 @@ import simple.util.logging.LogFactory;
  */
 public final class Client{
 	private static final Log log=LogFactory.getLogFor(Client.class);
-	private final HashMap<String,DefaultHttpClient> cache=new HashMap<String,DefaultHttpClient>();
-	private final BasicCookieStore cookies=new BasicCookieStore();
+	// Needed anymore?
+	//private final HashMap<String,DefaultHttpClient> cache=new HashMap<String,DefaultHttpClient>();
+	private BasicCookieStore cookies=new BasicCookieStore();
 	private final HttpHost proxy;
+	private final CloseableHttpClient client;
 	public static final Header[] defaults=new Header[]{
 		new BasicHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 		,new BasicHeader("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.3")
@@ -64,66 +69,6 @@ public final class Client{
 		,new BasicHeader("Accept-Language","en-US,en;q=0.8")
 	};
 	public static final String FORMAT_URLENCODED="application/x-www-form-urlencoded",FORMAT_FORMDATA="multipart/form-data";
-	/**
-	 * The last response
-	 */
-	private HttpResponse response=null;
-	public Header[] getHeader(String header){
-		return response.getHeaders(header);
-	}
-	public HttpEntity getResponseEntity(){
-		return response.getEntity();
-	}
-	private DefaultHttpClient getClient(Uri uri){
-		DefaultHttpClient client=cache.get(uri.getHost());
-		if(client==null){
-			client=new DefaultHttpClient();
-			if(proxy!=null)
-				client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,proxy);
-			/*else{
-				ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
-				        client.getConnectionManager().getSchemeRegistry(),
-				        ProxySelector.getDefault());
-				client.setRoutePlanner(routePlanner);
-			}*/
-			client.setCookieStore(cookies);
-			client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
-			client.getParams().setIntParameter("http.socket.timeout",15000);
-			client.setHttpRequestRetryHandler(RetryHandler);
-			client.addRequestInterceptor(new HttpRequestInterceptor(){
-				@Override
-				public void process(final HttpRequest request,final HttpContext context) throws HttpException,IOException{
-					if(!request.containsHeader("Accept-Encoding")){
-						request.addHeader("Accept-Encoding","gzip,deflate");
-					}
-				}
-			});
-			client.addResponseInterceptor(new HttpResponseInterceptor(){
-				@Override
-				public void process(final HttpResponse response,final HttpContext context) throws HttpException,IOException{
-					HttpEntity entity=response.getEntity();
-					Header ceheader=entity.getContentEncoding();
-					if(ceheader!=null){
-						HeaderElement[] codecs=ceheader.getElements();
-						log.debug("Codecs",codecs);
-						for(int i=0;i<codecs.length;i++){
-							if(codecs[i].getName().equalsIgnoreCase("gzip")){
-								response.setEntity(new GzipDecompressingEntity(response.getEntity()));
-								log.debug("Content-Encoding","GZIP");
-								return;
-							}else if(codecs[i].getName().equalsIgnoreCase("deflate")){
-								response.setEntity(new DeflaterDecompressingEntity(response.getEntity()));
-								log.debug("Content-Encoding","DEFLATE");
-								return;
-							}
-						}
-					}
-				}
-			});
-			cache.put(uri.getHost(),client);
-		}
-		return client;
-	}
 	public void addCookie(org.apache.http.cookie.Cookie cookie){
 		cookies.addCookie(cookie);
 	}
@@ -133,14 +78,24 @@ public final class Client{
 	public BasicCookieStore getCookieStore(){
 		return cookies;
 	}
+	public void saveCookies(File destination) throws FileNotFoundException, IOException{
+		FileUtil.createFile(destination);
+		ObjectOutputStream oos= new ObjectOutputStream(new FileOutputStream(destination));
+		oos.writeObject(cookies);
+		oos.close();
+	}
+	public void loadCookies(File source) throws FileNotFoundException, IOException, ClassNotFoundException{
+		ObjectInputStream ois= new ObjectInputStream(new FileInputStream(source));
+		cookies= (BasicCookieStore)ois.readObject();
+		ois.close();
+	}
 	public HttpResponse get(Uri uri,Header[] headers) throws ClientProtocolException, IOException{
 		return get(uri,headers,null);
 	}
 	public HttpResponse get(Uri uri,Header[] headers,HttpContext context) throws ClientProtocolException, IOException{
-		DefaultHttpClient client=getClient(uri);
 		HttpGet req=new HttpGet(uri.toString());
-		log.debug(client.getCookieStore().getCookies().toArray());
 		req.setHeaders(defaults);
+		HttpResponse response;
 		if(headers!=null){
 			for(Header header:headers)
 				req.setHeader(header);
@@ -163,9 +118,10 @@ public final class Client{
 		return get(uri,null,null);
 	}
 	public HttpResponse post(Uri uri,Header[] headers,ClientParam[] data,String format,HttpContext context) throws ClientProtocolException, IOException{
-		DefaultHttpClient client=getClient(uri);
 		HttpPost req=new HttpPost(uri.toString());
+		HttpResponse response;
 		req.setHeaders(defaults);
+		// I assume this is proper enough
 		String boundary=Integer.toHexString(uri.hashCode());
 		if(headers!=null){
 			for(Header header:headers)
@@ -186,16 +142,14 @@ public final class Client{
 			response=client.execute(req,context);
 		log.debug("Request",req.getRequestLine().toString());
 		log.debug("Request",req.getAllHeaders());
-		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
+			// redirection
 			Header location=response.getFirstHeader("Location");
 			log.debug("Redirect",uri+" --TO-- "+location);
 			if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,format,context);
 		}
 		log.debug("Response",response);
 		return response;
-	}
-	public BufferedInputStream getInputStream() throws IllegalStateException,IOException{
-		return new BufferedInputStream(response.getEntity().getContent());
 	}
 	private static final HttpRequestRetryHandler RetryHandler=new HttpRequestRetryHandler(){
 		@Override
@@ -212,7 +166,7 @@ public final class Client{
 				// Do not retry on SSL handshake exception
 				return false;
 			}
-			HttpRequest request=(HttpRequest)context.getAttribute(ExecutionContext.HTTP_REQUEST);
+			HttpRequest request=(HttpRequest)context.getAttribute(HttpCoreContext.HTTP_REQUEST);
 			boolean idempotent=!(request instanceof HttpEntityEnclosingRequest);
 			if(idempotent){
 				// Retry if the request is considered idempotent
@@ -223,18 +177,56 @@ public final class Client{
 	};
 	public Client(String ProxyHost,int ProxyPort){
 		proxy = new HttpHost(ProxyHost,ProxyPort);
+		client=init().build();
 	}
 	public Client(){
 		proxy=null;
-		/*
-		try{
-			//TODO: add persistent cookie cache
-			File cookies = App.getResourceAsFile("cookie.cache",getClass());
-		}catch(FileNotFoundException e){
-			//log.error(e);
-			//e.printStackTrace();
-		}//*/
+		client=init().build();
+	}
+	/**
+	 * Initializes the connection builder
+	 */
+	private HttpClientBuilder init(){
+		HttpClientBuilder conBuilder= HttpClientBuilder.create();
+		// Let the server know we want compressed if available
+		conBuilder.addInterceptorFirst(
+			new HttpRequestInterceptor(){
+				@Override
+				public void process(final HttpRequest request,final HttpContext context) throws HttpException,IOException{
+					if(!request.containsHeader("Accept-Encoding")){
+						request.addHeader("Accept-Encoding","gzip,deflate");
+					}
+				}
+			});
+		// Expand if compressed
+		conBuilder.addInterceptorFirst(new HttpResponseInterceptor(){
+				@Override
+				public void process(final HttpResponse response,final HttpContext context) throws HttpException,IOException{
+					HttpEntity entity=response.getEntity();
+					Header ceheader=entity.getContentEncoding();
+					if(ceheader!=null){
+						HeaderElement[] codecs=ceheader.getElements();
+						log.debug("Codecs",codecs);
+						for(int i=0;i<codecs.length;i++){
+							if(codecs[i].getName().equalsIgnoreCase("gzip")){
+								response.setEntity(new GzipDecompressingEntity(response.getEntity()));
+								log.debug("Content-Encoding","GZIP");
+								return;
+							}else if(codecs[i].getName().equalsIgnoreCase("deflate")){
+								response.setEntity(new DeflaterDecompressingEntity(response.getEntity()));
+								log.debug("Content-Encoding","DEFLATE");
+								return;
+							}
+						}
+					}
+				}
+			});
+		// set the proxy host
+		if(proxy != null)
+			conBuilder.setProxy(proxy);
+		conBuilder.setRetryHandler(RetryHandler);
 
+		return conBuilder;
 	}
 	public void addCookies(List<Cookie> cookies2) {
 		for(Cookie cookie:cookies2){
