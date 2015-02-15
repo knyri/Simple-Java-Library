@@ -45,7 +45,7 @@ public final class do_bit {
 	public static final long toggle(long options,long mask){
 		return (options^mask);
 	}
-	public static final boolean isSet(long options,byte mask){
+	public static final boolean isSet(long options,long mask){
 		return (options&mask)==mask;
 	}
 	public static final String toString(byte b){
