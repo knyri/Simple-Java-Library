@@ -121,13 +121,26 @@ public class InlineLooseParser {
 				buf.setLength(0);
 				continue;
 			}
-			if(buf.length()<2)break;//hmm, can't remember why I did this...
+			// rare case where < is the last character?
+			if(buf.length()<2)break;
+			log.debug("buf",buf);
+			if(buf.charAt(1)=='?'){
+				if (!buf.substring(buf.length()-2).equals("?>"))
+					buf.append(RWUtil.readUntil(bin,"?>"));
+				if (cur != null) {
+					cur.addChild(new Tag(Tag.CDATA, buf.toString(), true));
+				} else {
+					page.addTag(new Tag(Tag.CDATA, buf.toString(), true), null);
+				}
+				buf.setLength(0);
+				continue;
+			}
 			if (buf.charAt(1)=='!'){
 				// <!DOCTYPE
 				if (buf.length()>9){
 					final String ttmp=buf.substring(0,9);
 					if(ttmp.equals("<!CDATA[[")){//NOTE: SGML CDATA
-						if (!buf.substring(buf.length()-4).equals("]]>")) {
+						if (!buf.substring(buf.length()-3).equals("]]>")) {
 							buf.append(RWUtil.readUntil(bin,"]]>"));
 						}
 //						log.debug("SGML CDATA");
@@ -147,19 +160,17 @@ public class InlineLooseParser {
 				}
 			}
 			if (buf.charAt(pos.start+1)=='/') {//NOTE: found an end tag
-//				log.debug(pos);
 				pos.end = do_str.indexOfAny(buf, ">", pos.start);
 				if (!pos.validEnd() || do_str.isWhiteSpace(buf.charAt(pos.end)))
 					throw new ParseException("Missing matching '>' for '<' at index "+pos.start+" of "+buf, pos.start);
 				final String name = buf.substring(pos.start+2, pos.end).trim();
-//				log.debug("End tag", "'"+name+"'|"+pos);
 				if (cur != null) {
 					//end the tags whose end tags are optional
 					while (!cur.getName().equals(name) && pconst.isOptionalEnder(cur.getName())) {
 //						log.debug("optional ender","ended: '"+cur.getName()+"'");
 						cur = (Tag) cur.getParent();
 					}
-//					log.debug("current: '"+cur.getName()+"'");
+					log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
 					if (cur.getName().equals(name)) {
 						cur = (Tag) cur.getParent();
 //						log.debug("ended: '"+name+"' current: '"+(cur!=null?cur.getName():"[NONE]")+"'");
@@ -182,7 +193,7 @@ public class InlineLooseParser {
 						if (!found){
 							log.warning("Missing opening tag for closing tag "
 									+buf.subSequence(pos.start, pos.end+1)
-									+" found at "+pos);
+									+" found at "+pos+". Current tag: "+cur.getName());
 							//if (cur!=null)
 							//	log.information("current(after closing): "+cur.getName());
 						}
@@ -367,13 +378,13 @@ public class InlineLooseParser {
 		pos.end = do_str.indexOf(src, ' ', pos.start, limits.end);
 		if (!pos.validEnd()) {//no space so no attributes.
 			if (tag.isSelfClosing())
-				tag.setName(src.subSequence(limits.start+1, limits.end-1).toString());
+				tag.setName(src.subSequence(limits.start+1, limits.end-1).toString().trim());
 			else
-				tag.setName(src.subSequence(limits.start+1, limits.end).toString());
+				tag.setName(src.subSequence(limits.start+1, limits.end).toString().trim());
 
 			return tag;
 		}
-		tag.setName(src.subSequence(limits.start+1, pos.end).toString());
+		tag.setName(src.subSequence(limits.start+1, pos.end).toString().trim());
 		String attrn = "";
 		while (true) {
 			pos.start = pos.end+1;
@@ -382,7 +393,7 @@ public class InlineLooseParser {
 			if (!pos.validEnd())
 				break;
 
-			attrn = src.subSequence(pos.start, pos.end).toString();
+			attrn = src.subSequence(pos.start, pos.end).toString().trim();
 			try {
 				if (src.charAt(pos.end)=='=') {//distinguish between name=value and name
 					pos.start = pos.end = pos.end+1;

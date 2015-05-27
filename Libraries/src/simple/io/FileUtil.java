@@ -5,6 +5,7 @@ package simple.io;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -372,6 +373,29 @@ public final class FileUtil{
 						tmp.addAll(getFiles(cur, true));
 					}
 				} else {
+					tmp.add(cur);
+				}
+			}
+		}
+		return tmp;
+	}
+	/**Adds all the files to a giant vector. Can add them recursively.
+	 * NOTE: will not add directories. Might add symbolic links.
+	 * @param start Directory to start in.
+	 * @param filter
+	 * @param recursive Whether or not to add files of sub-directories.
+	 * @return A vector containing all the files.
+	 */
+	public static List<File> getFiles(File start, FileFilter filter, boolean recursive) {
+		if (!start.isDirectory()) {return null;}
+		List<File> tmp = new LinkedList<File>();
+		if (start.listFiles()!=null) {
+			for (File cur : start.listFiles()) {
+				if (cur.isDirectory()) {
+					if (recursive) {
+						tmp.addAll(getFiles(cur, filter, true));
+					}
+				} else if(filter.accept(cur)) {
 					tmp.add(cur);
 				}
 			}
