@@ -13,6 +13,7 @@ import simple.util.logging.LogFactory;
 
 /**tag.tag.tag;number<br>
  * tag.tag.tag#attribute<br>
+ * Not thread safe.
  * <b>Do not add multiple roots of the same name!</b> If you need to do so, make
  * a dummy root node and add them there.
  * <hr>
@@ -38,7 +39,9 @@ public class Page implements Iterable<Tag> {
 		if (where==null || where.isEmpty()) {roots.put(tag.getName().toString(), tag); return;}
 		getTag(where).addChild(tag);
 	}
-	/**Finds a tag using it's fully qualified name.<br>
+	/**
+	 * Finds a tag using it's fully qualified name.<br>
+	 * Does not depend on the tag cache.<br>
 	 * We have a document with this structure:<br>
 	 * html
 	 * <dl>
@@ -64,22 +67,30 @@ public class Page implements Iterable<Tag> {
 		}
 		return t;
 	}
-	/** Finds and returns all the tags with this name.
+	/**
+	 * Finds and returns all the tags with this name.<br>
+	 * Will be inaccurate if the cache is not rebuilt after
+	 * the page is modified.
 	 * @param name Name of the tags wanted.
 	 * @return A Vector containing the tags.
 	 */
 	public LinkedList<Tag> getTags(final String name) {
 		return cache.get(name);
 	}
-	/** Finds and returns all the tags with this name.
+	/**
+	 * Finds and returns all the tags with this name.<br>
+	 * Will be inaccurate if the cache is not rebuilt after
+	 * the page is modified.
 	 * @param name Name of the tags wanted.
 	 * @return A Vector containing the tags.
 	 */
 	public LinkedList<Tag> getTags(final CIString name) {
 		return cache.get(name);
 	}
-	/** Rebuilds the tag cache. Should be called after a full parsing of the
-	 * page */
+	/**
+	 * Rebuilds the tag cache. Should be called after a full parsing of the
+	 * page or after removing/adding children.
+	 */
 	public void rebuildCache() {
 		log.information("building tag cache");
 		cache.clear();
@@ -99,8 +110,7 @@ public class Page implements Iterable<Tag> {
 	 * @param tag
 	 */
 	private void addToCache(final Tag tag) {
-		if (tag.isSelfClosing()) return;
-		if (!tag.hasChild()) return;
+		if (tag.isSelfClosing() || !tag.hasChild()) return;
 		LinkedList<Tag> tmp;
 		for (final Tag child : tag) {
 			tmp = cache.get(child.getName());
@@ -113,22 +123,27 @@ public class Page implements Iterable<Tag> {
 			addToCache(child);
 		}
 	}
-	/**Recreates an equivalent to the original page. This will not be an exact
+	/**
+	 * Recreates an equivalent to the original page. This will not be an exact
 	 * duplication.
 	 * @return Source equivalent to the original.
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder buf = new StringBuilder(300);
+		final StringBuilder buf = new StringBuilder(2048);
 		for (final Tag tag : roots.values()) {
 			buf.append(tag.toString());
 			buf.append('\n');
 		}
 		return buf.toString();
 	}
+	/**
+	 * Generates the pretty print of the page.
+	 * @return
+	 */
 	public String formattedSource() {
-		final StringBuilder buf = new StringBuilder(300);
+		final StringBuilder buf = new StringBuilder(2048);
 		for (final Tag tag : roots.values()) {
 			buf.append(tag.toStringFormatted(0));
 			buf.append('\n');
