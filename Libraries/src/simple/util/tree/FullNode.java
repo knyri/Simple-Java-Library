@@ -78,23 +78,25 @@ public class FullNode<T, K, V> {
 	/**
 	 * Sets the contents of the node.
 	 * @param object Object to set as the contents.
+	 * @return this
 	 */
-	public final void setContent(T object) {	content = object;	}
+	public final FullNode<T,K,V> setContent(T object){content = object; return this;}
 	/**
-	 *
+	 * Contents of the Node. May be null.
 	 * @return The contents of the node.
 	 */
-	public final T getContent() {	return content;	}
+	public final T getContent() {return content;}
 
 	/**
 	 * Sets the name of the node.
 	 * @param name String to set as the Node's name.
+	 * @return this
 	 */
-	public final void setName(String name) {	nName=new CIString(name);	}
+	public final FullNode<T,K,V> setName(String name) {nName=new CIString(name);return this;}
 	/**
 	 * @return The name of this node.
 	 */
-	public final CIString getName() {	return nName;	}
+	public final CIString getName() {return nName;}
 
 	/**Sets the parent of this node. If it already has a parent then it calls
 	 * <code>removeChild(this)</code> on its parent before setting its parent
@@ -102,44 +104,45 @@ public class FullNode<T, K, V> {
 	 * <code><var>node</var>.hasChild(this)!=true</code>.<br>
 	 * This function sets the depth.
 	 * @param pnode Node to be set as the parent of this Node.
+	 * @return The old parent or null if pnode is already the parent
 	 */
-	public final void setParent(FullNode<T,K,V> pnode) {
-		if (parent==pnode) return;
+	public final FullNode<T,K,V> setParent(FullNode<T,K,V> pnode) {
+		if (parent==pnode) return null;
+		FullNode<T,K,V> oldp= parent;
 		//log.debug("moving "+getName()+" from "+getParent()+" to "+(node==null?null:node.getName()));
-		if (hasParent()) {
+		if (hasParent())
 			parent.removeChild(this);
-		}
+
 		if (pnode!=null) {
-			if (!pnode.hasChild(this)) {
+			if (!pnode.hasChild(this))
 				pnode.addChild(this);
-			}
-			depth = pnode.getDepth()+1;
+
+			depth= pnode.getDepth()+1;
 		} else {
-			depth = 0;
+			depth= 0;
 		}
 		parent=pnode;
+		return oldp;
 	}
 	/**
 	 * @return The result of <code>getParent()!=null</code>.
 	 */
-	public final boolean hasParent() {
-		return parent!=null;
-	}
+	public final boolean hasParent() {return parent != null;}
 	/**
 	 * @return The parent of this node.
 	 */
-	public final FullNode<T,K,V> getParent() {	return parent;	}
+	public final FullNode<T,K,V> getParent() {return parent;}
 	/**
 	 * Checks if it has a parent and returns the result.
 	 * Logical opposite of {@link #hasParent()}
 	 * @return True if it has no parent.
 	 */
-	public final boolean isRoot() {	return (parent==null);	}
+	public final boolean isRoot() {return parent==null;}
 	/**
 	 * Checks if it has any children.
 	 * @return True if it has one or more children.
 	 */
-	public final boolean hasChild() {	return !children.isEmpty();	}
+	public final boolean hasChild() {return !children.isEmpty();}
 	/**
 	 * @param child Node to test if it is a child.
 	 * @return True if the specified Node is a child of this node.
@@ -157,14 +160,16 @@ public class FullNode<T, K, V> {
 	/**
 	 * Adds a child Node and sets this as the node's parent. Does nothing if <code><var>node</var>==null</code>.
 	 * @param cnode Node to be added as a child.
+	 * @return this
 	 */
-	public final void addChild(FullNode<T,K,V> cnode) {
-		if (cnode==null) {	return;	}
+	public final FullNode<T,K,V> addChild(FullNode<T,K,V> cnode) {
+		if (cnode==null) return this;
 		synchronized(sync){
 			children.add(cnode);
 			cnode.setSiblingIndex(children.size()-1);
 			cnode.setParent(this);
 		}
+		return this;
 	}
 	/**
 	 * Gets a child at the index specified.
@@ -173,42 +178,49 @@ public class FullNode<T, K, V> {
 	 * out of the valid range(0&gt;= index &gt; childCount()).
 	 */
 	public final FullNode<T,K,V> getChild(int index) {
-		if (index>=children.size()||index<0) {	return null;	}
+		if (index >= children.size() || index < 0) return null;
 		return children.get(index);
 	}
 	/**
 	 * @return The number of children this node has.
 	 */
-	public final int childCount() {	return children.size();	}
+	public final int childCount() {return children.size();}
 
 	/**
 	 * Removes the specified Node from the list of children if it has any.
 	 * @param child Node to be removed.
+	 * @return this
 	 */
-	public void removeChild(FullNode<T,K,V> child) {
+	public FullNode<T,K,V> removeChild(FullNode<T,K,V> child) {
 		synchronized(sync){
-			removeChild(children.indexOf(child));
+			return removeChild(children.indexOf(child));
 		}
-		//children.remove(child);
-		//log.debug(getName()+" removing child "+child.getName());
 	}
 	/**
 	 * Removes the child Node at the specified index if getChild(index)!=null.
 	 * @param index Index of Node to be removed.
+	 * @return this
 	 */
-	public final void removeChild(int index) {
-		if (index<children.size()&&index>0){
+	public final FullNode<T,K,V> removeChild(int index) {
+		if (index < children.size() && index >= 0){
 			synchronized(sync){
 				children.remove(index).setSiblingIndex(-1).setParent(null);
 				for(;index<children.size();index++)
 					children.get(index).setSiblingIndex(index);
 			}
 		}
+		return this;
 	}
-	public final void removeAllChildren(){
+	/**
+	 * Removes all children.
+	 * @return this
+	 */
+	public final FullNode<T,K,V> removeAllChildren(){
 		synchronized(sync){
-			children.clear();
+			for(int index=0;index<children.size();index++)
+				children.pop().setSiblingIndex(-1).setParent(null);
 		}
+		return this;
 	}
 	/**
 	 * @param key The key for the value.
@@ -254,6 +266,10 @@ public class FullNode<T, K, V> {
 	public final void print(PrintStream out){
 		Util.print(this,out);
 	}
+	/**
+	 * @param index
+	 * @return this
+	 */
 	protected FullNode<T,K,V> setSiblingIndex(int index){
 		this.siblingIndex=index;
 		return this;
