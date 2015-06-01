@@ -6,6 +6,7 @@ package simple.ml;
 import java.util.Iterator;
 
 import simple.CIString;
+import simple.util.do_str;
 import simple.util.tree.FullNode;
 
 /**<hr>
@@ -74,7 +75,7 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 					getParent().addChild(children.remove(0));
 				}
 			}
-			children.clear();
+			removeAllChildren();
 		}
 	}
 	/** Finds the child by name. Children with the same name can be
@@ -162,7 +163,7 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 			buf.append(" "+key+"=\""+properties.get(key)+"\"");
 		}
 		if (isSelfClosing()) {
-			buf.append(" />");
+			buf.append("/>");
 			return buf.toString();
 		}
 		buf.append(">");
@@ -180,7 +181,7 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 			buf.append(" "+key+"=\""+properties.get(key)+"\"");
 		}
 		if (isSelfClosing()) {
-			buf.append(" />\n");
+			buf.append("/>\n");
 			return buf.toString();
 		}
 		buf.append(">\n");
@@ -195,25 +196,45 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
 		if (getName().equals(HTMLCOMM)) return getContent()+"\n";
 		final StringBuilder buf = new StringBuilder(300);
-		for (int j=0;j<depth;j++) {
-			buf.append('\t');
-		}
+		String tabs=do_str.repeat('\t', depth);
+		buf.append(tabs);
 		buf.append('<');
 		buf.append(getName());
 		for (final CIString key : properties.keySet()) {
 			buf.append(" "+key+"=\""+properties.get(key)+"\"");
 		}
 		if (isSelfClosing()) {
-			buf.append(" />\n");
+			buf.append("/>\n");
 			return buf.toString();
 		}
 		buf.append(">\n");
 		for (int i = 0 ; i < children.size(); i++) {
-			buf.append(((Tag)children.get(i)).toStringFormatted(depth+1));
+			buf.append(((Tag)children.get(i)).toStringFormatted(tabs+"\t"));
 		}
-		for (int j=0;j<depth;j++) {
-			buf.append('\t');
+		buf.append(tabs);
+		buf.append("</"+getName()+">\n");
+		return buf.toString();
+	}
+	protected String toStringFormatted(final String tabs){
+		if (getName().equals(CDATA) || getName().equals(META)) return getContent()+"\n";
+		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
+		if (getName().equals(HTMLCOMM)) return getContent()+"\n";
+		final StringBuilder buf = new StringBuilder(300);
+		buf.append(tabs);
+		buf.append('<');
+		buf.append(getName());
+		for (final CIString key : properties.keySet()) {
+			buf.append(" "+key+"=\""+properties.get(key)+"\"");
 		}
+		if (isSelfClosing()) {
+			buf.append("/>\n");
+			return buf.toString();
+		}
+		buf.append(">\n");
+		for (int i = 0 ; i < children.size(); i++) {
+			buf.append(((Tag)children.get(i)).toStringFormatted(tabs+"\t"));
+		}
+		buf.append(tabs);
 		buf.append("</"+getName()+">\n");
 		return buf.toString();
 	}
