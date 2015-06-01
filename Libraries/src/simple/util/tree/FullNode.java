@@ -172,6 +172,23 @@ public class FullNode<T, K, V> {
 		return this;
 	}
 	/**
+	 * Adds a child Node and sets this as the node's parent. Does nothing if <code><var>node</var>==null</code>.
+	 * @param cnode Node to be added as a child.
+	 * @return this
+	 */
+	public final FullNode<T,K,V> insertChild(FullNode<T,K,V> cnode, int index) {
+		if (cnode==null) return this;
+		if (index >= children.size() || index < 0) return this;
+		synchronized(sync){
+			children.add(index, cnode);
+			cnode.setSiblingIndex(index);
+			cnode.setParent(this);
+			for(;index<children.size();index++)
+				children.get(index).setSiblingIndex(index);
+		}
+		return this;
+	}
+	/**
 	 * Gets a child at the index specified.
 	 * @param index Index of the child wanted.
 	 * @return Child Node at specified index or null if it has no children or the index is
