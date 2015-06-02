@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.ml;
 
@@ -14,15 +14,13 @@ import java.util.HashSet;
 
 import simple.CIString;
 import simple.util.MVHashtable;
-import simple.util.logging.Log;
-import simple.util.logging.LogFactory;
 
 /**
  * <br>Created: Oct 23, 2010
  * @author Kenneth Pierce
  */
 public final class ParserConstants {
-	private static final Log log = LogFactory.getLogFor(ParserConstants.class);
+//	private static final Log log = LogFactory.getLogFor(ParserConstants.class);
 	private final HashSet<CIString> PCDATA = new HashSet<CIString>();
 	private final HashSet<CIString> SELFCLOSER = new HashSet<CIString>();
 	private final HashSet<CIString> OPTIONALEND = new HashSet<CIString>();
@@ -63,7 +61,7 @@ public final class ParserConstants {
 			src.append(buf, 0, read);
 		}
 		in.close();
-		final Page page = InlineLooseParser.parse(src,PCONST);
+		final Page page = InlineLooseParser.parse(src,PCONST, false);
 		String name;
 		for(final Tag tag : page) {
 			if (tag.getName().equals("pcdata")) {
@@ -83,7 +81,7 @@ public final class ParserConstants {
 	 * @param tag the tag name
 	 */
 	public void addOptionalEnder(final String tag) {
-		log.debug("Add Optional Ender",tag);
+//		log.debug("Add Optional Ender",tag);
 		OPTIONALEND.add(new CIString(tag));
 	}
 	/**Adds this tag as a tag that will close the optional end tag when it opens.
@@ -92,7 +90,7 @@ public final class ParserConstants {
 	 * @param etag The tag name that ends this tag
 	 */
 	public void addOptionalEnderEnd(final CIString otag, final CIString etag) {
-		log.debug("Add Option ender end",etag+" ends "+otag);
+//		log.debug("Add Option ender end",etag+" ends "+otag);
 		OPTIONALENDEND.add(otag, etag);
 	}
 	/**Adds this tag as a tag that will close the optional end tag when it opens.
@@ -101,21 +99,21 @@ public final class ParserConstants {
 	 * @param etag The tag name that ends this tag
 	 */
 	public void addOptionalEnderEnd(final String otag, final String etag) {
-		log.debug("Add Option ender end",etag+" ends "+otag);
+//		log.debug("Add Option ender end",etag+" ends "+otag);
 		OPTIONALENDEND.add(new CIString(otag), new CIString(etag));
 	}
 	/**Defines this tag as never having content or sub-tags. Tags like "br" and "hr" belong here.
 	 * @param tag The tag name
 	 */
 	public void addSelfCloser(final String tag) {
-		log.debug("Add self closer",tag);
+//		log.debug("Add self closer",tag);
 		SELFCLOSER.add(new CIString(tag));
 	}
 	/**Sets this tag as only containing PCDATA. Tags like "style" and "script" belong here.
 	 * @param tag
 	 */
 	public void addPcdataTag(final String tag) {
-		log.debug("Add PCDATA tag",tag);
+//		log.debug("Add PCDATA tag",tag);
 		PCDATA.add(new CIString(tag));
 	}
 	/**Checks to see if the end tag is optional for this tag.

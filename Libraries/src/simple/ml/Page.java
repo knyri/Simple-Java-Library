@@ -75,7 +75,7 @@ public class Page implements Iterable<Tag> {
 	 * @return A Vector containing the tags.
 	 */
 	public LinkedList<Tag> getTags(final String name) {
-		return cache.get(name);
+		return cache.get(new CIString(name));
 	}
 	/**
 	 * Finds and returns all the tags with this name.<br>
@@ -92,7 +92,7 @@ public class Page implements Iterable<Tag> {
 	 * page or after removing/adding children.
 	 */
 	public void rebuildCache() {
-		log.information("building tag cache");
+		log.debug("building tag cache");
 		cache.clear();
 		LinkedList<Tag> tmp;
 		for (final Tag tag : roots.values()) {
@@ -105,6 +105,7 @@ public class Page implements Iterable<Tag> {
 			//log.debug(tag.toStringTagOnly());
 			addToCache(tag);
 		}
+		log.debug("tag cache done");
 	}
 	/**Adds the children of this tag to the cache recursively.
 	 * @param tag

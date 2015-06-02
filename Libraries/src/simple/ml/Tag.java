@@ -52,7 +52,6 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 	public Tag(final String name, final Tag parent, final String content, final boolean selfClosing) {
 		super(name, parent, content);
 		this.selfClosing = selfClosing;
-		//log.debug("name:"+name+" ; parent:"+(parent==null?null:parent.getName())+" ; content:"+content+" ; self closing:"+selfClosing);
 	}
 	public Tag(final boolean selfClosing) {
 		this("", null, null, selfClosing);

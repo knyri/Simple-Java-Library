@@ -32,13 +32,35 @@ import simple.util.logging.LogLevel;
  */
 public class InlineLooseParser {
 	protected static final Log log = LogFactory.getLogFor(InlineLooseParser.class);
+
+	public static Page parse(final CharSequence src) throws ParseException, IOException {
+		return parse(src, new ParserConstants(), true);
+	}
 	/** See {@link #parse(CharSequence, ParserConstants)} for important notes.
 	 * @param src The text.
+	 * @param buildCache wether or not to build the tag cache
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @throws ParseException
 	 */
-	public static Page parse(final CharSequence src) throws ParseException, IOException {
-		return parse(src, new ParserConstants());
+	public static Page parse(final CharSequence src, boolean buildCache) throws ParseException, IOException {
+		return parse(src, new ParserConstants(), buildCache);
+	}
+	public static Page parse(final CharSequence src, final ParserConstants pconst) throws ParseException, IOException {
+		return parse(new StringReader(src.toString()),pconst, true);
+	}
+	/** Parses the text.
+	 * NOTE: the plain text of a tag is added as a sub-tag with the name "CDATA".
+	 * You can also use Tag.CDATA for the reference.
+	 * This is done since the CDATA could be split by a sub-tag.(e.g. [p] text [span]text[/span] text [/p])
+	 * @param src The text.
+	 * @param pconst Options specific to this source's format.
+	 * @param buildCache wether or not to build the tag cache
+	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @see simple.ml.ParserConstants
+	 * @throws ParseException
+	 */
+	public static Page parse(final CharSequence src, final ParserConstants pconst, boolean buildCache) throws ParseException, IOException {
+		return parse(new StringReader(src.toString()),pconst, buildCache);
 	}
 	/** See {@link #parse(Reader, ParserConstants)} for important notes.
 	 * @param in The Reader.
@@ -46,9 +68,21 @@ public class InlineLooseParser {
 	 * @throws ParseException
 	 */
 	public static Page parse(final Reader in) throws ParseException, IOException {
-		return parse(in, new ParserConstants());
+		return parse(in, new ParserConstants(),true);
+	}
+	/** See {@link #parse(Reader, ParserConstants)} for important notes.
+	 * @param in The Reader.
+	 * @param buildCache wether or not to build the tag cache
+	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @throws ParseException
+	 */
+	public static Page parse(final Reader in, boolean buildCache) throws ParseException, IOException {
+		return parse(in, new ParserConstants(), buildCache);
 	}
 	public static Page parse(final Reader in, final ParserConstants pconst) throws IOException, ParseException {
+		return parse(in, pconst, true);
+	}
+	public static Page parse(final Reader in, final ParserConstants pconst, final boolean buildCache) throws IOException, ParseException {
 		final BufferedReader bin = ReadWriterFactory.getBufferedReader(in);
 		final Page page = new Page();
 		final DoubleParsePosition pos = new DoubleParsePosition();
@@ -78,8 +112,7 @@ public class InlineLooseParser {
 				if (buf.charAt(buf.length()-1)=='<') {
 					buf.deleteCharAt(buf.length()-1);
 				}
-//				log.debug("buf",buf);
-//				log.debug("CDATA");
+//				log.debug("CDATA", buf);
 				if (cur != null) {
 					cur.addChild(new Tag(Tag.CDATA, buf.toString(), true));
 				} else {
@@ -107,12 +140,11 @@ public class InlineLooseParser {
 					buf.delete(0,index-1);
 				}
 			}
-			//log.warning(buf);
 			if (buf.length()>3 && buf.substring(0, 4).equals("<!--")) {
 				if (!buf.substring(buf.length()-3).equals("-->"))
 					buf.append(RWUtil.readUntil(bin,"-->"));
 
-//				log.debug("HTML comment");
+//				log.debug("HTML comment", buf);
 				if (cur==null)
 					page.addTag(new Tag(Tag.HTMLCOMM, buf.toString(), true), null);
 				else
@@ -123,7 +155,7 @@ public class InlineLooseParser {
 			}
 			// rare case where < is the last character?
 			if(buf.length()<2)break;
-			log.debug("buf",buf);
+//			log.debug("buf",buf);
 			if(buf.charAt(1)=='?'){
 				if (!buf.substring(buf.length()-2).equals("?>"))
 					buf.append(RWUtil.readUntil(bin,"?>"));
@@ -177,7 +209,11 @@ public class InlineLooseParser {
 					} else {
 						tag = cur;
 						boolean found = false;
-						while (tag.hasParent()) {//check the upper tags(cause: self-closing tag without special closure or empty body followed by closing tag)
+						while (tag.hasParent()) {
+							/*
+							 * check the upper tags(cause: self-closing tag without special
+							 * closure or empty body followed by closing tag)
+							 */
 							tag = (Tag) tag.getParent();
 							if (tag.getName().equals(name)) {
 								found = true;
@@ -194,8 +230,6 @@ public class InlineLooseParser {
 							log.warning("Missing opening tag for closing tag "
 									+buf.subSequence(pos.start, pos.end+1)
 									+" found at "+pos+". Current tag: "+cur.getName());
-							//if (cur!=null)
-							//	log.information("current(after closing): "+cur.getName());
 						}
 					}
 				} else {
@@ -207,7 +241,10 @@ public class InlineLooseParser {
 				continue;
 			}//end handle end tag
 			try{
-			//search for ending > [had a case where the alt attr of an img tag contained a > and it screwed the parser]
+			/*
+			 * search for ending > [had a case where the alt attr of an img tag contained a > and
+			 * it screwed the parser]
+			 */
 			while (buf.charAt(pos.end)!='>') {
 				//<input name="name" value="ss"' ... >
 				//fixes cases like <td colspan=11'>
@@ -225,7 +262,6 @@ public class InlineLooseParser {
 						if (pos.end == buf.length()) {
 							tmp = RWUtil.readUntil(bin, '>');
 							if (tmp.isEmpty()) {
-								log.debug(buf);
 								throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
 							}
 							buf.append(tmp);
@@ -240,7 +276,6 @@ public class InlineLooseParser {
 							if (pos.end == buf.length()) {
 								tmp = RWUtil.readUntil(bin, '>');
 								if (tmp.isEmpty()) {
-									log.debug(buf);
 									throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
 								}
 								buf.append(tmp);
@@ -254,7 +289,6 @@ public class InlineLooseParser {
 							if (pos.end == buf.length()) {
 								tmp = RWUtil.readUntil(bin, '>');
 								if (tmp.isEmpty()) {
-									log.debug(buf);
 									throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
 								}
 								buf.append(tmp);
@@ -267,7 +301,6 @@ public class InlineLooseParser {
 							if (pos.end == buf.length()) {
 								tmp = RWUtil.readUntil(bin, '>');
 								if (tmp.isEmpty()) {
-									log.debug(buf);
 									throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
 								}
 								buf.append(tmp);
@@ -280,7 +313,6 @@ public class InlineLooseParser {
 				if (pos.end == buf.length()) {
 					tmp = RWUtil.readUntil(bin, '>');
 					if (tmp.isEmpty()) {
-						log.debug(buf);
 						throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
 					}
 					buf.append(tmp);
@@ -306,7 +338,8 @@ public class InlineLooseParser {
 				}
 				cur.addChild(tag);
 			}
-			if (pconst.isPcdataTag(tag.getName())) {//check for tags filled with gibberish to us
+			if (pconst.isPcdataTag(tag.getName())) {
+				//check for tags filled with gibberish to us
 				try {
 					buf.setLength(0);
 					buf.append(RWUtil.readUntil(bin, "</"+tag.getName()+">", true));
@@ -322,7 +355,8 @@ public class InlineLooseParser {
 				}
 //				log.debug("PCDATA tag");
 				buf.setLength(0);
-				continue;//add the data and continue(skips the adding of sub tags)
+				//add the data and continue(skips the adding of sub tags)
+				continue;
 			}
 			if (tag.isSelfClosing()) {
 				buf.setLength(0);
@@ -344,23 +378,9 @@ public class InlineLooseParser {
 				cur = (Tag) cur.getParent();
 			} while (cur != null);
 		}
-		//log.debug(page);
-		page.rebuildCache();
-//		log.debug(page);
+		if(buildCache)
+			page.rebuildCache();
 		return page;
-	}
-	/** Parses the text.
-	 * NOTE: the plain text of a tag is added as a sub-tag with the name "CDATA".
-	 * You can also use Tag.CDATA for the reference.
-	 * This is done since the CDATA could be split by a sub-tag.(e.g. [p] text [span]text[/span] text [/p])
-	 * @param src The text.
-	 * @param pconst Options specific to this source's format.
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
-	 * @see simple.ml.ParserConstants
-	 * @throws ParseException
-	 */
-	public static Page parse(final CharSequence src, final ParserConstants pconst) throws ParseException, IOException {
-		return parse(new StringReader(src.toString()),pconst);
 	}
 	/**Creates a Tag based on the raw data passed to it. Fills in attributes and the self-closing flag.
 	 * TODO: inline this function
