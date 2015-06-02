@@ -202,7 +202,7 @@ public class InlineLooseParser {
 //						log.debug("optional ender","ended: '"+cur.getName()+"'");
 						cur = (Tag) cur.getParent();
 					}
-					log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
+//					log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
 					if (cur.getName().equals(name)) {
 						cur = (Tag) cur.getParent();
 //						log.debug("ended: '"+name+"' current: '"+(cur!=null?cur.getName():"[NONE]")+"'");
