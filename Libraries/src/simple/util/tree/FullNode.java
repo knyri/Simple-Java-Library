@@ -94,6 +94,7 @@ public class FullNode<T, K, V> {
 	 * @return this
 	 */
 	public final FullNode<T,K,V> setName(String name) {nName=new CIString(name);return this;}
+	public final FullNode<T,K,V> setName(CIString name) {nName=name;return this;}
 	/**
 	 * @return The name of this node.
 	 */
