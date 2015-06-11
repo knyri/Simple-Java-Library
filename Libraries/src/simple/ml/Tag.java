@@ -19,7 +19,6 @@ import simple.util.tree.FullNode;
 public final class Tag extends FullNode<String, CIString, String> implements Iterable<Tag> {
 	public static final String CDATA = "CDATA", META = "DOCTYPE", SGMLCDATA = "SGMLCDATA", HTMLCOMM = "HCOM";
 	private boolean selfClosing = false;
-	private Tag sibling=null;
 	//private static final Log log = LogFactory.getLogFor(Tag.class);
 	public Tag() {
 		this(false);
@@ -278,36 +277,65 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 		};
 	}
 
+	/**
+	 * @param key
+	 * @return
+	 * @deprecated Use {{@link #getProperty(CIString)}
+	 */
+	@Deprecated
 	public String getProperty(final String key) {
 		return super.getProperty(new CIString(key));
 	}
 
+	/**
+	 * @param key
+	 * @param value
+	 * @return
+	 * @deprecated Use {{@link #setProperty(CIString, String)}
+	 */
+	@Deprecated
 	public String setProperty(final String key, final String value) {
 		return super.setProperty(new CIString(key), value);
 	}
 
+	/**
+	 * @param key
+	 * @return
+	 * @deprecated Use {{@link #removeProperty(CIString)}
+	 */
+	@Deprecated
 	public String removeProperty(final String key) {
 		return super.removeProperty(new CIString(key));
 	}
 
+	/**
+	 * @param key
+	 * @return
+	 * @deprecated Use {{@link #hasProperty(CIString)}
+	 */
+	@Deprecated
 	public boolean hasProperty(final String key) {
 		return super.hasProperty(new CIString(key));
 	}
-	public void addChild(Tag child){
-		super.addChild(child);
-		if(children.size()>1)
-			((Tag)children.get(children.size()-2)).setSibling(child);
-	}
-	/*
-	 * TODO: Update remove child to update siblings
-	 */
-	protected void setSibling(Tag tag){
-		sibling=tag;
-	}
-	/** The Element adjacent to this tag. In the markup this will be the tag below it.
+
+	/**
+	 * Do Not use for iteration.
+	 * Convenience method: ((Tag)getParent()).getChildAt(getSiblingIndex()+1);
 	 * @return The sibling or null
 	 */
-	public Tag getSibling(){
-		return sibling;
+	public Tag getNextSibling(){
+		if(getParent() != null)
+			return ((Tag)getParent()).getChildAt(getSiblingIndex()+1);
+		return null;
+	}
+	/**
+	 * Do Not use for iteration.
+	 * Convenience method: ((Tag)getParent()).getChildAt(getSiblingIndex()-1);
+	 * @return The sibling or null
+	 */
+	public Tag getPrevSibling(){
+		if(getSiblingIndex() > 0 && getParent() != null)
+			return ((Tag)getParent()).getChildAt(getSiblingIndex()-1);
+		return null;
 	}
 }

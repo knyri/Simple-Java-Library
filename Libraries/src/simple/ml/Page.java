@@ -27,7 +27,7 @@ import simple.util.logging.LogFactory;
  */
 public class Page implements Iterable<Tag> {
 	private static final Log log = LogFactory.getLogFor(Page.class);
-	private final HashMap<String,Tag> roots = new HashMap<String,Tag>();
+	private final LinkedList<Tag> roots = new LinkedList<Tag>();
 	/** Cache of all tags by their entity name(not the full canonical name) */
 	private final HashMap<CIString, LinkedList<Tag>> cache = new HashMap<CIString, LinkedList<Tag>>();
 	public Page() {}
@@ -36,7 +36,7 @@ public class Page implements Iterable<Tag> {
 	 * @param where Qualified position to add the tag or null to add a new root tag.
 	 */
 	public void addTag(final Tag tag, final String where) {
-		if (where==null || where.isEmpty()) {roots.put(tag.getName().toString(), tag); return;}
+		if (where==null || where.isEmpty()) {roots.add(tag); return;}
 		getTag(where).addChild(tag);
 	}
 	/**
@@ -58,14 +58,29 @@ public class Page implements Iterable<Tag> {
 		final String[] path = where.split("\\.");
 		Tag t = null;
 		if (path.length==1)
-			return roots.get(path[0]);
+			return getRoot(path[0]);
 		else {
-			t = roots.get(path[0]);
+			t = getRoot(path[0]);
 			for(int i = 1;i<path.length;i++) {
 				t = t.getChild(path[i]);
 			}
 		}
 		return t;
+	}
+	public final Tag getRoot(final String name) {
+		final String[] fname = name.split(";");
+		int count = 0;
+		if (fname.length==2)
+			count = Integer.parseInt(fname[1]);
+
+		for (final Tag node: roots) {
+			if (node.getName().equals(fname[0])) {
+				if (count>0) {
+					count--;
+				} else return node;
+			}
+		}
+		return null;
 	}
 	/**
 	 * Finds and returns all the tags with this name.<br>
@@ -87,6 +102,14 @@ public class Page implements Iterable<Tag> {
 	public LinkedList<Tag> getTags(final CIString name) {
 		return cache.get(name);
 	}
+	void addTagToCache(Tag t){
+		LinkedList<Tag> tmp= cache.get(t.getName());
+		if (tmp==null) {
+			tmp = new LinkedList<Tag>();
+			cache.put(t.getName(), tmp);
+		}
+		tmp.add(t);
+	}
 	/**
 	 * Rebuilds the tag cache. Should be called after a full parsing of the
 	 * page or after removing/adding children.
@@ -95,7 +118,7 @@ public class Page implements Iterable<Tag> {
 		log.debug("building tag cache");
 		cache.clear();
 		LinkedList<Tag> tmp;
-		for (final Tag tag : roots.values()) {
+		for (final Tag tag : roots) {
 			tmp = cache.get(tag.getName());
 			if (tmp==null) {
 				tmp = new LinkedList<Tag>();
@@ -133,7 +156,7 @@ public class Page implements Iterable<Tag> {
 	@Override
 	public String toString() {
 		final StringBuilder buf = new StringBuilder(2048);
-		for (final Tag tag : roots.values()) {
+		for (final Tag tag : roots) {
 			buf.append(tag.toString());
 			buf.append('\n');
 		}
@@ -145,7 +168,7 @@ public class Page implements Iterable<Tag> {
 	 */
 	public String formattedSource() {
 		final StringBuilder buf = new StringBuilder(2048);
-		for (final Tag tag : roots.values()) {
+		for (final Tag tag : roots) {
 			buf.append(tag.toStringFormatted(0));
 			buf.append('\n');
 		}
