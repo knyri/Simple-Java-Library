@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple;
 
@@ -17,12 +17,15 @@ public final class CIString implements CharSequence {
 		string = str;
 		hashcode = calcHashCode(str);
 	}
+	@Override
 	public int hashCode() {
 		return hashcode;
 	}
+	@Override
 	public String toString() {
 		return string;
 	}
+	@Override
 	public boolean equals(Object obj) {
 		if (obj==string) return true;
 		return string.equalsIgnoreCase(obj.toString());
@@ -30,6 +33,7 @@ public final class CIString implements CharSequence {
 	/* (non-Javadoc)
 	 * @see java.lang.CharSequence#charAt(int)
 	 */
+	@Override
 	public char charAt(int index) {
 		return string.charAt(index);
 	}
@@ -37,6 +41,7 @@ public final class CIString implements CharSequence {
 	/* (non-Javadoc)
 	 * @see java.lang.CharSequence#length()
 	 */
+	@Override
 	public int length() {
 		return string.length();
 	}
@@ -44,6 +49,7 @@ public final class CIString implements CharSequence {
 	/* (non-Javadoc)
 	 * @see java.lang.CharSequence#subSequence(int, int)
 	 */
+	@Override
 	public CharSequence subSequence(int beginIndex, int endIndex) {
 		return string.subSequence(beginIndex, endIndex);
 	}
