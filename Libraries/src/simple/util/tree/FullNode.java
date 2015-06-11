@@ -1,6 +1,7 @@
 package simple.util.tree;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -156,6 +157,11 @@ public class FullNode<T, K, V> {
 	 */
 	public final boolean isChildOf(FullNode<T,K,V> parent) {
 		return parent.hasChild(this);
+	}
+	public final void addChildren(Collection<? extends FullNode<T,K,V>> nodes){
+		for(FullNode<T,K,V> n: nodes){
+			addChild(n);
+		}
 	}
 	/**
 	 * Adds a child Node and sets this as the node's parent. Does nothing if <code><var>node</var>==null</code>.
