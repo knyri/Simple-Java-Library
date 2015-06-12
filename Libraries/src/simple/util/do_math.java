@@ -17,12 +17,12 @@ public final class do_math {
 		if(ret.length()<places+3)return ret.toString();
 		int dot= ret.indexOf(".");
 		if(dot==-1 || dot+places+2 > ret.length()) return ret.toString();
-		if(ret.charAt(dot+places+1) > '4')
+		if(ret.charAt(dot+places+1) > '4'){
 loop:
 			for(int i= dot+places; i != -1; i--){
 				switch(ret.charAt(i)){
 				case '9':
-					ret.setCharAt(i, '0');
+					places--;
 				break;
 				case '.':
 				break;
@@ -31,7 +31,13 @@ loop:
 				break loop;
 				}
 			}
-		ret.setLength(dot+places+1);
+		}else{
+			while(ret.charAt(dot+places) == '0') places--;
+		}
+		if(places>0)
+			ret.setLength(dot+places+1);
+		else
+			ret.setLength(dot);
 		return ret.toString();
 	}
 	public static long sum(int[] x) {

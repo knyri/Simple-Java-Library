@@ -27,6 +27,8 @@ public final class tester {
 		do_mathRound();
 	}
 	static void do_mathRound(){
+		System.out.println(do_math.round(1.002, 2));
+		System.out.println(do_math.round(10.002, 2));
 		System.out.println(do_math.round(1.005, 2));
 		System.out.println(do_math.round(1.995, 2));
 		System.out.println(do_math.round(1.9949, 2));
