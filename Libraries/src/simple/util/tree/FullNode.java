@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import simple.CIString;
 
@@ -244,6 +245,10 @@ public class FullNode<T, K, V> {
 			for(int index=0;index<children.size();index++)
 				children.pop().setSiblingIndex(-1).setParent(null);
 		}
+		return this;
+	}
+	public final FullNode<T,K,V> setProperties(Map<K,V> props){
+		properties.putAll(properties);
 		return this;
 	}
 	/**
