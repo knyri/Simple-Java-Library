@@ -5,6 +5,35 @@ package simple.util;
  * @author Kenneth Pierce
  */
 public final class do_math {
+	/** Rounds half up.
+	 * Does not yet do an exhaustive search. Meaning 1.445
+	 * rounded to 1 place equals 1.4 instead of 1.5
+	 * @param d
+	 * @param places
+	 * @return
+	 */
+	public static String round(double d, int places){
+		StringBuilder ret=new StringBuilder(Double.toString(d));
+		if(ret.length()<places+3)return ret.toString();
+		int dot= ret.indexOf(".");
+		if(dot==-1 || dot+places+2 > ret.length()) return ret.toString();
+		if(ret.charAt(dot+places+1) > '4')
+loop:
+			for(int i= dot+places; i != -1; i--){
+				switch(ret.charAt(i)){
+				case '9':
+					ret.setCharAt(i, '0');
+				break;
+				case '.':
+				break;
+				default:
+					ret.setCharAt(i, (char)(ret.charAt(i)+1));
+				break loop;
+				}
+			}
+		ret.setLength(dot+places+1);
+		return ret.toString();
+	}
 	public static long sum(int[] x) {
 		long sum = 0;
 		for(int i = 0;i<x.length;i++) {
