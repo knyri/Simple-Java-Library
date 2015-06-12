@@ -32,6 +32,7 @@ public final class tester {
 		System.out.println(do_math.round(1.005, 2));
 		System.out.println(do_math.round(1.995, 2));
 		System.out.println(do_math.round(1.9949, 2));
+		System.out.println(do_math.round(0, 2));
 	}
 	static void numberIterator(){
 		NumberIterator iter = new NumberIterator("[011...45,3]");

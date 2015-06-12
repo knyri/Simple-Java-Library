@@ -13,6 +13,7 @@ public final class do_math {
 	 * @return
 	 */
 	public static String round(double d, int places){
+		if(d == 0.0)return "0";
 		StringBuilder ret=new StringBuilder(Double.toString(d));
 		if(ret.length()<places+3)return ret.toString();
 		int dot= ret.indexOf(".");
