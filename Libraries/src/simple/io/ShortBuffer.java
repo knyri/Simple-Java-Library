@@ -3,13 +3,10 @@ package simple.io;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 
-/**Byte buffer utilizing a circular array that can auto-grow.
- * <br>Created: 2006
- * @author Kenneth Pierce
- */
-public class ByteBuffer {
+public class ShortBuffer{
+
 	/** the buffer */
-	protected byte[] buf;
+	protected short[] buf;
 	/** index of the first byte */
 	private int start = 0;
 	/** index of the last byte */
@@ -20,12 +17,12 @@ public class ByteBuffer {
 	private final float fillLimit;
 	/** percentage of total to grow */
 	private final float growthRate;
-	public ByteBuffer(int initialSize, float growAt, float growBy){
-		buf = new byte[initialSize];
+	public ShortBuffer(int initialSize, float growAt, float growBy){
+		buf = new short[initialSize];
 		fillLimit =growAt;
 		growthRate= growBy;
 	}
-	public ByteBuffer(int initialSize) {
+	public ShortBuffer(int initialSize) {
 		this(initialSize, 0.75f, 0.33f);
 	}
 	/**The max number of elements
@@ -42,7 +39,7 @@ public class ByteBuffer {
 	}
 	private void grow() {
 		synchronized(buf) {
-			byte[] tmp = new byte[(int)(size*(1+growthRate))];
+			short[] tmp = new short[(int)(size*(1+growthRate))];
 			if (start > end) {
 				// Might as well place them in order while we're here
 				System.arraycopy(buf, start, tmp, 0, buf.length - start);
@@ -72,7 +69,7 @@ public class ByteBuffer {
 			if (++end == buf.length)
 				end = 0;
 			if(end == start) throw new BufferOverflowException();
-			buf[end] = (byte)Byte;
+			buf[end] = (short)Byte;
 			size++;
 		}
 	}
@@ -82,12 +79,12 @@ public class ByteBuffer {
 	/** Gets the next byte and increments the pointer.
 	 * @return The next byte.
 	 */
-	public byte get() {
+	public short get() {
 		synchronized(buf) {
 			if (start == end) {
 				throw new BufferUnderflowException();
 			}
-			byte b = buf[start];
+			short b = buf[start];
 			start++;
 			if (start == buf.length)
 				start = 0;
@@ -98,8 +95,8 @@ public class ByteBuffer {
 	public void clear(){
 		start= end= size= 0;
 	}
-	public byte[] asArray(){
-		byte[] ret= new byte[size];
+	public short[] asArray(){
+		short[] ret= new short[size];
 		if (start > end) {
 			// Might as well place them in order while we're here
 			System.arraycopy(buf, start, ret, 0, buf.length - start);
@@ -109,10 +106,11 @@ public class ByteBuffer {
 		}
 		return ret;
 	}
-	public byte peekLast(){
+	public short peekLast(){
 		return buf[end];
 	}
-	public byte peekFirst(){
+	public short peekFirst(){
 		return buf[start];
 	}
+
 }
