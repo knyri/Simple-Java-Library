@@ -135,6 +135,12 @@ public class FullNode<T, K, V> {
 	 * @return The parent of this node.
 	 */
 	public final FullNode<T,K,V> getParent() {return parent;}
+	public final FullNode<T,K,V> getParent(int levels) {
+		FullNode<T,K,V> ret= parent;
+		while(ret != null && --levels > 0)
+			ret= ret.getParent();
+		return ret;
+	}
 	/**
 	 * Checks if it has a parent and returns the result.
 	 * Logical opposite of {@link #hasParent()}
@@ -263,10 +269,11 @@ public class FullNode<T, K, V> {
 	 * the value for that key is replaced with the one provided.
 	 * @param key Key for the value.
 	 * @param value Value to be set for the property.
-	 * @return The old value if previously set
+	 * @return This node
 	 */
-	public final V setProperty(K key, V value) {
-		return properties.put(key, value);
+	public final FullNode<T,K,V> setProperty(K key, V value) {
+		properties.put(key, value);
+		return this;
 	}
 	/**Removes the key/value pair.
 	 * @param key

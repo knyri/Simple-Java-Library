@@ -56,6 +56,10 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 		this("", null, null, selfClosing);
 	}
 
+	public final Tag getParentTag(){
+		return (Tag) getParent();
+	}
+
 	public final boolean isSelfClosing() {
 		return selfClosing;
 	}
@@ -169,11 +173,11 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 	}
 	@Override
 	public String toString() {
-		if (getName().equals(CDATA) || getName().equals(META)) return getContent()+"\n";
+		if (getName().equals(CDATA) || getName().equals(META)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(HTMLCOMM)) return getContent()+"\n";
+		if (getName().equals(HTMLCOMM)) return "\n"+getContent();
 		final StringBuilder buf = new StringBuilder(300);
-		buf.append('<');
+		buf.append("\n<");
 		buf.append(getName());
 		for (final CIString key : properties.keySet()) {
 			buf.append(" "+key+"=\""+properties.get(key)+"\"");
@@ -182,11 +186,11 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 			buf.append("/>\n");
 			return buf.toString();
 		}
-		buf.append(">\n");
-		for (int i = 0 ; i < children.size(); i++) {
-			buf.append(((Tag)children.get(i)).toString());
+		buf.append('>');
+		for(Tag t: this){
+			buf.append(t.toString());
 		}
-		buf.append("</"+getName()+">\n");
+		buf.append("</"+getName()+">");
 		return buf.toString();
 	}
 	public String toStringFormatted(final int depth) {
@@ -205,9 +209,11 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 			buf.append("/>\n");
 			return buf.toString();
 		}
-		buf.append(">\n");
-		for (int i = 0 ; i < children.size(); i++) {
-			buf.append(((Tag)children.get(i)).toStringFormatted(tabs+"\t"));
+		buf.append('>');
+		if(hasChild())
+			buf.append('\n');
+		for(Tag t: this){
+			buf.append(t.toStringFormatted(tabs+"\t"));
 		}
 		buf.append(tabs);
 		buf.append("</"+getName()+">\n");
@@ -228,9 +234,11 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 			buf.append("/>\n");
 			return buf.toString();
 		}
-		buf.append(">\n");
-		for (int i = 0 ; i < children.size(); i++) {
-			buf.append(((Tag)children.get(i)).toStringFormatted(tabs+"\t"));
+		buf.append('>');
+		if(hasChild())
+			buf.append('\n');
+		for(Tag t: this){
+			buf.append(t.toStringFormatted(tabs+"\t"));
 		}
 		buf.append(tabs);
 		buf.append("</"+getName()+">\n");
@@ -294,8 +302,8 @@ public final class Tag extends FullNode<String, CIString, String> implements Ite
 	 * @deprecated Use {{@link #setProperty(CIString, String)}
 	 */
 	@Deprecated
-	public String setProperty(final String key, final String value) {
-		return super.setProperty(new CIString(key), value);
+	public Tag setProperty(final String key, final String value) {
+		return (Tag)super.setProperty(new CIString(key), value);
 	}
 
 	/**
