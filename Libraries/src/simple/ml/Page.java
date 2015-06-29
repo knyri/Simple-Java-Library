@@ -3,9 +3,11 @@
  */
 package simple.ml;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import simple.CIString;
 import simple.util.logging.Log;
@@ -25,11 +27,11 @@ import simple.util.logging.LogFactory;
  * <br>Created: Oct 16, 2010
  * @author Kenneth Pierce
  */
-public class Page implements Iterable<Tag> {
+public class Page implements Iterable<Tag>, TagParentListener {
 	private static final Log log = LogFactory.getLogFor(Page.class);
 	private final LinkedList<Tag> roots = new LinkedList<Tag>();
 	/** Cache of all tags by their entity name(not the full canonical name) */
-	private final HashMap<CIString, LinkedList<Tag>> cache = new HashMap<CIString, LinkedList<Tag>>();
+	private final HashMap<CIString, List<Tag>> cache = new HashMap<CIString, List<Tag>>();
 	public Page() {}
 	/**Adds a tag to the page.
 	 * @param tag Tag to be added.
@@ -89,7 +91,7 @@ public class Page implements Iterable<Tag> {
 	 * @param name Name of the tags wanted.
 	 * @return A Vector containing the tags.
 	 */
-	public LinkedList<Tag> getTags(final String name) {
+	public List<Tag> getTags(final String name) {
 		return cache.get(new CIString(name));
 	}
 	/**
@@ -99,16 +101,27 @@ public class Page implements Iterable<Tag> {
 	 * @param name Name of the tags wanted.
 	 * @return A Vector containing the tags.
 	 */
-	public LinkedList<Tag> getTags(final CIString name) {
+	public List<Tag> getTags(final CIString name) {
 		return cache.get(name);
 	}
 	void addTagToCache(Tag t){
-		LinkedList<Tag> tmp= cache.get(t.getName());
+		List<Tag> tmp= cache.get(t.getName());
 		if (tmp==null) {
-			tmp = new LinkedList<Tag>();
+			tmp = Collections.synchronizedList(new LinkedList<Tag>());
 			cache.put(t.getName(), tmp);
 		}
-		tmp.add(t);
+		synchronized(tmp){
+			tmp.add(t);
+		}
+	}
+	void removeTagFromCache(Tag t){
+		//TODO: bother with children?
+		List<Tag> tmp= cache.get(t.getName());
+		if(tmp!=null){
+			synchronized(tmp){
+				tmp.remove(t);
+			}
+		}
 	}
 	/**
 	 * Rebuilds the tag cache. Should be called after a full parsing of the
@@ -117,7 +130,7 @@ public class Page implements Iterable<Tag> {
 	public void rebuildCache() {
 		log.debug("building tag cache");
 		cache.clear();
-		LinkedList<Tag> tmp;
+		List<Tag> tmp;
 		for (final Tag tag : roots) {
 			tmp = cache.get(tag.getName());
 			if (tmp==null) {
@@ -135,7 +148,7 @@ public class Page implements Iterable<Tag> {
 	 */
 	private void addToCache(final Tag tag) {
 		if (tag.isSelfClosing() || !tag.hasChild()) return;
-		LinkedList<Tag> tmp;
+		List<Tag> tmp;
 		for (final Tag child : tag) {
 			tmp = cache.get(child.getName());
 			if (tmp==null) {
@@ -179,10 +192,17 @@ public class Page implements Iterable<Tag> {
 	 */
 	@Override
 	public Iterator<Tag> iterator() {
-		final LinkedList<Tag> tags = new LinkedList<Tag>();
-		for(final LinkedList<Tag> taglist: cache.values()) {
+		final List<Tag> tags = new LinkedList<Tag>();
+		for(final List<Tag> taglist: cache.values()) {
 			tags.addAll(taglist);
 		}
 		return tags.iterator();
+	}
+	@Override
+	public void newParentTag(Tag child, Tag oldP, Tag newP){
+		if(oldP == null)
+			addTagToCache(child);
+		else if(newP == null)
+			removeTagFromCache(child);
 	}
 }

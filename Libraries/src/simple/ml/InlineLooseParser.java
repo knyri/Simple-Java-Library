@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.ParseException;
+import java.util.Hashtable;
 
+import simple.CIString;
 import simple.io.DoubleParsePosition;
 import simple.io.RWUtil;
 import simple.io.ReadWriterFactory;
@@ -32,7 +34,15 @@ import simple.util.logging.LogLevel;
  */
 public class InlineLooseParser {
 	protected static final Log log = LogFactory.getLogFor(InlineLooseParser.class);
-
+	static final Hashtable<String, CIString> cicache= new Hashtable<String, CIString>();
+	private static CIString get(String s){
+		CIString r= cicache.get(s);
+		if(r == null){
+			r= new CIString(s);
+			cicache.put(s, r);
+		}
+		return r;
+	}
 	public static Page parse(final CharSequence src) throws ParseException, IOException {
 		return parse(src, new ParserConstants(), true);
 	}
@@ -114,7 +124,12 @@ public class InlineLooseParser {
 				}
 //				log.debug("CDATA", buf);
 				if (cur != null) {
-					cur.addChild(new Tag(Tag.CDATA, buf.toString(), true));
+					tag=new Tag(Tag.CDATA, buf.toString(), true);
+					if(buildCache){
+						page.addTagToCache(tag);
+						tag.addParentListener(page);
+					}
+					cur.addChild(tag);
 				} else {
 					page.addTag(new Tag(Tag.CDATA, buf.toString(), true), null);
 				}
@@ -151,7 +166,10 @@ public class InlineLooseParser {
 				else
 					cur.addChild(tag);
 
-				if(buildCache)page.addTagToCache(tag);
+				if(buildCache){
+					page.addTagToCache(tag);
+					tag.addParentListener(page);
+				}
 				buf.setLength(0);
 				continue;
 			}
@@ -167,7 +185,10 @@ public class InlineLooseParser {
 				} else {
 					page.addTag(tag, null);
 				}
-				if(buildCache)page.addTagToCache(tag);
+				if(buildCache){
+					page.addTagToCache(tag);
+					tag.addParentListener(page);
+				}
 				buf.setLength(0);
 				continue;
 			}
@@ -185,7 +206,10 @@ public class InlineLooseParser {
 							page.addTag(tag, null);
 						else
 							cur.addChild(tag);
-						if(buildCache)page.addTagToCache(tag);
+						if(buildCache){
+							page.addTagToCache(tag);
+							tag.addParentListener(page);
+						}
 
 						buf.setLength(0);
 						continue;
@@ -193,7 +217,10 @@ public class InlineLooseParser {
 //						log.debug("DOCTYPE");
 						tag=new Tag(Tag.META,buf.toString(),true);
 						page.addTag(tag, null);
-						if(buildCache)page.addTagToCache(tag);
+						if(buildCache){
+							page.addTagToCache(tag);
+							tag.addParentListener(page);
+						}
 						buf.setLength(0);
 						continue;
 					}
@@ -208,11 +235,11 @@ public class InlineLooseParser {
 					//end the tags whose end tags are optional
 					while (!cur.getName().equals(name) && pconst.isOptionalEnder(cur.getName())) {
 //						log.debug("optional ender","ended: '"+cur.getName()+"'");
-						cur = (Tag) cur.getParent();
+						cur = cur.getParent();
 					}
 //					log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
 					if (cur.getName().equals(name)) {
-						cur = (Tag) cur.getParent();
+						cur = cur.getParent();
 //						log.debug("ended: '"+name+"' current: '"+(cur!=null?cur.getName():"[NONE]")+"'");
 					} else {
 						tag = cur;
@@ -222,15 +249,15 @@ public class InlineLooseParser {
 							 * check the upper tags(cause: self-closing tag without special
 							 * closure or empty body followed by closing tag)
 							 */
-							tag = (Tag) tag.getParent();
+							tag = tag.getParent();
 							if (tag.getName().equals(name)) {
 								found = true;
 								do {
 									log.warning("lazy self-closing tag found: '"+cur.getName()+"'");
 									cur.setSelfClosing(true);//this will copy all children to parent
-									cur = (Tag) cur.getParent();
+									cur = cur.getParent();
 								} while (cur != tag);
-								cur = (Tag) cur.getParent();
+								cur = cur.getParent();
 								break;
 							}
 						}
@@ -339,14 +366,20 @@ public class InlineLooseParser {
 //			log.debug("Start tag","'"+tag.getName()+"' | "+pos);
 			if (cur==null) {
 				page.addTag(tag, null);
-				if(buildCache)page.addTagToCache(tag);
+				if(buildCache){
+					page.addTagToCache(tag);
+					tag.addParentListener(page);
+				}
 			} else {
 				if (pconst.isOptionalEnder(cur.getName()) && pconst.isOptionalEnderEnd(cur.getName(),tag.getName())) {
 //					log.debug("optional ender","ended: "+cur.getName()+" current: "+(cur.getParent()!=null?cur.getParent().getName():"[NONE]"));
-					cur = (Tag) cur.getParent();
+					cur = cur.getParent();
 				}
 				cur.addChild(tag);
-				if(buildCache)page.addTagToCache(tag);
+				if(buildCache){
+					page.addTagToCache(tag);
+					tag.addParentListener(page);
+				}
 			}
 			if (pconst.isPcdataTag(tag.getName())) {
 				//check for tags filled with gibberish to us
@@ -359,7 +392,10 @@ public class InlineLooseParser {
 				try{
 					Tag tmptag=new Tag(Tag.CDATA, buf.substring(0, Math.max(do_str.CI.lastIndexOf(buf,"</"+tag.getName()),0)).trim(),true);
 					tag.addChild(tmptag);
-					if(buildCache)page.addTagToCache(tmptag);
+					if(buildCache){
+						page.addTagToCache(tmptag);
+						tmptag.addParentListener(page);
+					}
 				}catch(final StringIndexOutOfBoundsException e){
 					final StringIndexOutOfBoundsException e2= new StringIndexOutOfBoundsException(buf.toString());
 					e2.initCause(e);
@@ -387,7 +423,7 @@ public class InlineLooseParser {
 		if (cur != null && log.getPrint(LogLevel.WARNING)) {
 			do {
 				log.warning("Missing end tag for " + cur.getName()+"|"+pos);
-				cur = (Tag) cur.getParent();
+				cur = cur.getParent();
 			} while (cur != null);
 		}
 
@@ -450,9 +486,9 @@ public class InlineLooseParser {
 							}
 					}
 					//log.debug(pos+attrn+"="+src.subSequence(pos.start, pos.end));
-					tag.setProperty(attrn, src.subSequence(pos.start, pos.end).toString());
+					tag.setProperty(get(attrn), src.subSequence(pos.start, pos.end).toString());
 				} else {//attribute with no value
-					tag.setProperty(attrn, attrn);
+					tag.setProperty(get(attrn), attrn);
 					//log.debug(pos+attrn+"="+src.subSequence(pos.start, pos.end));
 				}
 			} catch (final StringIndexOutOfBoundsException e) {
