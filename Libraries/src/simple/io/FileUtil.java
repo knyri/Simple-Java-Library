@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public final class FileUtil{
 	private FileUtil(){}
 	static final BlackHoleOutputStream voidos=new BlackHoleOutputStream();
 	static final BlackHoleWriter voidw = new BlackHoleWriter();
+	public static final List<File> EMPTY_LIST= new LinkedList<File>();
 	public static final void discard(InputStream in) throws IOException{
 		copy(in,voidos,4096);
 	}
@@ -388,9 +390,11 @@ public final class FileUtil{
 	 */
 	public static List<File> getFiles(File start, FileFilter filter, boolean recursive) {
 		if (!start.isDirectory()) {return null;}
-		List<File> tmp = new LinkedList<File>();
-		if (start.listFiles()!=null) {
-			for (File cur : start.listFiles()) {
+		File[] files= start.listFiles();
+		List<File> tmp;
+		if (files!=null) {
+			tmp = new ArrayList<File>((int)(files.length*1.3));
+			for (File cur : files) {
 				if (cur.isDirectory()) {
 					if (recursive) {
 						tmp.addAll(getFiles(cur, filter, true));
@@ -399,8 +403,9 @@ public final class FileUtil{
 					tmp.add(cur);
 				}
 			}
+			return tmp;
 		}
-		return tmp;
+		return EMPTY_LIST;
 	}
 	public static void close(Statement stm) {
 		try{

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/HTTPClient"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="tritonus-jodatime-javalayer.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/fluent-hc-4.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/httpclient-4.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/httpclient-cache-4.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/httpclient-win-4.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/greg/libs/java/httpcomponents-client-4.5/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

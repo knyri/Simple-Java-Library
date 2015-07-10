@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -36,6 +37,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -116,6 +118,61 @@ public final class Client{
 	}
 	public HttpResponse get(Uri uri) throws ClientProtocolException, IOException{
 		return get(uri,null,null);
+	}
+	public HttpResponse post(Uri uri,Header[] headers,String data, Charset charset,HttpContext context) throws ClientProtocolException, IOException{
+		HttpPost req=new HttpPost(uri.toString());
+		HttpResponse response;
+		req.setHeaders(defaults);
+		if(headers!=null){
+			for(Header header:headers)
+				req.setHeader(header);
+		}
+		if(data!=null){
+			if(charset==null)
+				req.setEntity(new StringEntity(data));
+			else
+				req.setEntity(new StringEntity(data, charset));
+		}
+		if(context==null)
+			response=client.execute(req);
+		else
+			response=client.execute(req,context);
+		log.debug("Request",req.getRequestLine().toString());
+		log.debug("Request",req.getAllHeaders());
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
+			// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,charset,context);
+		}
+		log.debug("Response",response);
+		return response;
+	}
+	public HttpResponse post(Uri uri,Header[] headers,String data,HttpContext context) throws ClientProtocolException, IOException{
+		HttpPost req=new HttpPost(uri.toString());
+		HttpResponse response;
+		req.setHeaders(defaults);
+		if(headers!=null){
+			for(Header header:headers)
+				req.setHeader(header);
+		}
+		if(data!=null){
+			req.setEntity(new StringEntity(data));
+		}
+		if(context==null)
+			response=client.execute(req);
+		else
+			response=client.execute(req,context);
+		log.debug("Request",req.getRequestLine().toString());
+		log.debug("Request",req.getAllHeaders());
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
+			// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,context);
+		}
+		log.debug("Response",response);
+		return response;
 	}
 	public HttpResponse post(Uri uri,Header[] headers,ClientParam[] data,String format,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
