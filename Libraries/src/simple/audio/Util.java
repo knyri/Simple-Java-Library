@@ -1,16 +1,17 @@
 package simple.audio;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.tritonus.sampled.convert.PCM2PCMConversionProvider;
 import org.tritonus.sampled.convert.SampleRateConversionProvider;
 
-import simple.io.FileUtil;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
@@ -132,64 +133,56 @@ public final class Util{
 	public static int getSamplesPerFrame(AudioInputStream ais){
 		return getSamplesPerFrame(ais.getFormat());
 	}
-	public static boolean changePCMFormatTo(AudioFormat to,File from){
-		AudioInputStream stream=null;
-		try{
-			AudioInputStream ostream=stream=AudioSystem.getAudioInputStream(from);
-			if(stream.getFormat().getSampleRate()==to.getSampleRate() && stream.getFormat().getChannels()==to.getChannels()){
-				stream.close();
-				return true;
-			}
-	log.debug("changePCMFormatTo() File [From] [To]",from+" ["+stream.getFormat()+"] ["+to+"]");
-			File tmp=File.createTempFile("changeSampleRateTemp",".wav");
-			if(stream.getFormat().getChannels()!=to.getChannels()){
-				AudioFormat old=stream.getFormat();
-				if(stream.getFormat().getChannels()<to.getChannels()){
-					stream=P2PCP.getAudioInputStream(new AudioFormat(old.getEncoding(),old.getSampleRate(),old.getSampleSizeInBits(),to.getChannels(),
-							to.getFrameSize(),old.getFrameRate(),old.isBigEndian()),stream);
-				}else{
-					stream=new MonoAIS(new AudioFormat(old.getEncoding(),old.getSampleRate(),old.getSampleSizeInBits(),1,
-							old.getFrameSize()/old.getChannels(),old.getFrameRate(),old.isBigEndian()),stream);
+	@SuppressWarnings("resource")
+	public static boolean changePCMFormatTo(AudioFormat to,File from) throws IOException, UnsupportedAudioFileException{
+			try(AudioInputStream ostream=AudioSystem.getAudioInputStream(from)){
+				AudioInputStream stream= null;
+				if(ostream.getFormat().getSampleRate()==to.getSampleRate() && ostream.getFormat().getChannels()==to.getChannels()){
+					return true;
 				}
+		log.debug("changePCMFormatTo() File [From] [To]",from+" ["+ostream.getFormat()+"] ["+to+"]");
+				File tmp=File.createTempFile("changeSampleRateTemp",".wav");
+				if(ostream.getFormat().getChannels()!=to.getChannels()){
+					AudioFormat old=ostream.getFormat();
+					if(ostream.getFormat().getChannels()<to.getChannels()){
+						stream=P2PCP.getAudioInputStream(new AudioFormat(old.getEncoding(),old.getSampleRate(),old.getSampleSizeInBits(),to.getChannels(),
+								to.getFrameSize(),old.getFrameRate(),old.isBigEndian()),ostream);
+					}else{
+						stream=new MonoAIS(new AudioFormat(old.getEncoding(),old.getSampleRate(),old.getSampleSizeInBits(),1,
+								old.getFrameSize()/old.getChannels(),old.getFrameRate(),old.isBigEndian()),ostream);
+					}
+				}else{
+					stream= ostream;
+				}
+				if(stream.getFormat().getSampleRate()!=to.getSampleRate())
+					stream=SFCP.getAudioInputStream(to,stream);
+				try{
+					AudioSystem.write(stream,Type.WAVE,tmp);
+				}finally{
+					stream.close();
+				}
+				if(!from.delete())
+					log.warning("changePCMFormatTo() Could not delete ["+from+"]");
+				if(tmp.renameTo(from))
+					return true;
+				else
+					log.error("changePCMFormatTo() Could not rename ["+tmp+"] to ["+from+"]");
 			}
-			if(stream.getFormat().getSampleRate()!=to.getSampleRate())
-				stream=SFCP.getAudioInputStream(to,stream);
-			AudioSystem.write(stream,Type.WAVE,tmp);
-			FileUtil.close(stream);
-			FileUtil.close(ostream);
-			if(!from.delete())
-				log.warning("changePCMFormatTo() Could not delete ["+from+"]");
-			if(tmp.renameTo(from))
-				return true;
-			else
-				log.error("changePCMFormatTo() Could not rename ["+tmp+"] to ["+from+"]");
-		}catch(Exception e){
-			if(stream!=null)
-				log.error("File [From] [To]",from+" ["+stream.getFormat()+"] ["+to+"]");
-			else
-				log.error("File [From] [To]",from+" [NULL] ["+to+"]");
-			log.error(e);
-		}
 		return false;
 	}
-	public static boolean trimSilence(File file){
-		AudioInputStream stream=null;
-		try{
+	public static boolean trimSilence(File file) throws IOException, UnsupportedAudioFileException{
 	log.debug("trimSilence() File",file);
-			File tmp=File.createTempFile("trimSilenceTemp",".wav");
-			stream=AudioSystem.getAudioInputStream(file);
-			stream=new SilenceTrimmer(stream.getFormat(),stream,40);
-			AudioSystem.write(stream,Type.WAVE,tmp);
-			FileUtil.close(stream);
-			if(!file.delete())
-				log.warning("trimSilence() Could not delete ["+file+"]");
-			if(tmp.renameTo(file))
-				return true;
-			else
-				log.error("trimSilence() Could not rename ["+tmp+"] to ["+file+"]");
-		}catch(Exception e){
-			log.error("File",file);
-			log.error(e);
+		File tmp=File.createTempFile("trimSilenceTemp",".wav");
+		try(AudioInputStream stream=AudioSystem.getAudioInputStream(file)){
+			try(AudioInputStream trimstream=new SilenceTrimmer(stream.getFormat(),stream,40)){
+				AudioSystem.write(stream,Type.WAVE,tmp);
+				if(!file.delete())
+					log.warning("trimSilence() Could not delete ["+file+"]");
+				if(tmp.renameTo(file))
+					return true;
+				else
+					log.error("trimSilence() Could not rename ["+tmp+"] to ["+file+"]");
+			}
 		}
 		return false;
 	}
