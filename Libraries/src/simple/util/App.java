@@ -132,10 +132,10 @@ public final class App {
 	 * @return true on success. False if an error occurred.
 	 */
 	public static final boolean playSound(final File file){
-		try{
-			final Clip clip=AudioSystem.getClip();
-			final AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-			clip.open(ais);
+		try(Clip clip=AudioSystem.getClip()){
+			try(AudioInputStream ais = AudioSystem.getAudioInputStream(file)){
+				clip.open(ais);
+			}
 			clip.start();
 		}catch(final Exception e){
 			log.error(e);
@@ -150,10 +150,10 @@ public final class App {
 	 * @return true on success. False if an error occurred.
 	 */
 	public static final boolean playSound(final File file, float gain){
-		try{
-			final Clip clip=AudioSystem.getClip();
-			final AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-			clip.open(ais);
+		try(Clip clip=AudioSystem.getClip()){
+			try(AudioInputStream ais = AudioSystem.getAudioInputStream(file)){
+				clip.open(ais);
+			}
 			if(gain!=0){
 				final FloatControl gainControl=(FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
 				if(gain>gainControl.getMaximum())gain=gainControl.getMaximum();

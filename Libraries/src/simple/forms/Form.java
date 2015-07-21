@@ -199,12 +199,12 @@ public class Form extends JPanel {
 	private boolean isSet(final int comp) {
 		return ((option&comp)!=0);
 	}
-	private JLabel jLabel(final String label) {
+	private static JLabel jLabel(final String label) {
 		final JLabel lTemp = new JLabel(label);
 		lTemp.setFont(new Font("Courier", Font.PLAIN, 12));
 		return lTemp;
 	}
-	private JPanel borderPanel(final String title) {
+	private static JPanel borderPanel(final String title) {
 		final JPanel pTemp = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		pTemp.setBorder(new TitledBorder(new EmptyBorder(0,0,0,0),title));
 		return pTemp;

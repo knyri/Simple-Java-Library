@@ -1,11 +1,12 @@
 package simple.forms.old;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
 import java.awt.Font;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 /**
  * Creates a form object that validates E-mail addresses.
@@ -13,6 +14,7 @@ import java.awt.Font;
  * @author Kenneth Pierce
  * @deprecated
  */
+@Deprecated
 public class Email extends JPanel implements FormObject {
 
 	private static final long serialVersionUID = 1L;
@@ -33,27 +35,33 @@ public class Email extends JPanel implements FormObject {
 		temp.add(p3);
 		add(temp);
 	}
+	@Override
 	public String getValue() {
 		return p1.getText().trim()+"@"+p2.getText().trim()+"."+p3.getText().trim();
 	}
+	@Override
 	public void setValue(String v) {
 		p1.setText(v.substring(0,v.indexOf("@")));
 		p2.setText(v.substring(v.indexOf("@")+1,v.indexOf(".")));
 		p3.setText(v.substring(v.indexOf(".")+1,v.length()));
 	}
+	@Override
 	public boolean isValid() {
 		if ((p1.getText().trim().length()>0)&&(p2.getText().trim().length()>0)&&(p3.getText().trim().length()>0)) {return true;}
 		return false;
 	}
+	@Override
 	public void reset() {
 		p1.setText("");
 		p2.setText("");
 		p3.setText("");
 	}
+	@Override
 	public String getName() {
 		return "Email";
 	}
+	@Override
 	public JPanel getJPanel() {
-		return (JPanel)this;
+		return this;
 	}
 }

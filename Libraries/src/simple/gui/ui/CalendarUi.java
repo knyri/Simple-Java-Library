@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.gui.ui;
 
@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 
 import simple.gui.factory.SwingFactory;
 
@@ -27,7 +28,7 @@ import simple.gui.factory.SwingFactory;
 public class CalendarUi extends JPanel implements ActionListener {
 	private final JLabel daysl[];
 	private final JToggleButton days[];
-	private final JLabel header = new JLabel("",JLabel.CENTER);
+	private final JLabel header = new JLabel("",SwingConstants.CENTER);
 	private final Calendar date;
 	private final Calendar copy;
 	private final Locale locale;
@@ -35,7 +36,7 @@ public class CalendarUi extends JPanel implements ActionListener {
 	private final JPanel mid;
 	private final int slots;
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	/**
@@ -72,7 +73,7 @@ public class CalendarUi extends JPanel implements ActionListener {
 		for (int i = 0; i < days.length; i++) {
 			days[i] = new JToggleButton(""+(i+1));
 			days[i].addActionListener(this);
-			daysl[i] = new JLabel(""+(i+1), JLabel.CENTER);
+			daysl[i] = new JLabel(""+(i+1), SwingConstants.CENTER);
 		}
 		selected = days[0];
 		selectCalendarDay();
@@ -83,13 +84,13 @@ public class CalendarUi extends JPanel implements ActionListener {
 		JPanel topBottom = new JPanel(new GridLayout(1,diw));
 		for (int i = 0; i < diw; i++) {
 			copy.set(Calendar.DAY_OF_WEEK, i+1);
-			topBottom.add(new JLabel(copy.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, loc), JLabel.CENTER));
+			topBottom.add(new JLabel(copy.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, loc), SwingConstants.CENTER));
 		}
 		top.add(header);
 		top.add(SwingFactory.makeJButton("<<", "pm",this), BorderLayout.WEST);
 		top.add(SwingFactory.makeJButton(">>", "nm", this), BorderLayout.EAST);
 		top.add(topBottom, BorderLayout.SOUTH);
-		
+
 		add(top, BorderLayout.NORTH);
 		add(mid);
 	}
@@ -99,7 +100,7 @@ public class CalendarUi extends JPanel implements ActionListener {
 	public Date getDate() {
 		return date.getTime();
 	}
-	/** Returns a copy of the underlying Calendar with the selected date. 
+	/** Returns a copy of the underlying Calendar with the selected date.
 	 * @return a copy of the underlying Calendar with the selected date.
 	 */
 	public Calendar getCalendar() {
@@ -148,6 +149,7 @@ public class CalendarUi extends JPanel implements ActionListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() instanceof JToggleButton) {
 			select((JToggleButton)ae.getSource());

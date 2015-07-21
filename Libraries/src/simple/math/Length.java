@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.math;
 
@@ -20,16 +20,16 @@ public final class Length {
 		return yard*FOOT_PER_YARD;
 	}
 	public static final double footToYard(double feet) {
-		return feet/(double)FOOT_PER_YARD;
+		return feet/FOOT_PER_YARD;
 	}
 	public static final double inchToFoot(double inch) {
-		return inch/(double)INCH_PER_FOOT;
+		return inch/INCH_PER_FOOT;
 	}
 	public static final double footToInch(double feet) {
 		return feet*INCH_PER_FOOT;
 	}
 	public static final double footToMile(double feet) {
-		return feet/(double)FOOT_PER_MILE;
+		return feet/FOOT_PER_MILE;
 	}
 	public static final double mileToFoot(double miles) {
 		return miles*FOOT_PER_MILE;

@@ -46,12 +46,10 @@ public final class Utils {
 	 */
 	public static String getStackTrace(final Throwable ex) {
 		String result = "";
-		try  {
-			final StringWriter sw = new StringWriter();
-			final PrintWriter pw = new PrintWriter(sw);
-			ex.printStackTrace(pw);
-			pw.close();
-			sw.close();
+		try(StringWriter sw = new StringWriter()){
+			try(PrintWriter pw = new PrintWriter(sw)){
+				ex.printStackTrace(pw);
+			}
 			result = sw.toString();
 		} catch(final Exception e)  {
 			e.printStackTrace();

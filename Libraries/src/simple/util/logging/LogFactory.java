@@ -130,6 +130,7 @@ public final class LogFactory {
 	 * @throws IOException if file creation fails.
 	 * @see java.io.File#createNewFile()
 	 */
+	@SuppressWarnings("resource")
 	public static void setGlobalLogFile(final File file, final boolean append) throws IOException {
 		if(!FileUtil.createFile(file))
 			throw new IOException("The file could not be created. No reason given.");
@@ -142,6 +143,7 @@ public final class LogFactory {
 	 * @throws IOException if file creation fails
 	 * @see java.io.File#createNewFile()
 	 */
+	@SuppressWarnings("resource")
 	public static void setLogFileFor(final Class<?> clazz, final File file, final boolean append) throws IOException {
 		if(!FileUtil.createFile(file))
 			throw new IOException("The file could not be created. No reason given.");

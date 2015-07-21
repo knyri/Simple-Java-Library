@@ -62,10 +62,10 @@ public class MultipartFormEntity extends AbstractHttpEntity{
 				tmp.write(("Content-Disposition: form-data; name=\""+param.getName()
 						+"\"; filename=\""+param.getValue().substring(param.getValue().lastIndexOf('/'))
 						+"\"\r\nContent-Type: "+((FileParam)param).getContentType()+"\r\n\r\n").getBytes());
-				InputStream in =StreamFactory.getBufferedInputStream(file);
-				FileUtil.copy(in,tmp,6000);
-				tmp.write("\r\n".getBytes());
-				FileUtil.close(in);
+				try(InputStream in =StreamFactory.getBufferedInputStream(file)){
+					FileUtil.copy(in,tmp,6000);
+					tmp.write("\r\n".getBytes());
+				}
 			}catch(FileNotFoundException e){
 				throw new IllegalArgumentException("File does not exists! "+file,e);
 			}

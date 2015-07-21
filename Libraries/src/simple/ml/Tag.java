@@ -331,12 +331,11 @@ public final class Tag implements Iterable<Tag> {
 	}
 
 	/**
+	 * Use is discouraged unless building a page from a file.
 	 * @param key
 	 * @param value
 	 * @return
-	 * @deprecated Use {{@link #setProperty(CIString, String)}
 	 */
-	@Deprecated
 	public Tag setProperty(final String key, final String value) {
 		return setProperty(new CIString(key), value);
 	}
@@ -535,7 +534,7 @@ public final class Tag implements Iterable<Tag> {
 		return this;
 	}
 	public final Tag setProperties(Map<CIString,String> props){
-		properties.putAll(properties);
+		properties.putAll(props);
 		return this;
 	}
 	/**

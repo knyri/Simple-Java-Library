@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.math;
 
@@ -53,13 +53,13 @@ public final class Mass {
 	public static final double ounceToDram(double ounce) {
 		return ounce*DRAM_PER_OUNCE;
 	}
-	
+
 	/**Grams to metric tons.
 	 * @param gram
 	 * @return Metric Tons
 	 */
 	public static final double gramToTonne(double gram) {
-		return gram/(double)GRAM_PER_TONNE;
+		return gram/GRAM_PER_TONNE;
 	}
 	/**Metric tons to grams.
 	 * @param tonne

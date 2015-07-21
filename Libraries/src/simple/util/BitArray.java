@@ -1,5 +1,5 @@
-/* µCOMP:javac %sµ
-   µEXEC:cmd /K java -classpath .. simple.BitArrayµ
+/* ï¿½COMP:javac %sï¿½
+   ï¿½EXEC:cmd /K java -classpath .. simple.BitArrayï¿½
  */
 package simple.util;
 
@@ -41,7 +41,7 @@ public final class BitArray {
   }
   /**
    * Creates a new BitArray with <var>size</var> bits.
-   * 
+   *
    * @param size The number of bits to be used.
    */
   public BitArray(int size) {
@@ -50,7 +50,7 @@ public final class BitArray {
   /**
    * Creates a new BitArray with <var>size</var> bits and sets the value
    * to <var>value</var>.
-   * 
+   *
    * @param size The number of bits to be used.
    * @param value The initial value.
    */
@@ -116,11 +116,11 @@ public long getValue() {
  * @param i
  * @return True if <var>i</var>!=0
  */
-private boolean tf(long i) {
+private static boolean tf(long i) {
     return i!=0;
   }
   /**
-   * 
+   *
    * @param bit Bit to check. Must be one of 2^<sup>x</sup>.
    * @return True or False depending on <var>bit</var>.
    */
@@ -158,7 +158,7 @@ private boolean tf(long i) {
   }
   /**
    * Sets bit at <var>bit</var> to true.<br>
-   * 
+   *
    * @param bit One of 2<sup>x</sup>.
    */
   public void setBit(long bit) {
@@ -168,17 +168,17 @@ private boolean tf(long i) {
   }
   /**
    * Sets 1 bits found in <var>bits</var> to true.
-   * 
+   *
    * @param bits Int with the bits to set in it.
    */
   public void setBits(long bits) {
 	  for (int i = 0;i<this.bits.length;i++) {
 	      if (tf(bits>>>i&1)) {this.bits[i]=true;}
-	   }  
+	   }
   }
   /**
    * Sets bit at <var>bit</var> to false.
-   * 
+   *
    * @param bit One of 2<sup>x</sup>.
    */
   public void unsetBit(long bit) {
@@ -232,7 +232,8 @@ public void unsetAll() {
   /**
    * @return A string of binary.
    */
-  public String toString() {
+  @Override
+public String toString() {
     StringBuffer t = new StringBuffer(bits.length);
     for (int i = bits.length-1;i>=0;i--) {
       t.append(bits[i]?1:0);
@@ -240,7 +241,7 @@ public void unsetAll() {
     return new String(t);
   }
   /**
-   * 
+   *
    * @param bitSeperator Charater to place between each byte(8 bits).
    * @return A string of binary numbers.
    */

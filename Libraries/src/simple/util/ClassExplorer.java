@@ -11,7 +11,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Stack;
 
-import simple.io.FileUtil;
 import simple.io.StringWriterExt;
 
 /**
@@ -104,87 +103,89 @@ public class ClassExplorer {
 	@Override
 	public String toString() {
 		final Class<?> c = _o;
-		final StringWriterExt buf = new StringWriterExt();
-		buf.writeln(c.getName());
-		if (c.getSuperclass() != null)
-			buf.writeln("Superclass:\t"+c.getSuperclass().getSimpleName());
-		buf.writeln("Type:\t\t"+c.getSimpleName());
-		buf.writeln("isArray:\t"+c.isArray());
-		buf.writeln("isAnnotation:\t"+c.isAnnotation());
-		buf.writeln("isAnonymous:\t"+c.isAnonymousClass());
-		buf.writeln("isEnum:\t\t"+c.isEnum());
-		buf.writeln("isInterface:\t"+c.isInterface());
-		buf.writeln("isLocalClass:\t"+c.isLocalClass());
-		buf.writeln("isMemberClass:\t"+c.isMemberClass());
-		buf.writeln("isPrimitive:\t"+c.isPrimitive());
-		buf.writeln("isSynthetic:\t"+c.isSynthetic());
-		final Type[] inter = c.getInterfaces();
-		if (inter!=null) {
-			buf.writeln("Implemented Interfaces:");
-			for (int i = 0;i<inter.length;i++) {
-				buf.writeln("\t"+inter[i].toString());
+		try(StringWriterExt buf = new StringWriterExt()){
+			buf.writeln(c.getName());
+			if (c.getSuperclass() != null)
+				buf.writeln("Superclass:\t"+c.getSuperclass().getSimpleName());
+			buf.writeln("Type:\t\t"+c.getSimpleName());
+			buf.writeln("isArray:\t"+c.isArray());
+			buf.writeln("isAnnotation:\t"+c.isAnnotation());
+			buf.writeln("isAnonymous:\t"+c.isAnonymousClass());
+			buf.writeln("isEnum:\t\t"+c.isEnum());
+			buf.writeln("isInterface:\t"+c.isInterface());
+			buf.writeln("isLocalClass:\t"+c.isLocalClass());
+			buf.writeln("isMemberClass:\t"+c.isMemberClass());
+			buf.writeln("isPrimitive:\t"+c.isPrimitive());
+			buf.writeln("isSynthetic:\t"+c.isSynthetic());
+			final Type[] inter = c.getInterfaces();
+			if (inter!=null) {
+				buf.writeln("Implemented Interfaces:");
+				for (int i = 0;i<inter.length;i++) {
+					buf.writeln("\t"+inter[i].toString());
+				}
 			}
-		}
-		final TypeVariable<?>[] typed = c.getTypeParameters();
-		if (typed!=null) {
-			buf.writeln("Type Parameters:");
-			for (int i = 0; i < typed.length; i++) {
-				buf.writeln("\t"
-						+ typed[i].getGenericDeclaration().getClass()
-								.getCanonicalName());
+			final TypeVariable<?>[] typed = c.getTypeParameters();
+			if (typed!=null) {
+				buf.writeln("Type Parameters:");
+				for (int i = 0; i < typed.length; i++) {
+					buf.writeln("\t"
+							+ typed[i].getGenericDeclaration().getClass()
+									.getCanonicalName());
+				}
 			}
-		}
-		final Class<?>[] subs = c.getClasses();
-		if (subs!=null) {
-			buf.writeln("Known Subclasses:");
-			for (int i = 0; i < subs.length; i++) {
-				buf.writeln("\t"+subs[i].getCanonicalName());
+			final Class<?>[] subs = c.getClasses();
+			if (subs!=null) {
+				buf.writeln("Known Subclasses:");
+				for (int i = 0; i < subs.length; i++) {
+					buf.writeln("\t"+subs[i].getCanonicalName());
+				}
 			}
-		}
-		if (c.isEnum()) {
-			final Object[] enums = c.getEnumConstants();
-			buf.writeln("Declared enum values:");
-			for (int i = 0; i < enums.length; i++) {
-				buf.writeln("\t" + enums[i].toString());
+			if (c.isEnum()) {
+				final Object[] enums = c.getEnumConstants();
+				buf.writeln("Declared enum values:");
+				for (int i = 0; i < enums.length; i++) {
+					buf.writeln("\t" + enums[i].toString());
+				}
 			}
-		}
-		final Constructor<?>[] con = c.getDeclaredConstructors();
-		if (con!=null) {
-			buf.writeln("Declared Constructors:");
-			for (int i = 0;i<con.length;i++) {
-				buf.writeln("\t"+con[i].toString());
+			final Constructor<?>[] con = c.getDeclaredConstructors();
+			if (con!=null) {
+				buf.writeln("Declared Constructors:");
+				for (int i = 0;i<con.length;i++) {
+					buf.writeln("\t"+con[i].toString());
+				}
 			}
-		}
-		final Annotation[] anno = c.getDeclaredAnnotations();
-		if (anno!=null) {
-			buf.writeln("Declared Annotations:");
-			for (int i = 0;i<anno.length;i++) {
-				buf.writeln("\t"+anno[i].toString());
+			final Annotation[] anno = c.getDeclaredAnnotations();
+			if (anno!=null) {
+				buf.writeln("Declared Annotations:");
+				for (int i = 0;i<anno.length;i++) {
+					buf.writeln("\t"+anno[i].toString());
+				}
 			}
-		}
-		final Class<?>[] cla = c.getDeclaredClasses();
-		if (cla!=null) {
-			buf.writeln("Declared Classes:");
-			for (int i = 0;i<cla.length;i++) {
-				buf.writeln("\t"+cla[i].toString());
+			final Class<?>[] cla = c.getDeclaredClasses();
+			if (cla!=null) {
+				buf.writeln("Declared Classes:");
+				for (int i = 0;i<cla.length;i++) {
+					buf.writeln("\t"+cla[i].toString());
+				}
 			}
-		}
-		final Method[] meth = c.getDeclaredMethods();
-		if (meth!=null) {
-			buf.writeln("Declared Methods:");
-			for (int i = 0;i<meth.length;i++) {
-				buf.writeln("\t"+meth[i].toString());
+			final Method[] meth = c.getDeclaredMethods();
+			if (meth!=null) {
+				buf.writeln("Declared Methods:");
+				for (int i = 0;i<meth.length;i++) {
+					buf.writeln("\t"+meth[i].toString());
+				}
 			}
-		}
-		final Field[] feild = c.getDeclaredFields();
-		if (feild!=null) {
-			buf.writeln("Declared Feilds:");
-			for (int i = 0;i<feild.length;i++) {
-				buf.writeln("\t"+feild[i].toString());
+			final Field[] feild = c.getDeclaredFields();
+			if (feild!=null) {
+				buf.writeln("Declared Feilds:");
+				for (int i = 0;i<feild.length;i++) {
+					buf.writeln("\t"+feild[i].toString());
+				}
 			}
+			return buf.toString();
+		}catch(IOException e){ //should never happen
+			return "Error";
 		}
-		FileUtil.close(buf);
-		return buf.toString();
 	}
 	public static void main(final String[] args) {
 		if (args==null || args.length == 0) {
@@ -195,19 +196,17 @@ public class ClassExplorer {
 			System.exit(0);
 		}
 		File f;
-		PrintStream out;
 		for (final String cur : args) {
 			try {
 			f = new File(cur+".txt");
 				f.createNewFile();
-			out = new PrintStream(f);
-			try {
-				out.print(new ClassExplorer(Class.forName(cur)).toString());
-			} catch (final ClassNotFoundException e) {
-				e.printStackTrace(out);
+			try(PrintStream out = new PrintStream(f)){
+				try {
+					out.print(new ClassExplorer(Class.forName(cur)).toString());
+				} catch (final ClassNotFoundException e) {
+					e.printStackTrace(out);
+				}
 			}
-			out.flush();
-			FileUtil.close(out);
 			} catch (final IOException e1) {
 				e1.printStackTrace();
 			}

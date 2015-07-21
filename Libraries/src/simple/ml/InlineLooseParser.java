@@ -93,233 +93,206 @@ public class InlineLooseParser {
 		return parse(in, pconst, true);
 	}
 	public static Page parse(final Reader in, final ParserConstants pconst, final boolean buildCache) throws IOException, ParseException {
-		final BufferedReader bin = ReadWriterFactory.getBufferedReader(in);
-		final Page page = new Page();
-		final DoubleParsePosition pos = new DoubleParsePosition();
-		Tag cur = null;//tag currently adding to. defaults to page if cur==null
-		Tag tag = null;//tag currently creating
-		final StringBuilder buf = new StringBuilder(500);
-		char c;
-		int retc;
-		//int index = 0;
-		String tmp;
-		while (true) {
-			pos.reset();
-			//log.debug("---- LOOP ----");
-			if (buf.length()==0) {
-				retc = RWUtil.skipWhitespace(bin);
-				c= (char)retc;
-				//log.debug("retc="+retc+":c='"+c+"'");
-				if (retc==-1)
-					break;
-				//index +=1;
-				buf.append(c);
-			} else {
-				c = buf.charAt(0);
-			}
-			if (c!='<') {
-				buf.append(RWUtil.readUntil(bin, '<'));
-				if (buf.charAt(buf.length()-1)=='<') {
-					buf.deleteCharAt(buf.length()-1);
+		try(BufferedReader bin = ReadWriterFactory.getBufferedReader(in)){
+			final Page page = new Page();
+			final DoubleParsePosition pos = new DoubleParsePosition();
+			Tag cur = null;//tag currently adding to. defaults to page if cur==null
+			Tag tag = null;//tag currently creating
+			final StringBuilder buf = new StringBuilder(500);
+			char c;
+			int retc;
+			//int index = 0;
+			String tmp;
+			while (true) {
+				pos.reset();
+				//log.debug("---- LOOP ----");
+				if (buf.length()==0) {
+					retc = RWUtil.skipWhitespace(bin);
+					c= (char)retc;
+					//log.debug("retc="+retc+":c='"+c+"'");
+					if (retc==-1)
+						break;
+					//index +=1;
+					buf.append(c);
+				} else {
+					c = buf.charAt(0);
 				}
-//				log.debug("CDATA", buf);
-				if (cur != null) {
-					tag=new Tag(Tag.CDATA, buf.toString(), true);
+				if (c!='<') {
+					buf.append(RWUtil.readUntil(bin, '<'));
+					if (buf.charAt(buf.length()-1)=='<') {
+						buf.deleteCharAt(buf.length()-1);
+					}
+	//				log.debug("CDATA", buf);
+					if (cur != null) {
+						tag=new Tag(Tag.CDATA, buf.toString(), true);
+						if(buildCache){
+							page.addTagToCache(tag);
+							tag.addParentListener(page);
+						}
+						cur.addChild(tag);
+					} else {
+						page.addTag(new Tag(Tag.CDATA, buf.toString(), true), null);
+					}
+					buf.setLength(0);
+					buf.append('<');
+					continue;
+				}
+				buf.append(RWUtil.readUntil(bin, '>'));
+				if(buf.charAt(1)=='<' || do_str.isWhiteSpace(buf.charAt(1))){
+					//un-escaped <
+					int index=1;
+					while(buf.charAt(index)=='<' || do_str.isWhiteSpace(buf.charAt(index))){index++;}
+					if(cur!=null){
+						if(cur.getChild(cur.childCount()-1).getName().equals(Tag.CDATA)){
+							cur.getChild(cur.childCount()-1).setContent(cur.getChild(cur.childCount()-1).getContent()+buf.substring(0,index-1));
+							buf.delete(0,index-1);
+						}else{
+							cur.addChild(new Tag(Tag.CDATA, buf.substring(0,index-1), true));
+							buf.delete(0,index-1);
+						}
+					}else{
+						page.addTag(new Tag(Tag.CDATA, buf.substring(0,index-1), true), null);
+						buf.delete(0,index-1);
+					}
+				}
+				if (buf.length()>3 && buf.substring(0, 4).equals("<!--")) {
+					if (!buf.substring(buf.length()-3).equals("-->"))
+						buf.append(RWUtil.readUntil(bin,"-->"));
+
+	//				log.debug("HTML comment", buf);
+					tag= new Tag(Tag.HTMLCOMM, buf.toString(), true);
+					if (cur==null)
+						page.addTag(tag, null);
+					else
+						cur.addChild(tag);
+
 					if(buildCache){
 						page.addTagToCache(tag);
 						tag.addParentListener(page);
 					}
-					cur.addChild(tag);
-				} else {
-					page.addTag(new Tag(Tag.CDATA, buf.toString(), true), null);
-				}
-				buf.setLength(0);
-				buf.append('<');
-				continue;
-			}
-			buf.append(RWUtil.readUntil(bin, '>'));
-			if(buf.charAt(1)=='<' || do_str.isWhiteSpace(buf.charAt(1))){
-				//un-escaped <
-				int index=1;
-				while(buf.charAt(index)=='<' || do_str.isWhiteSpace(buf.charAt(index))){index++;}
-				if(cur!=null){
-					if(cur.getChild(cur.childCount()-1).getName().equals(Tag.CDATA)){
-						cur.getChild(cur.childCount()-1).setContent(cur.getChild(cur.childCount()-1).getContent()+buf.substring(0,index-1));
-						buf.delete(0,index-1);
-					}else{
-						cur.addChild(new Tag(Tag.CDATA, buf.substring(0,index-1), true));
-						buf.delete(0,index-1);
-					}
-				}else{
-					page.addTag(new Tag(Tag.CDATA, buf.substring(0,index-1), true), null);
-					buf.delete(0,index-1);
-				}
-			}
-			if (buf.length()>3 && buf.substring(0, 4).equals("<!--")) {
-				if (!buf.substring(buf.length()-3).equals("-->"))
-					buf.append(RWUtil.readUntil(bin,"-->"));
-
-//				log.debug("HTML comment", buf);
-				tag= new Tag(Tag.HTMLCOMM, buf.toString(), true);
-				if (cur==null)
-					page.addTag(tag, null);
-				else
-					cur.addChild(tag);
-
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
-				buf.setLength(0);
-				continue;
-			}
-			// rare case where < is the last character?
-			if(buf.length()<2)break;
-//			log.debug("buf",buf);
-			if(buf.charAt(1)=='?'){
-				if (!buf.substring(buf.length()-2).equals("?>"))
-					buf.append(RWUtil.readUntil(bin,"?>"));
-				tag=new Tag(Tag.CDATA, buf.toString(), true);
-				if (cur != null) {
-					cur.addChild(tag);
-				} else {
-					page.addTag(tag, null);
-				}
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
-				buf.setLength(0);
-				continue;
-			}
-			if (buf.charAt(1)=='!'){
-				// <!DOCTYPE
-				if (buf.length()>9){
-					final String ttmp=buf.substring(0,9);
-					if(ttmp.equals("<!CDATA[[")){//NOTE: SGML CDATA
-						if (!buf.substring(buf.length()-3).equals("]]>")) {
-							buf.append(RWUtil.readUntil(bin,"]]>"));
-						}
-//						log.debug("SGML CDATA");
-						tag=new Tag(Tag.SGMLCDATA, buf.toString(), true);
-						if (cur==null)
-							page.addTag(tag, null);
-						else
-							cur.addChild(tag);
-						if(buildCache){
-							page.addTagToCache(tag);
-							tag.addParentListener(page);
-						}
-
-						buf.setLength(0);
-						continue;
-					}else if(ttmp.toUpperCase().equals("<!DOCTYPE")){
-//						log.debug("DOCTYPE");
-						tag=new Tag(Tag.META,buf.toString(),true);
-						page.addTag(tag, null);
-						if(buildCache){
-							page.addTagToCache(tag);
-							tag.addParentListener(page);
-						}
-						buf.setLength(0);
-						continue;
-					}
-				}
-			}
-			if (buf.charAt(pos.start+1)=='/') {//NOTE: found an end tag
-				pos.end = do_str.indexOfAny(buf, ">", pos.start);
-				if (!pos.validEnd() || do_str.isWhiteSpace(buf.charAt(pos.end)))
-					throw new ParseException("Missing matching '>' for '<' at index "+pos.start+" of "+buf, pos.start);
-				final String name = buf.substring(pos.start+2, pos.end).trim();
-				if (cur != null) {
-					//end the tags whose end tags are optional
-					while (!cur.getName().equals(name) && pconst.isOptionalEnder(cur.getName())) {
-//						log.debug("optional ender","ended: '"+cur.getName()+"'");
-						cur = cur.getParent();
-					}
-//					log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
-					if (cur.getName().equals(name)) {
-						cur = cur.getParent();
-//						log.debug("ended: '"+name+"' current: '"+(cur!=null?cur.getName():"[NONE]")+"'");
-					} else {
-						tag = cur;
-						boolean found = false;
-						while (tag.hasParent()) {
-							/*
-							 * check the upper tags(cause: self-closing tag without special
-							 * closure or empty body followed by closing tag)
-							 */
-							tag = tag.getParent();
-							if (tag.getName().equals(name)) {
-								found = true;
-								do {
-									log.warning("lazy self-closing tag found: '"+cur.getName()+"'");
-									cur.setSelfClosing(true);//this will copy all children to parent
-									cur = cur.getParent();
-								} while (cur != tag);
-								cur = cur.getParent();
-								break;
-							}
-						}
-						if (!found){
-							log.warning("Missing opening tag for closing tag "
-									+buf.subSequence(pos.start, pos.end+1)
-									+" found at "+pos+". Current tag: "+cur.getName());
-						}
-					}
-				} else {
-					log.warning("Missing opening tag for closing tag "
-							+buf.subSequence(pos.start, pos.end+1)
-							+" found at "+pos+".(At document root)");
-				}
-				buf.setLength(0);
-				continue;
-			}//end handle end tag
-			try{
-			/*
-			 * search for ending > [had a case where the alt attr of an img tag contained a > and
-			 * it screwed the parser]
-			 */
-			while (buf.charAt(pos.end)!='>') {
-				//<input name="name" value="ss"' ... >
-				//fixes cases like <td colspan=11'>
-				switch(buf.charAt(pos.end)){
-				case '"':
-				case '\'':
-					pos.end++;
+					buf.setLength(0);
 					continue;
 				}
-				if(buf.charAt(pos.end)=='='){
-//skip whitespace
-					pos.end++;
-					while(do_str.isWhiteSpace(buf.charAt(pos.end))){
-						pos.end++;
-						if (pos.end == buf.length()) {
-							tmp = RWUtil.readUntil(bin, '>');
-							if (tmp.isEmpty()) {
-								throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
+				// rare case where < is the last character?
+				if(buf.length()<2)break;
+	//			log.debug("buf",buf);
+				if(buf.charAt(1)=='?'){
+					if (!buf.substring(buf.length()-2).equals("?>"))
+						buf.append(RWUtil.readUntil(bin,"?>"));
+					tag=new Tag(Tag.CDATA, buf.toString(), true);
+					if (cur != null) {
+						cur.addChild(tag);
+					} else {
+						page.addTag(tag, null);
+					}
+					if(buildCache){
+						page.addTagToCache(tag);
+						tag.addParentListener(page);
+					}
+					buf.setLength(0);
+					continue;
+				}
+				if (buf.charAt(1)=='!'){
+					// <!DOCTYPE
+					if (buf.length()>9){
+						final String ttmp=buf.substring(0,9);
+						if(ttmp.equals("<!CDATA[[")){//NOTE: SGML CDATA
+							if (!buf.substring(buf.length()-3).equals("]]>")) {
+								buf.append(RWUtil.readUntil(bin,"]]>"));
 							}
-							buf.append(tmp);
+	//						log.debug("SGML CDATA");
+							tag=new Tag(Tag.SGMLCDATA, buf.toString(), true);
+							if (cur==null)
+								page.addTag(tag, null);
+							else
+								cur.addChild(tag);
+							if(buildCache){
+								page.addTagToCache(tag);
+								tag.addParentListener(page);
+							}
+
+							buf.setLength(0);
+							continue;
+						}else if(ttmp.toUpperCase().equals("<!DOCTYPE")){
+	//						log.debug("DOCTYPE");
+							tag=new Tag(Tag.META,buf.toString(),true);
+							page.addTag(tag, null);
+							if(buildCache){
+								page.addTagToCache(tag);
+								tag.addParentListener(page);
+							}
+							buf.setLength(0);
+							continue;
 						}
 					}
-					//read value
+				}
+				if (buf.charAt(pos.start+1)=='/') {//NOTE: found an end tag
+					pos.end = do_str.indexOfAny(buf, ">", pos.start);
+					if (!pos.validEnd() || do_str.isWhiteSpace(buf.charAt(pos.end)))
+						throw new ParseException("Missing matching '>' for '<' at index "+pos.start+" of "+buf, pos.start);
+					final String name = buf.substring(pos.start+2, pos.end).trim();
+					if (cur != null) {
+						//end the tags whose end tags are optional
+						while (!cur.getName().equals(name) && pconst.isOptionalEnder(cur.getName())) {
+	//						log.debug("optional ender","ended: '"+cur.getName()+"'");
+							cur = cur.getParent();
+						}
+	//					log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
+						if (cur.getName().equals(name)) {
+							cur = cur.getParent();
+	//						log.debug("ended: '"+name+"' current: '"+(cur!=null?cur.getName():"[NONE]")+"'");
+						} else {
+							tag = cur;
+							boolean found = false;
+							while (tag.hasParent()) {
+								/*
+								 * check the upper tags(cause: self-closing tag without special
+								 * closure or empty body followed by closing tag)
+								 */
+								tag = tag.getParent();
+								if (tag.getName().equals(name)) {
+									found = true;
+									do {
+										log.warning("lazy self-closing tag found: '"+cur.getName()+"'");
+										cur.setSelfClosing(true);//this will copy all children to parent
+										cur = cur.getParent();
+									} while (cur != tag);
+									cur = cur.getParent();
+									break;
+								}
+							}
+							if (!found){
+								log.warning("Missing opening tag for closing tag "
+										+buf.subSequence(pos.start, pos.end+1)
+										+" found at "+pos+". Current tag: "+cur.getName());
+							}
+						}
+					} else {
+						log.warning("Missing opening tag for closing tag "
+								+buf.subSequence(pos.start, pos.end+1)
+								+" found at "+pos+".(At document root)");
+					}
+					buf.setLength(0);
+					continue;
+				}//end handle end tag
+				try{
+				/*
+				 * search for ending > [had a case where the alt attr of an img tag contained a > and
+				 * it screwed the parser]
+				 */
+				while (buf.charAt(pos.end)!='>') {
+					//<input name="name" value="ss"' ... >
+					//fixes cases like <td colspan=11'>
 					switch(buf.charAt(pos.end)){
 					case '"':
-						pos.end++;
-						while(buf.charAt(pos.end)!='"'){
-							pos.end++;
-							if (pos.end == buf.length()) {
-								tmp = RWUtil.readUntil(bin, '>');
-								if (tmp.isEmpty()) {
-									throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
-								}
-								buf.append(tmp);
-							}
-						}
-						break;
 					case '\'':
 						pos.end++;
-						while(buf.charAt(pos.end)!='\''){
+						continue;
+					}
+					if(buf.charAt(pos.end)=='='){
+	//skip whitespace
+						pos.end++;
+						while(do_str.isWhiteSpace(buf.charAt(pos.end))){
 							pos.end++;
 							if (pos.end == buf.length()) {
 								tmp = RWUtil.readUntil(bin, '>');
@@ -329,105 +302,133 @@ public class InlineLooseParser {
 								buf.append(tmp);
 							}
 						}
-						break;
-					default:
-						while(!do_str.isWhiteSpace(buf.charAt(pos.end)) && buf.charAt(pos.end)!='>'){
+						//read value
+						switch(buf.charAt(pos.end)){
+						case '"':
 							pos.end++;
-							if (pos.end == buf.length()) {
-								tmp = RWUtil.readUntil(bin, '>');
-								if (tmp.isEmpty()) {
-									throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
+							while(buf.charAt(pos.end)!='"'){
+								pos.end++;
+								if (pos.end == buf.length()) {
+									tmp = RWUtil.readUntil(bin, '>');
+									if (tmp.isEmpty()) {
+										throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
+									}
+									buf.append(tmp);
 								}
-								buf.append(tmp);
 							}
+							break;
+						case '\'':
+							pos.end++;
+							while(buf.charAt(pos.end)!='\''){
+								pos.end++;
+								if (pos.end == buf.length()) {
+									tmp = RWUtil.readUntil(bin, '>');
+									if (tmp.isEmpty()) {
+										throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
+									}
+									buf.append(tmp);
+								}
+							}
+							break;
+						default:
+							while(!do_str.isWhiteSpace(buf.charAt(pos.end)) && buf.charAt(pos.end)!='>'){
+								pos.end++;
+								if (pos.end == buf.length()) {
+									tmp = RWUtil.readUntil(bin, '>');
+									if (tmp.isEmpty()) {
+										throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
+									}
+									buf.append(tmp);
+								}
+							}
+						}//switch
+						if(buf.charAt(pos.end)=='>')break;
+					}//if(buf.charAt(pos.end)=='=')
+					pos.end++;
+					if (pos.end == buf.length()) {
+						tmp = RWUtil.readUntil(bin, '>');
+						if (tmp.isEmpty()) {
+							throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
 						}
-					}//switch
-					if(buf.charAt(pos.end)=='>')break;
-				}//if(buf.charAt(pos.end)=='=')
-				pos.end++;
-				if (pos.end == buf.length()) {
-					tmp = RWUtil.readUntil(bin, '>');
-					if (tmp.isEmpty()) {
-						throw new ParseException(pos+" Reached end of file while parsing. Cause: "+buf, pos.start);
+						buf.append(tmp);
 					}
-					buf.append(tmp);
 				}
-			}
-			}catch(final StringIndexOutOfBoundsException e){
-				log.debug("BUFFER DUMP",buf);
-				int start=pos.end-100,end=pos.end+100;
-				if(start<0)start=0;
-				if(end>buf.length())end=buf.length();
-				StringIndexOutOfBoundsException e2=new StringIndexOutOfBoundsException(pos.toString()+":"+buf.substring(start,end));
-				e2.initCause(e);
-				throw e2;
-			}
-			tag = createTag(buf, pos);
-//			log.debug("Start tag","'"+tag.getName()+"' | "+pos);
-			if (cur==null) {
-				page.addTag(tag, null);
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
-			} else {
-				if (pconst.isOptionalEnder(cur.getName()) && pconst.isOptionalEnderEnd(cur.getName(),tag.getName())) {
-//					log.debug("optional ender","ended: "+cur.getName()+" current: "+(cur.getParent()!=null?cur.getParent().getName():"[NONE]"));
-					cur = cur.getParent();
-				}
-				cur.addChild(tag);
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
-			}
-			if (pconst.isPcdataTag(tag.getName())) {
-				//check for tags filled with gibberish to us
-				try {
-					buf.setLength(0);
-					buf.append(RWUtil.readUntil(bin, "</"+tag.getName()+">", true));
-				} catch (final EOFException e) {
-					throw new ParseException("Missing end tag for PCDATA tag "+tag.getName()+" found at "+pos,pos.start);
-				}
-				try{
-					Tag tmptag=new Tag(Tag.CDATA, buf.substring(0, Math.max(do_str.CI.lastIndexOf(buf,"</"+tag.getName()),0)).trim(),true);
-					tag.addChild(tmptag);
-					if(buildCache){
-						page.addTagToCache(tmptag);
-						tmptag.addParentListener(page);
-					}
 				}catch(final StringIndexOutOfBoundsException e){
-					final StringIndexOutOfBoundsException e2= new StringIndexOutOfBoundsException(buf.toString());
+					log.debug("BUFFER DUMP",buf);
+					int start=pos.end-100,end=pos.end+100;
+					if(start<0)start=0;
+					if(end>buf.length())end=buf.length();
+					StringIndexOutOfBoundsException e2=new StringIndexOutOfBoundsException(pos.toString()+":"+buf.substring(start,end));
 					e2.initCause(e);
 					throw e2;
 				}
-//				log.debug("PCDATA tag");
+				tag = createTag(buf, pos);
+	//			log.debug("Start tag","'"+tag.getName()+"' | "+pos);
+				if (cur==null) {
+					page.addTag(tag, null);
+					if(buildCache){
+						page.addTagToCache(tag);
+						tag.addParentListener(page);
+					}
+				} else {
+					if (pconst.isOptionalEnder(cur.getName()) && pconst.isOptionalEnderEnd(cur.getName(),tag.getName())) {
+	//					log.debug("optional ender","ended: "+cur.getName()+" current: "+(cur.getParent()!=null?cur.getParent().getName():"[NONE]"));
+						cur = cur.getParent();
+					}
+					cur.addChild(tag);
+					if(buildCache){
+						page.addTagToCache(tag);
+						tag.addParentListener(page);
+					}
+				}
+				if (pconst.isPcdataTag(tag.getName())) {
+					//check for tags filled with gibberish to us
+					try {
+						buf.setLength(0);
+						buf.append(RWUtil.readUntil(bin, "</"+tag.getName()+">", true));
+					} catch (final EOFException e) {
+						throw new ParseException("Missing end tag for PCDATA tag "+tag.getName()+" found at "+pos,pos.start);
+					}
+					try{
+						Tag tmptag=new Tag(Tag.CDATA, buf.substring(0, Math.max(do_str.CI.lastIndexOf(buf,"</"+tag.getName()),0)).trim(),true);
+						tag.addChild(tmptag);
+						if(buildCache){
+							page.addTagToCache(tmptag);
+							tmptag.addParentListener(page);
+						}
+					}catch(final StringIndexOutOfBoundsException e){
+						final StringIndexOutOfBoundsException e2= new StringIndexOutOfBoundsException(buf.toString());
+						e2.initCause(e);
+						throw e2;
+					}
+	//				log.debug("PCDATA tag");
+					buf.setLength(0);
+					//add the data and continue(skips the adding of sub tags)
+					continue;
+				}
+				if (tag.isSelfClosing()) {
+					buf.setLength(0);
+					continue;
+				} else if (pconst.isSelfCloser(tag.getName())) {
+	//				log.debug("pre-defined self closer");
+					tag.setSelfClosing(true);
+					buf.setLength(0);
+					continue;
+				}
+				cur = tag;
 				buf.setLength(0);
-				//add the data and continue(skips the adding of sub tags)
-				continue;
+	//			log.debug("current: "+cur.getName());
 			}
-			if (tag.isSelfClosing()) {
-				buf.setLength(0);
-				continue;
-			} else if (pconst.isSelfCloser(tag.getName())) {
-//				log.debug("pre-defined self closer");
-				tag.setSelfClosing(true);
-				buf.setLength(0);
-				continue;
+	//don't waste time in the loop if it won't be displayed
+			if (cur != null && log.getPrint(LogLevel.WARNING)) {
+				do {
+					log.warning("Missing end tag for " + cur.getName()+"|"+pos);
+					cur = cur.getParent();
+				} while (cur != null);
 			}
-			cur = tag;
-			buf.setLength(0);
-//			log.debug("current: "+cur.getName());
-		}
-//don't waste time in the loop if it won't be displayed
-		if (cur != null && log.getPrint(LogLevel.WARNING)) {
-			do {
-				log.warning("Missing end tag for " + cur.getName()+"|"+pos);
-				cur = cur.getParent();
-			} while (cur != null);
-		}
 
-		return page;
+			return page;
+		}
 	}
 	/**Creates a Tag based on the raw data passed to it. Fills in attributes and the self-closing flag.
 	 * TODO: inline this function

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util.system;
 import java.awt.event.ActionEvent;
@@ -24,7 +24,7 @@ import simple.gui.factory.SwingFactory;
  */
 public class RegistryEditor extends SimpleBorderLayoutPane implements ActionListener {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected static Runtime runtime = Runtime.getRuntime();
@@ -41,7 +41,7 @@ public class RegistryEditor extends SimpleBorderLayoutPane implements ActionList
 		frame.setContentPane(new RegistryEditor());
 		SwingFactory.showFrame(frame);
 		/*Console con = System.console();
-		LineNumberReader input = null; 
+		LineNumberReader input = null;
 		PrintWriter output = null;
 		if (con!=null) {
 			input = new LineNumberReader(con.reader());
@@ -64,9 +64,9 @@ public class RegistryEditor extends SimpleBorderLayoutPane implements ActionList
 			if (cmd=="list") {
 				do_list(output, line.substring(cmd.length()+1));
 			} else if (cmd=="del") {
-				
+
 			} else if (cmd=="create") {
-				
+
 			} else if (cmd=="help" || cmd=="?"){
 				printHelp(output);
 			} else if (cmd == "x") {
@@ -83,12 +83,12 @@ public class RegistryEditor extends SimpleBorderLayoutPane implements ActionList
 				thread = runtime.exec("regedit /s/e registrytmp.reg \""+arg+"\"");
 			thread.waitFor();
 			char buff[] = new char[255];
-			FileReader in = new FileReader("registrytmp.reg");
-			int read = 0;
-			while ((read = in.read(buff)) !=-1) {
-				out.print(read);
+			try(FileReader in = new FileReader("registrytmp.reg")){
+				int read = 0;
+				while ((read = in.read(buff)) !=-1) {
+					out.print(read);
+				}
 			}
-			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -102,12 +102,13 @@ public class RegistryEditor extends SimpleBorderLayoutPane implements ActionList
 		out.println("x : exit");
 	}
 	public static String getList(String key) {
-		
+
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if ("EXP".equals(ae.getActionCommand())) {
 			StringWriter str = new StringWriter();

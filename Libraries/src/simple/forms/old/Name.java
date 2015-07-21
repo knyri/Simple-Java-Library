@@ -1,9 +1,9 @@
 package simple.forms.old;
 
 import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 /**
  * Creates a form object that accepts First and Last names.
@@ -11,6 +11,7 @@ import javax.swing.JTextField;
  * @author Kenneth Pierce
  * @deprecated
  */
+@Deprecated
 public class Name extends JPanel implements FormObject {
 
 	private static final long serialVersionUID = 1L;
@@ -25,25 +26,31 @@ public class Name extends JPanel implements FormObject {
 		temp.add(last);
 		add(temp);
 	}
+	@Override
 	public String getValue() {
 		return first.getText().trim()+" "+last.getText().trim();
 	}
+	@Override
 	public void setValue(String v) {
 		first.setText(v.split(" ")[0]);
 		last.setText(v.split(" ")[1]);
 	}
+	@Override
 	public boolean isValid() {
 		if ((first.getText().trim().length()>0)&&(last.getText().trim().length()>0)) {return true;}
 		return false;
 	}
+	@Override
 	public void reset() {
 		first.setText("");
 		last.setText("");
 	}
+	@Override
 	public String getName() {
 		return "Name";
 	}
+	@Override
 	public JPanel getJPanel() {
-		return (JPanel)this;
+		return this;
 	}
 }

@@ -254,7 +254,7 @@ public class FullNode<T, K, V> {
 		return this;
 	}
 	public final FullNode<T,K,V> setProperties(Map<K,V> props){
-		properties.putAll(properties);
+		properties.putAll(props);
 		return this;
 	}
 	/**

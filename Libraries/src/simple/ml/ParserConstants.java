@@ -38,7 +38,9 @@ public final class ParserConstants {
 	 * @throws ParseException
 	 */
 	public void load(final File file) throws IOException, ParseException {
-		load(new FileReader(file));
+		try(Reader r= new FileReader(file)){
+			load(r);
+		}
 	}
 	/**Loads the configuration file.
 	 * @param in
@@ -46,7 +48,9 @@ public final class ParserConstants {
 	 * @throws ParseException
 	 */
 	public void load(final InputStream in) throws IOException, ParseException {
-		load(new InputStreamReader(in));
+		try(Reader r= new InputStreamReader(in)){
+			load(r);
+		}
 	}
 	/**Loads the configuration file.
 	 * @param in

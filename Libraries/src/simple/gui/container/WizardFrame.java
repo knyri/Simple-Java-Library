@@ -127,7 +127,7 @@ public class WizardFrame extends JDialog implements ActionListener {
 			}
 		}
 	}
-	private void showError(WizardPanel wp) {
+	private static void showError(WizardPanel wp) {
 		SJOptionPane.showErrorMessage(wp, wp.getErrorCode());
 	}
 	public void showPanel(int index) {

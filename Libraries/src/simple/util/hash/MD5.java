@@ -25,11 +25,11 @@ public final class MD5 {
 	 */
 	public static final String hash(File file) throws IOException {
 		MD5State state=new MD5State();
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-		final byte[] buf=new byte[2048];
-		while(in.read(buf) != -1)
-			state.update(buf,buf.length);
-		in.close();
+		try(BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))){
+			final byte[] buf=new byte[2048];
+			while(in.read(buf) != -1)
+				state.update(buf,buf.length);
+		}
 		return state.finish();
 	}
 	public static final String hash(String str){
