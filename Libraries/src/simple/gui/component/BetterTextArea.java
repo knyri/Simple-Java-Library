@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.gui.component;
 
@@ -15,7 +15,7 @@ import javax.swing.JTextArea;
  */
 public final class BetterTextArea extends JComponent {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -6881880883567252576L;
 	private final JTextArea out = new JTextArea();
@@ -24,13 +24,26 @@ public final class BetterTextArea extends JComponent {
 		setLayout(new BorderLayout());
 		add(pane);
 	}
-	public void append(String s) {
-		out.append(s);
+	public JScrollPane getScrollPane(){
+		return pane;
 	}
-	public void appendln(String s) {
-		out.append(s+'\n');
+	public JTextArea getTextArea(){
+		return out;
+	}
+	public BetterTextArea append(String s) {
+		out.append(s);
+		return this;
+	}
+	public BetterTextArea appendln(String s) {
+		out.append(s);
+		out.append("\n");
+		return this;
 	}
 	public void clear() {
 		out.setText("");
+	}
+	public BetterTextArea appendln(){
+		out.append("\n");
+		return this;
 	}
 }

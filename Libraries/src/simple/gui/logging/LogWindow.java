@@ -4,10 +4,9 @@ import java.awt.Font;
 import java.util.Date;
 
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import simple.gui.SDialog;
+import simple.gui.component.BetterTextArea;
 import simple.util.App;
 
 /** Dialog version of LogPanel.
@@ -22,18 +21,17 @@ public class LogWindow extends SDialog {
 	public static final int modal = 1;
 	public static final int onTop = 2;
 	public static final int printTimestamp = 4;
-	private final JTextArea log = new JTextArea();
-	private final JScrollPane scroll = new JScrollPane(log);
+	private final BetterTextArea log = new BetterTextArea();
 	private boolean timestamp = true;
 	private final Date time = new Date();
 	public LogWindow(final JFrame frame, final String title, final boolean modal) {
 		super(frame, title, modal);
 		setSize(300,250);
-		addCenter(scroll);
+		addCenter(log);
 		log.setFont(new Font("Courier New", Font.PLAIN, 12));
-		log.setLineWrap(true);
-		log.setWrapStyleWord(true);
-		log.setEditable(false);
+		log.getTextArea().setLineWrap(true);
+		log.getTextArea().setWrapStyleWord(true);
+		log.getTextArea().setEditable(false);
 	}
 	public LogWindow(final JFrame frame, final String title, final boolean modal, final boolean timestamp) {
 		this(frame, title, modal);
@@ -44,19 +42,19 @@ public class LogWindow extends SDialog {
 		setAlwaysOnTop(App.isSet(options, onTop));
 	}
 	public void setAutoscroll(final boolean autoscroll) {
-		scroll.setAutoscrolls(autoscroll);
+		log.getScrollPane().setAutoscrolls(autoscroll);
 	}
 	public void setLineWrap(final boolean wraps) {
-		log.setLineWrap(wraps);
+		log.getTextArea().setLineWrap(wraps);
 	}
 	public void setPrintTimeStamp(final boolean timestamp) {
 		this.timestamp = timestamp;
 	}
 	public boolean isAutoscrolls() {
-		return scroll.getAutoscrolls();
+		return log.getScrollPane().getAutoscrolls();
 	}
 	public boolean isLineWrap() {
-		return log.getLineWrap();
+		return log.getTextArea().getLineWrap();
 	}
 	public boolean isPrintTimeStamp() {
 		return timestamp;
@@ -67,15 +65,15 @@ public class LogWindow extends SDialog {
 		return "["+time.toString()+"]: ";
 	}
 	public synchronized void append(final String s) {
-		log.append(getTimeStamp()+s);
+		log.append(getTimeStamp()).append(s);
 	}
 	public synchronized void appendln(final String s) {
-		log.append(getTimeStamp()+s+"\n");
+		log.append(getTimeStamp()).appendln(s);
 	}
 	public synchronized void appendln() {
-		log.append("\n");
+		log.appendln();
 	}
 	public synchronized void clear() {
-		log.setText("");
+		log.clear();
 	}
 }
