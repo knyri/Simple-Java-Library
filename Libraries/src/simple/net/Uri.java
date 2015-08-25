@@ -756,7 +756,7 @@ public final class Uri {
 			if(ind!=-1){
 				ret.append('%');
 				ret.append(Integer.toHexString(chr));
-			}else{ret.append(part.charAt(chr));}
+			}else{ret.append(chr);}
 		}
 		return ret.toString();
 	}
