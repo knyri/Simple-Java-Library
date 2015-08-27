@@ -152,10 +152,10 @@ public final class SJPanel {
 	 * @param title Title to be displayed.
 	 * @return The resulting JPanel.
 	 */
-	public static JPanel makeTitledPanel(final JComponent[] c, final String title) {
+	public static JPanel makeTitledPanel(final String title, final JComponent... c) {
 		final JPanel tmp = new JPanel();
-		for (int i = 0;i<c.length;i++) {
-			tmp.add(c[i]);
+		for (JComponent cur: c) {
+			tmp.add(cur);
 		}
 		tmp.setBorder(new TitledBorder(new EmptyBorder(0,0,0,0),title));
 		return tmp;
@@ -172,13 +172,13 @@ public final class SJPanel {
 		tmp.setBorder(new TitledBorder(new EmptyBorder(0,0,0,0),title));
 		return tmp;
 	}
-	public static JPanel makeTitledPanel(final JComponent c, final String title, final LayoutManager m) {
+	public static JPanel makeTitledPanel(final String title, final LayoutManager m, final JComponent c) {
 		final JPanel tmp = new JPanel(m);//new BorderLayout());
 		tmp.add(c);
 		tmp.setBorder(new TitledBorder(new EmptyBorder(0,0,0,0),title));
 		return tmp;
 	}
-	public static JPanel makeTitledPanel(final JComponent[] c, final String title, final LayoutManager m) {
+	public static JPanel makeTitledPanel(final String title, final LayoutManager m, final JComponent... c) {
 		final JPanel tmp = new JPanel(m);//new BorderLayout());
 		for (int i = 0;i<c.length;i++) {
 			tmp.add(c[i]);
@@ -197,7 +197,7 @@ public final class SJPanel {
 	 * @return The resulting JPanel.
 	 * @see javax.swing.BoxLayout
 	 */
-	public static JPanel makeTitledPanel(final JComponent[] c, final String title, final int axis) {
+	public static JPanel makeTitledPanel(final String title, final int axis,final JComponent... c) {
 		final JPanel tmp = new JPanel();
 		final BoxLayout m = new BoxLayout(tmp, axis);
 		tmp.setLayout(m);
@@ -229,7 +229,7 @@ public final class SJPanel {
 	 * @return BoxLayout JPanel with JComponents on the Y_AXIS.
 	 * @see javax.swing.BoxLayout
 	 */
-	public static JPanel makeBoxLayoutPanelY(final JComponent[] c) {
+	public static JPanel makeBoxLayoutPanelY(final JComponent... c) {
 		final JPanel tmp = makeBoxLayoutPanelY();
 		for (int i = 0;i<c.length;i++) {
 			tmp.add(c[i]);
@@ -333,10 +333,10 @@ public final class SJPanel {
 	 * @param m GridLayout to be used.
 	 * @return The resulting JPanel.
 	 */
-	public static JPanel wrapInJPanel(final JComponent c[], final GridLayout m) {
+	public static JPanel wrapInJPanel(final GridLayout m, final JComponent... c) {
 		final JPanel tmp = new JPanel(m);
-		for (int i = 0;i<c.length;i++) {
-			tmp.add(c[i]);
+		for (JComponent cur: c) {
+			tmp.add(cur);
 		}
 		return tmp;
 	}
@@ -348,8 +348,8 @@ public final class SJPanel {
 	 * @param rows Number of rows.
 	 * @return A JPanel with a GridLayout.
 	 */
-	public static JPanel wrapInJPanel(final JComponent c[], final int cols, final int rows) {
-		return wrapInJPanel(c, new GridLayout(cols, rows));
+	public static JPanel wrapInJPanel(final int cols, final int rows, final JComponent... c) {
+		return wrapInJPanel(new GridLayout(cols, rows),c);
 	}
 	/**
 	 * Mainly useful for GridBagLayout.<br>
