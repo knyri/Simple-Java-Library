@@ -13,9 +13,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +28,6 @@ public final class FileUtil{
 	private FileUtil(){}
 	static final BlackHoleOutputStream voidos=new BlackHoleOutputStream();
 	static final BlackHoleWriter voidw = new BlackHoleWriter();
-	public static final List<File> EMPTY_LIST= new LinkedList<File>();
 	public static final void discard(InputStream in) throws IOException{
 		copy(in,voidos,4096);
 	}
@@ -164,17 +162,18 @@ public final class FileUtil{
 	 * @since 4-19-2012
 	 */
 	public static String stripExtension(File file){
-		int idx=file.toString().lastIndexOf(File.separatorChar);
+		String fileStr= file.toString();
+		int idx=fileStr.lastIndexOf(File.separatorChar);
 		if(idx==-1)
-			idx=file.toString().lastIndexOf('.');
+			idx=fileStr.lastIndexOf('.');
 		else{
-			String fname=file.toString().substring(idx);
+			String fname=fileStr.substring(idx);
 			idx=fname.lastIndexOf('.');
-			if(idx==-1)return file.toString();
-			return file.toString().substring(0,file.toString().length()-fname.length()+idx);
+			if(idx==-1)return fileStr;
+			return fileStr.substring(0,fileStr.length()-fname.length()+idx);
 		}
-		if(idx==-1)return file.toString();
-		return file.toString().substring(0,idx);
+		if(idx==-1)return fileStr;
+		return fileStr.substring(0,idx);
 	}
 	/**
 	 * Copies from input directly to output.
@@ -359,11 +358,11 @@ public final class FileUtil{
 			return false;
 		return true;
 	}
-	/**Adds all the files to a giant vector. Can add them recursively.
+	/**Adds all the files to a giant LinkedList. Can add them recursively.
 	 * NOTE: will not add directories. Might add symbolic links.
 	 * @param start Directory to start in.
 	 * @param recursive Whether or not to add files of sub-directories.
-	 * @return A vector containing all the files.
+	 * @return A LinkedList containing all the files.
 	 */
 	public static List<File> getFiles(File start, boolean recursive) {
 		if (!start.isDirectory()) {return null;}
@@ -378,15 +377,17 @@ public final class FileUtil{
 					tmp.add(cur);
 				}
 			}
+		}else{
+			return Collections.emptyList();
 		}
 		return tmp;
 	}
-	/**Adds all the files to a giant vector. Can add them recursively.
+	/**Adds all the files to a giant LinkedList. Can add them recursively.
 	 * NOTE: will not add directories. Might add symbolic links.
 	 * @param start Directory to start in.
 	 * @param filter
 	 * @param recursive Whether or not to add files of sub-directories.
-	 * @return A vector containing all the files.
+	 * @return A LinkedList containing all the files.
 	 */
 	public static List<File> getFiles(File start, FileFilter filter, boolean recursive) {
 		if (!start.isDirectory()) {return null;}
@@ -405,12 +406,6 @@ public final class FileUtil{
 			}
 			return tmp;
 		}
-		return EMPTY_LIST;
-	}
-	public static void close(Statement stm) {
-		try{
-			stm.close();
-		}catch(SQLException e){}
-
+		return Collections.emptyList();
 	}
 }
