@@ -14,14 +14,26 @@ public class CsvReader implements Closeable{
 	private final BufferedReader in;
 	private final char colSep, escape, quote;
 
-	public CsvReader(File file, char colSep, char quote, char escape) throws FileNotFoundException {
+	/**
+	 * @param file The CSV file
+	 * @param colSep The column character. Default: ','
+	 * @param quote The quote character. Default: '"'
+	 * @param escape The quote escape character. Default: '"'
+	 * @param newline Not the line separator. This is what to put for quoted values that span multiple lines. Default: "\r\n"
+	 * @throws FileNotFoundException
+	 */
+	public CsvReader(File file, char colSep, char quote, char escape, String newline) throws FileNotFoundException {
 		this.colSep= colSep;
 		this.escape= escape;
 		this.quote= quote;
 		in= new BufferedReader(new FileReader(file));
 	}
+	/**
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
 	public CsvReader(File file) throws FileNotFoundException{
-		this(file, ',', '"', '"');
+		this(file, ',', '"', '"', "\r\n");
 	}
 	public int getRow(){
 		return row;
@@ -37,6 +49,9 @@ public class CsvReader implements Closeable{
 		int idx;
 		char ch;
 		while ((line= in.readLine()) != null){
+			if(inquote){
+				value.append("\r\n");
+			}
 			for(idx= 0; idx < line.length(); idx++){
 				ch= line.charAt(idx);
 				if(ch == quote){
@@ -68,14 +83,26 @@ public class CsvReader implements Closeable{
 						quoted= true;
 						inquote= true;
 					}
-				}else if(inquote && ch == escape){
-					hasescape= true;
+				}else if(ch == escape){
+					if(hasescape){
+						value.append(escape);
+						hasescape= false;
+					}else{
+						hasescape= true;
+					}
 				}else if(!inquote && ch == colSep){
 					ret.add(value.toString());
 					quoted= false;
 					value.setLength(0);
 				}else if(value.length() > 0 || !Character.isWhitespace(ch)){
+					if(hasescape){
+						// should I just discard it?
+						value.append(escape);
+						hasescape= false;
+					}
 					if(quoted && !inquote && Character.isWhitespace(ch)){
+						// has been quoted, not in a quote, and is whitespace.
+						// skip it.
 						continue;
 					}
 					value.append(ch);
