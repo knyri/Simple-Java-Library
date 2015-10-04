@@ -36,7 +36,6 @@ public final class App {
 	/**Turns the boolean into a static internalized string.
 	 * @param tf The boolean
 	 * @return {@link #TRUE} or {@link #FALSE}
-	 * @see {@link #TF(String)}
 	 */
 	public static final String TF(final boolean tf){
 		if(tf)
@@ -48,7 +47,6 @@ public final class App {
 	 * Does a <code>tf.equalsIgnoreCase({@link #TRUE})</code>
 	 * @param tf Turns the string into a boolean
 	 * @return true or false
-	 * @see {@link #TF(boolean)}
 	 */
 	public static final boolean TF(final String tf){
 		return tf.equalsIgnoreCase(TRUE);
@@ -171,7 +169,7 @@ public final class App {
 	 * Tests to see if the on bits in <var>option</var> are also on in <var>options</var>.
 	 * @param options Options the user set.
 	 * @param option Option to be tested.
-	 * @return The result of <code>(options&option)==option</code>
+	 * @return The result of <code>(options&amp;option)==option</code>
 	 */
 	public static boolean isSet(final int options, final int option) {
 		return (options&option)==option;
@@ -180,7 +178,7 @@ public final class App {
 	 * Tests to see if the on bits in <var>option</var> are also on in <var>options</var>.
 	 * @param options Options the user set.
 	 * @param option Option to be tested.
-	 * @return The result of <code>(options&option)==option</code>
+	 * @return The result of <code>(options&amp;option)==option</code>
 	 */
 	public static boolean isSet(final long options, final long option) {
 		return (options&option)==option;

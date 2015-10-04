@@ -39,6 +39,7 @@ public final class Log {
 	 * <dt>error</dt><dd>0x2</dd>
 	 * <dt>warning</dt><dd>0x4</dd>
 	 * <dt>information</dt><dd>0x8</dd>
+	 * </dl>
 	 */
 	private byte options = (byte)0xFF;
 	public Log(final Class<?> clazz) {

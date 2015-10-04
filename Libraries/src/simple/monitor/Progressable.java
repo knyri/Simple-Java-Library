@@ -8,7 +8,7 @@ import javax.swing.JProgressBar;
 public interface Progressable {
 	/**
 	 * Sets the progress bar that this object will use.
-	 * @param pbar
+	 * @param pbar the progress bar to use
 	 */
 	public void setProgressBar(JProgressBar pbar);
 	/**
@@ -19,7 +19,7 @@ public interface Progressable {
 	public JProgressBar getProgressBar();
 	/**
 	 * Returns the number that needs to be reached
-	 * in order to finish. This number can change over time. 
+	 * in order to finish. This number can change over time.
 	 * @return The maximum number for this object.
 	 */
 	public int getMaximum();

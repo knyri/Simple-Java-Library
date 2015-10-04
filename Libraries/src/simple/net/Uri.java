@@ -97,7 +97,7 @@ public final class Uri {
 	 * Sets the default scheme to use when a URI starting with '//'
 	 * is encountered. The default default scheme is blank.
 	 * Updating the default scheme is not retroactive.
-	 * @param scheme
+	 * @param scheme The default scheme
 	 */
 	public static void setDefaultScheme(String scheme){
 		defaultScheme=scheme.toLowerCase();
@@ -117,7 +117,7 @@ public final class Uri {
 		this(uri,defaultScheme);
 	}
 	/**
-	 * @param uri
+	 * @param uri The URI
 	 * @param defaultScheme Used if the URI starts with "//". Is to address a new fad on the net(2012-07-08).
 	 */
 	public Uri(String uri,String defaultScheme){
@@ -509,11 +509,13 @@ public final class Uri {
 	public String getQuery(final CIString name) {
 		return params.get(name);
 	}
-	/** Convenience method for {@link #getParam(CIString, String)}.
+	/** Convenience method for {@link #getQuery(CIString, String)}.
 	 * @param name Name of the parameter.
 	 * @param def Default value.
 	 * @return The value of the parameter or the default value if it was not defined.
+	 * @deprecated
 	 */
+	@Deprecated
 	public String getQuery(final String name, final String def) {
 		return getQuery(new CIString(name), def);
 	}
@@ -714,8 +716,8 @@ public final class Uri {
 	/** Escapes all reserved characters.
 	 * Checks for valid escape sequences to avoid escaping an escape character.
 	 * If the escape sequence is invalid then the escape is escaped.
-	 * @param part
-	 * @return
+	 * @param part The string to escape
+	 * @return the escaped string
 	 */
 	public static final String escapeSmart(final String part){
 		final StringBuilder ret=new StringBuilder(part.length()*2);
@@ -743,8 +745,8 @@ public final class Uri {
 		return ret.toString();
 	}
 	/** Blindly escapes all reserved characters.
-	 * @param part
-	 * @return
+	 * @param part the string to escape
+	 * @return the escaped string
 	 */
 	public static final String escape(final String part){
 		final StringBuilder ret=new StringBuilder(part.length()*2);
@@ -761,8 +763,8 @@ public final class Uri {
 		return ret.toString();
 	}
 	/** Unescapes an escaped string.
-	 * @param part
-	 * @return
+	 * @param part the string to unescape
+	 * @return the unescaped string
 	 */
 	public static final String unescape(final String part){
 		final StringBuilder ret=new StringBuilder(part.length());

@@ -144,7 +144,7 @@ public final class SwingFactory {
         }
     }
     /**
-     * Update component look & feel.<br>
+     * Update component look and feel.<br>
      * Updates the look and feel of the JFileChoosers only.
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      */
@@ -336,7 +336,7 @@ public final class SwingFactory {
 	 *
 	 * @param display The text to be displayed on the button.
 	 * @param actionCommand The action command to be set with JButton.setActionCommand(String)
-	 * @param icon
+	 * @param icon icon to show
 	 * @param al ActionListener to be added to the resulting JButton.
 	 * @return JButton with text <var>display</var> and actionCommand <var>actionCommand</var>
 	 * @see javax.swing.AbstractButton
@@ -395,50 +395,50 @@ public final class SwingFactory {
 		return c;
 	}
 	/**For chaining calls on anonymous Containers
-	 * @param c
-	 * @param to
-	 * @return
+	 * @param c component to add
+	 * @param to container to add to
+	 * @return the container
 	 */
 	public static JComponent add(Component c,JComponent to){
 		to.add(c);
 		return to;
 	}
 	/**For chaining calls on anonymous Containers
-	 * @param c
-	 * @param idx
-	 * @param to
-	 * @return
+	 * @param c component to add
+	 * @param idx index to add at
+	 * @param to container to add to
+	 * @return the container
 	 */
 	public static JComponent add(Component c, int idx,JComponent to){
 		to.add(c,idx);
 		return to;
 	}
 	/**For chaining calls on anonymous Containers
-	 * @param c
-	 * @param con
-	 * @param to
-	 * @return
+	 * @param c component to add
+	 * @param con constraints
+	 * @param to container to add to
+	 * @return the container
 	 */
 	public static JComponent add(Component c,Object con,JComponent to){
 		to.add(c,con);
 		return to;
 	}
 	/**For chaining calls on anonymous Containers
-	 * @param c
-	 * @param con
-	 * @param idx
-	 * @param to
-	 * @return
+	 * @param c component to add
+	 * @param con constraints
+	 * @param idx index
+	 * @param to container to add to
+	 * @return the container
 	 */
 	public static JComponent add(Component c,Object con,int idx,JComponent to){
 		to.add(c,con,idx);
 		return to;
 	}
 	/**For Chaining calls on anonymous Containers
-	 * @param name
-	 * @param c
-	 * @param to
-	 * @return
+	 * @param name name of the component
+	 * @param c the component to add
+	 * @param to the container to add to
+	 * @return the container
 	 */
 	public static JComponent add(String name,Component c,JComponent to){
 		to.add(name,c);

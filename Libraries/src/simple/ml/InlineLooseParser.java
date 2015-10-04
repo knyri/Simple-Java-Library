@@ -51,6 +51,7 @@ public class InlineLooseParser {
 	 * @param buildCache wether or not to build the tag cache
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final CharSequence src, boolean buildCache) throws ParseException, IOException {
 		return parse(src, new ParserConstants(), buildCache);
@@ -68,6 +69,7 @@ public class InlineLooseParser {
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @see simple.ml.ParserConstants
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final CharSequence src, final ParserConstants pconst, boolean buildCache) throws ParseException, IOException {
 		return parse(new StringReader(src.toString()),pconst, buildCache);
@@ -76,6 +78,7 @@ public class InlineLooseParser {
 	 * @param in The Reader.
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final Reader in) throws ParseException, IOException {
 		return parse(in, new ParserConstants(),true);
@@ -85,6 +88,7 @@ public class InlineLooseParser {
 	 * @param buildCache wether or not to build the tag cache
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final Reader in, boolean buildCache) throws ParseException, IOException {
 		return parse(in, new ParserConstants(), buildCache);

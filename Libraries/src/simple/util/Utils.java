@@ -17,14 +17,14 @@ public final class Utils {
 		return time.toString();
 	}
 	/**
-	 * @return A new {@link Utils.Timer Timer}.
+	 * @return A new timer.
 	 */
 	public static Timer getTimer() {
 		return new Timer();
 	}
 	/**
 	 * Takes a long value and returns a byte array with its value.
-	 * @param value
+	 * @param value the long number
 	 * @return The resulting array.
 	 */
 	public static byte[] toByteArray(final long value) {
@@ -58,8 +58,8 @@ public final class Utils {
 	}
 	/**
 	 * Sorts a list alphabetically using each element's toString() function.
-	 * @param <E>
-	 * @param list
+	 * @param <E> type of the list
+	 * @param list vector to sort
 	 * @return The sorted vector.
 	 */
 	public static <E> Vector<E> sort(final Vector<E> list) {
@@ -81,8 +81,8 @@ public final class Utils {
 	}
 	/**
 	 * Determines order between two objects by using their toString() method.
-	 * @param object1
-	 * @param object2
+	 * @param object1 compare object 1
+	 * @param object2 compare object 2
 	 * @return -1 if object2 comes before object1<br>
 	 * 	1 if object1 comes before object2<br>
 	 * 	0 if object1 and object2 are the same.
@@ -168,8 +168,8 @@ public final class Utils {
 	}//*/
 	/** Removes the duplicates and returns a new array. NOTE: this WILL modify the original array(sorts it).
 	 * Do not use if you need the original array unchanged.
-	 * @param s
-	 * @param ignorecase
+	 * @param s list of strings
+	 * @param ignorecase should case be ignored
 	 * @param keeporder Set to true only if the array is unsorted and order is important. (decreases speed significantly)
 	 * @return The new array of unique values. Will be the same length as original with trailing nulls.
 	 */

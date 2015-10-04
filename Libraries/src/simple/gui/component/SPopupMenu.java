@@ -23,7 +23,7 @@ public final class SPopupMenu extends JPopupMenu implements ActionListener{
 
 	public SPopupMenu() {super();}
 	/**
-	 * @param label
+	 * @param label label to show
 	 */
 	public SPopupMenu(final String label) {
 		super(label);
@@ -33,18 +33,21 @@ public final class SPopupMenu extends JPopupMenu implements ActionListener{
 	}
 	public static final Action createCopyAction(final JTextComponent c){
 		return new simple.gui.AbstractAction(){
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				c.copy();
 			}};
 	}
 	public static final Action createCutAction(final JTextComponent c){
 		return new simple.gui.AbstractAction(){
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				c.cut();
 			}};
 	}
 	public static final Action createPasteAction(final JTextComponent c){
 		return new simple.gui.AbstractAction(){
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				c.paste();
 			}};
@@ -53,6 +56,7 @@ public final class SPopupMenu extends JPopupMenu implements ActionListener{
 		switch(option){
 		case COPY:
 			final Action c = new simple.gui.AbstractAction(){
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					final SPopupMenu menu=(SPopupMenu)e.getSource();
 					if (menu.target instanceof JTextComponent){
@@ -64,6 +68,7 @@ public final class SPopupMenu extends JPopupMenu implements ActionListener{
 				break;
 		case PASTE:
 			final Action p = new simple.gui.AbstractAction(){
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					final SPopupMenu menu=(SPopupMenu)e.getSource();
 					if (menu.target instanceof JTextComponent){
@@ -75,6 +80,7 @@ public final class SPopupMenu extends JPopupMenu implements ActionListener{
 				break;
 		case CUT:
 			final Action u = new simple.gui.AbstractAction(){
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					final SPopupMenu menu=(SPopupMenu)e.getSource();
 					if (menu.target instanceof JTextComponent){
@@ -88,11 +94,13 @@ public final class SPopupMenu extends JPopupMenu implements ActionListener{
 	}
 	public void addItem(final String name,final ActionListener al){
 		final Action a=new simple.gui.AbstractAction(){
+			@Override
 			public void actionPerformed(final ActionEvent e){al.actionPerformed(e);}
 		};
 		a.putValue(Action.NAME, name);
 		add(a);
 	}
+	@Override
 	public void actionPerformed(final ActionEvent ae) {
 		if (ae.getSource()!=null && ae.getSource() instanceof Component)
 			this.target=(Component)ae.getSource();

@@ -86,16 +86,16 @@ public final class FileUtil{
 	}
 	/**
 	 * Flushes and closes the stream without throwing an exception
-	 * @param os
+	 * @param os the thing to close
 	 */
 	public static void close(final OutputStream os) {
 		if(os != null) {
-			try {os.flush(); os.close(); } catch(final Exception e) {}
+			try {os.close(); } catch(final Exception e) {}
 		}
 	}
 	/**
 	 * Closes the stream without throwing an exception
-	 * @param is
+	 * @param is the thing to close
 	 */
 	public static void close(final InputStream is) {
 		if(is != null) {
@@ -104,7 +104,7 @@ public final class FileUtil{
 	}
 	/**
 	 * Closes the stream without throwing an exception
-	 * @param rd
+	 * @param rd the thing to close
 	 */
 	public static void close(final Reader rd) {
 		if(rd != null) {
@@ -113,21 +113,21 @@ public final class FileUtil{
 	}
 	/**
 	 * Flushes and closes the stream without throwing an exception
-	 * @param wr
+	 * @param wr the thing to close
 	 */
 	public static void close(final Writer wr) {
 		if(wr != null) {
-			try {wr.flush();wr.close();}catch(final Exception e){}
+			try {wr.close();}catch(final Exception e){}
 		}
 	}
 	/**Closes the object ignoring any errors made.
-	 * @param f
+	 * @param f the thing to close
 	 */
 	public static final void close(final Closeable f){
 		try{f.close();}catch(final Exception e){}
 	}
 	/**
-	 * @param file
+	 * @param file the file
 	 * @return The parent directory
 	 */
 	public static final File cdup(File file){
@@ -137,8 +137,8 @@ public final class FileUtil{
 		return new File(path.substring(0,i));
 	}
 	/** Ensures the directory tree exists and attempts to create it.
-	 * @param file
-	 * @return
+	 * @param file the file
+	 * @return true if success
 	 */
 	public static final boolean ensureDir(File file){
 		File file2=cdup(file);
@@ -147,7 +147,7 @@ public final class FileUtil{
 	}
 	/**
 	 * Creates the file and any necessary directories.
-	 * @param file
+	 * @param file the file
 	 * @return True if the file has been created or already exists. False if the creation of the directories or file failed.
 	 * @throws IOException See {@linkplain java.io.File#createNewFile()}
 	 */
@@ -157,8 +157,8 @@ public final class FileUtil{
 		return file.createNewFile();
 	}
 	/**
-	 * @param file
-	 * @return
+	 * @param file the file
+	 * @return the file without the extension
 	 * @since 4-19-2012
 	 */
 	public static String stripExtension(File file){
@@ -255,8 +255,8 @@ public final class FileUtil{
 		output.flush();
 	}
 	/**
-	 * @param b1
-	 * @param b2
+	 * @param b1 the first array
+	 * @param b2 the second array
 	 * @return True of the elements of both are identical.
 	 */
 	public static boolean compareBytes(byte[] b1, byte[] b2) {
@@ -270,10 +270,10 @@ public final class FileUtil{
 		return true;
 	}
 	/**
-	 * @param b1
-	 * @param b2
-	 * @param offset
-	 * @param length
+	 * @param b1 the first array
+	 * @param b2 the second array
+	 * @param offset start index
+	 * @param length number of bytes to compare
 	 * @return true if the range is identical
 	 */
 	public static boolean compareBytes(byte[] b1, byte[] b2, int offset, int length) {
@@ -293,8 +293,8 @@ public final class FileUtil{
 	}
 	/**
 	 * Tests two files to see if they are identical on the bit level.
-	 * @param f1
-	 * @param f2
+	 * @param f1 the first file
+	 * @param f2 the second file
 	 * @return True if both files are exactly identical.
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -326,9 +326,9 @@ public final class FileUtil{
 	}
 	/**
 	 * Tests two files to see if they are identical on the bit level.
-	 * @param f1
-	 * @param f2
-	 * @param buffSize
+	 * @param f1 the first file
+	 * @param f2 the second file
+	 * @param buffSize read buffer size
 	 * @return True if both files are exactly identical.
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -385,7 +385,7 @@ public final class FileUtil{
 	/**Adds all the files to a giant LinkedList. Can add them recursively.
 	 * NOTE: will not add directories. Might add symbolic links.
 	 * @param start Directory to start in.
-	 * @param filter
+	 * @param filter file filter
 	 * @param recursive Whether or not to add files of sub-directories.
 	 * @return A LinkedList containing all the files.
 	 */

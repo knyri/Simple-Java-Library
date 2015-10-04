@@ -34,7 +34,7 @@ public final class RWUtil {
 	 * @throws IOException
 	 */
 	public static String readUntil(final Reader in, final char end) throws IOException {
-		final StringBuffer buf = new StringBuffer(255);
+		final StringBuilder buf = new StringBuilder(255);
 		final char[] cbuf = new char[1];
 		while((in.read(cbuf)!=-1)){
 			buf.append(cbuf[0]);
@@ -47,7 +47,7 @@ public final class RWUtil {
 	/**
 	 * Reads until <code>end</code> is reached. The returned String includes the end character.
 	 * @param in Reader to read from.
-	 * @param end Character to stop at.
+	 * @param limit Maximum number of bytes to read
 	 * @return String of read characters.
 	 * @throws IOException
 	 */

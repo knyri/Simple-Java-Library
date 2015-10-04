@@ -10,7 +10,7 @@ package simple.util;
 public final class NumberUtil{
 	private NumberUtil(){}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -20,7 +20,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -30,7 +30,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -40,7 +40,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -50,7 +50,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -60,7 +60,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -70,7 +70,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -80,7 +80,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -90,7 +90,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end
@@ -100,7 +100,7 @@ public final class NumberUtil{
 		return n > s && n < e;
 	}
 	/**
-	 * Convenience for n > s && n < e
+	 * Convenience for n greater than s and  n less than e
 	 * @param n number being compared
 	 * @param s start
 	 * @param e end

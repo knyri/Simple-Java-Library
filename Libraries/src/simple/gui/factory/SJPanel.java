@@ -110,7 +110,7 @@ public final class SJPanel {
 	 *
 	 * @param c JComponent to be added.
 	 * @param title Text to be displayed.
-	 * @param orient
+	 * @param orient left or right
 	 * @return The resulting JPanel.
 	 */
 	public static JPanel makeLabeledPanel2(final JComponent c, final String title, final String orient) {
@@ -306,7 +306,7 @@ public final class SJPanel {
 	/**
 	 * Useful to avoid the nasty effects of BoxLayout and GridLayout on preferred sizes.
 	 *
-	 * @param c
+	 * @param c component to wrap
 	 * @return <var>c</var> in a JPanel.
 	 */
 	public static JPanel wrapInJPanel(final JComponent c) {

@@ -33,7 +33,7 @@ public final class ParserConstants {
 		PCONST.addSelfCloser("end");
 	}
 	/** Loads the configuration file.
-	 * @param file
+	 * @param file file to get the config from
 	 * @throws IOException
 	 * @throws ParseException
 	 */
@@ -43,7 +43,7 @@ public final class ParserConstants {
 		}
 	}
 	/**Loads the configuration file.
-	 * @param in
+	 * @param in stream to get the config from
 	 * @throws IOException
 	 * @throws ParseException
 	 */
@@ -53,7 +53,7 @@ public final class ParserConstants {
 		}
 	}
 	/**Loads the configuration file.
-	 * @param in
+	 * @param in reader to get the config from
 	 * @throws IOException
 	 * @throws ParseException
 	 */
@@ -114,7 +114,7 @@ public final class ParserConstants {
 		SELFCLOSER.add(new CIString(tag));
 	}
 	/**Sets this tag as only containing PCDATA. Tags like "style" and "script" belong here.
-	 * @param tag
+	 * @param tag name of the tag
 	 */
 	public void addPcdataTag(final String tag) {
 //		log.debug("Add PCDATA tag",tag);

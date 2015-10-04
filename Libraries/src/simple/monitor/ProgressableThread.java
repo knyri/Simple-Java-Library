@@ -15,7 +15,7 @@ public interface ProgressableThread extends Runnable, Progressable {
 	/**
 	 * Returns a friendly error message using the exit value returned
 	 * by the waitFor() method.
-	 * @param exitCode
+	 * @param exitCode Exit code to look up
 	 * @return Should return a friendly error message about the exit code.
 	 */
 	public String getError(int exitCode);

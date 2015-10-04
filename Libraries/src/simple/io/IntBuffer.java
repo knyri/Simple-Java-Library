@@ -23,8 +23,8 @@ public class IntBuffer{
 	private final float growthRate;
 	/**
 	 * @param initialSize starting size
-	 * @param growAt How full it can get before growing ( < 1)
-	 * @param growBy How much to grow by ( < 1)
+	 * @param growAt How full it can get before growing ( muse be less than one)
+	 * @param growBy How much to grow by ( must be less than one )
 	 */
 	public IntBuffer(int initialSize, float growAt, float growBy){
 		buf = new int[initialSize];

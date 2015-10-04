@@ -25,7 +25,7 @@ public class UrlUtil {
 	 * @return The escaped version of this string.
 	 */
 	public static String URLescape(String e) {
-		StringBuffer buf = new StringBuffer(e.length()*3);
+		StringBuilder buf = new StringBuilder(e.length()*3);
 		buf.append(e);
 		Matcher m = escapeChars.matcher(e);
 		int offset = 0;
@@ -41,7 +41,7 @@ public class UrlUtil {
 	 * @return The unescaped version of this string.
 	 */
 	public static String URLunescape(String e) {
-		StringBuffer buf = new StringBuffer(e.length());
+		StringBuilder buf = new StringBuilder(e.length());
 		buf.append(e);
 		Matcher m = unescape.matcher(e);
 		int offset = 0;
@@ -53,7 +53,7 @@ public class UrlUtil {
 	}
 	//private static final String unsafeChars = "/\\\":?*|<>";
 	public static String URLescape2(String e) {
-		StringBuffer buf = new StringBuffer(e.length()*3);
+		StringBuilder buf = new StringBuilder(e.length()*3);
 		byte[] bbuf;
 		buf.append(e);
 		int offset = 0;
@@ -178,7 +178,7 @@ public class UrlUtil {
 		HtmlAscii.put("lt", '<');
 	}
 	/**
-	 * @param ascii Can either be in raw form (&#000; &yadda;) or parsed.
+	 * @param ascii Can either be in raw form (&amp;#000; &amp;yadda;) or parsed.
 	 * @return The character that this code represents.
 	 */
 	public static char htmlAsciiToChar(String ascii) {
@@ -216,9 +216,9 @@ public class UrlUtil {
 			}
 		}
 	}
-	/** Finds the url hidden in the tag. Matches <tag src=... > <tag src="..." > <tag src='...' >
-	 * @param s
-	 * @param offset
+	/** Finds the url hidden in the tag.
+	 * @param s the tag
+	 * @param offset search start
 	 * @return A String containing the source attribute or null if none was found.
 	 */
 	public static final String extractURL(CharSequence s, int offset) {

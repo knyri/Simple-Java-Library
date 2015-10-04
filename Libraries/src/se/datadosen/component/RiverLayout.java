@@ -22,7 +22,6 @@ import java.util.Vector;
  * The code above forces a "line break" and extends the added component horizontally.
  * Without the "hfill" constraint, the component would take on its preferred size.
  *</p>
- * <p>
  * List of constraints:<ul>
  * <li>br - Add a line break
  * <li>p - Add a paragraph break
@@ -35,7 +34,6 @@ import java.util.Vector;
  * <li>vtop - Align following components vertically top aligned
  * <li>vcenter - Align following components vertically centered (default)
  * </ul>
- * </p>
  * RiverLayout is LGPL licenced - use it freely in free and commercial programs
  *
  * @author David Ekholm
@@ -45,9 +43,9 @@ import java.util.Vector;
 public class RiverLayout
 	 extends FlowLayout
 	 implements LayoutManager, java.io.Serializable {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5667068861855516395L;
 	public static final String LINE_BREAK = "br";
@@ -82,6 +80,7 @@ public class RiverLayout
 	/**
 	 * Gets the horizontal gap between components.
 	 */
+	@Override
 	public int getHgap() {
 		 return hgap;
 	}
@@ -89,6 +88,7 @@ public class RiverLayout
 	/**
 	 * Sets the horizontal gap between components.
 	 */
+	@Override
 	public void setHgap(int hgap) {
 		 this.hgap = hgap;
 	}
@@ -96,6 +96,7 @@ public class RiverLayout
 	/**
 	 * Gets the vertical gap between components.
 	 */
+	@Override
 	public int getVgap() {
 		 return vgap;
 	}
@@ -120,6 +121,7 @@ public class RiverLayout
 	/**
 	 * Sets the vertical gap between components.
 	 */
+	@Override
 	public void setVgap(int vgap) {
 		 this.vgap = vgap;
 	}
@@ -129,6 +131,7 @@ public class RiverLayout
 	 * @param name the name of the component
 	 * @param comp the component to be added
 	 */
+	@Override
 	public void addLayoutComponent(String name, Component comp) {
 		constraints.put(comp, name);
 	}
@@ -139,6 +142,7 @@ public class RiverLayout
 	 * @param comp the component to remove
 	 * @see		 java.awt.Container#removeAll
 	 */
+	@Override
 	public void removeLayoutComponent(Component comp) {
 		constraints.remove(comp);
 	}
@@ -204,6 +208,7 @@ public class RiverLayout
 	 * @see #minimumLayoutSize
 	 * @see		 java.awt.Container#getPreferredSize
 	 */
+	@Override
 	public Dimension preferredLayoutSize(Container target) {
 		synchronized (target.getTreeLock()) {
 			Dimension dim = new Dimension(0, 0);
@@ -255,6 +260,7 @@ public class RiverLayout
 	 * @see		 java.awt.Container
 	 * @see		 java.awt.Container#doLayout
 	 */
+	@Override
 	public Dimension minimumLayoutSize(Container target) {
 		synchronized (target.getTreeLock()) {
 			Dimension dim = new Dimension(0, 0);
@@ -376,6 +382,7 @@ public class RiverLayout
 	 * @see Container
 	 * @see		 java.awt.Container#doLayout
 	 */
+	@Override
 	public void layoutContainer(Container target) {
 		setAlignment(FlowLayout.LEFT);
 		synchronized (target.getTreeLock()) {
@@ -479,6 +486,7 @@ class Ruler {
 		return tabs.get(num).intValue();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(getClass().getName() + " {");
 		for (int i=0; i<tabs.size(); i++) {

@@ -22,8 +22,8 @@ public class ByteBuffer {
 	private final float growthRate;
 	/**
 	 * @param initialSize starting size
-	 * @param growAt How full it can get before growing ( < 1)
-	 * @param growBy How much to grow by ( < 1)
+	 * @param growAt How full it can get before growing ( must be less than 1 )
+	 * @param growBy How much to grow by ( must be less than one )
 	 */
 	public ByteBuffer(int initialSize, float growAt, float growBy){
 		buf = new byte[initialSize];
@@ -71,7 +71,7 @@ public class ByteBuffer {
 
 	/**
 	 * Places the byte into the buffer.
-	 * @param v
+	 * @param v the value
 	 */
 	public void put(byte v) {
 		synchronized(buf) {
@@ -85,7 +85,7 @@ public class ByteBuffer {
 	}
 	/**
 	 * @param at Can be negative
-	 * @param v
+	 * @param v the value
 	 */
 	public void set(int at, byte v) {
 		if(at < 0) at = size + at;

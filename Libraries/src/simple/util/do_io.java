@@ -661,7 +661,6 @@ public final class do_io {
 	 * @param location Location of the file relative to the "start in" folder.
 	 * @param loader Class to use to load the file.
 	 * @return A File object referencing the URL returned from {@link java.lang.Class#getResource(String)}.
-	 * @throws URISyntaxException Happens if the returned URL cannot be transformed into a valid URI.
 	 * @throws FileNotFoundException Occurs if the loader returns a null. Avoids a nasty nondescript NullPointerException.
 	 * @deprecated {@link simple.util.App}
 	 */

@@ -26,6 +26,7 @@ public class CssParser{
 	 * @param src The text.
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final CharSequence src) throws ParseException, IOException {
 		return parse(src, new ParserConstants());
@@ -34,6 +35,7 @@ public class CssParser{
 	 * @param in The Reader.
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final Reader in) throws ParseException, IOException {
 		return parse(in, new ParserConstants());
@@ -315,6 +317,7 @@ public class CssParser{
 	 * @return A {@link simple.ml.Page Page} object that represents the source.
 	 * @see simple.ml.ParserConstants
 	 * @throws ParseException
+	 * @throws IOException
 	 */
 	public static Page parse(final CharSequence src, final ParserConstants pconst) throws ParseException, IOException {
 		return parse(new StringReader(src.toString()),pconst);

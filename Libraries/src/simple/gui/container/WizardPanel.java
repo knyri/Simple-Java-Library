@@ -19,7 +19,7 @@ public abstract class WizardPanel extends ConfigPage {
 		return parent;
 	}
 	/**
-	 * Sets the WizardFrame that this panel belongs to.<br />
+	 * Sets the WizardFrame that this panel belongs to.
 	 * It should not be called except by the frame it's being
 	 * added to.
 	 * @param frame
@@ -34,7 +34,7 @@ public abstract class WizardPanel extends ConfigPage {
 	public abstract boolean isPanelValid();
 	/**
 	 * Should return a helpful description of why the panel is invalid
-	 * if isPanelValid() returns false.<br />
+	 * if isPanelValid() returns false.
 	 * Should be implemented, but does not need to be.
 	 * @return The string representation of why the current form is invalid.
 	 */
@@ -45,16 +45,17 @@ public abstract class WizardPanel extends ConfigPage {
 	 */
 	public abstract boolean canGoBack();
 	/**
-	 * Resets the current panel to default values. 
+	 * Resets the current panel to default values.
 	 */
 	public abstract void reset();
-	
+
 	/**
 	 * Overrides setupGUI() in ConfigPage to remove the Save and Cancel
 	 * buttons. It is now up to the subclass to call the undo and save
 	 * methods.
 	 * @see simple.gui.container.ConfigPage#setupGUI(java.util.Properties)
 	 */
+	@Override
 	protected void setupGUI(Properties props) {
 		super.setLayout(new BorderLayout());
 		super.add(main);

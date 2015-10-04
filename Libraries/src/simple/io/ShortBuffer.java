@@ -19,8 +19,8 @@ public class ShortBuffer{
 	private final float growthRate;
 	/**
 	 * @param initialSize starting size
-	 * @param growAt How full it can get before growing ( < 1)
-	 * @param growBy How much to grow by ( < 1)
+	 * @param growAt How full it can get before growing ( less than one )
+	 * @param growBy How much to grow by ( less than one )
 	 */
 	public ShortBuffer(int initialSize, float growAt, float growBy){
 		buf = new short[initialSize];

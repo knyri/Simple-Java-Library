@@ -142,7 +142,7 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		Help.add(me);
 	}
 	/**Adds a separator line to the menu(s).
-	 * @param menu
+	 * @param menu menu to add
 	 */
 	public void addSeparator(final int menu) {
 		if (App.isSet(menu, FILE)) {
@@ -161,7 +161,7 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 
 
 	/** Returns the predefined menu.
-	 * @param menu
+	 * @param menu menu to get
 	 * @return the predefined menu
 	 */
 	public final JMenu getSMenu(final int menu) {
@@ -197,7 +197,7 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 	}
 
 	/**Returns the action command for the menu or menu item.
-	 * @param menu
+	 * @param menu command to get
 	 * @return the action command for the menu
 	 */
 	public static final String getMenuCommand(final int menu) {
@@ -228,8 +228,8 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		return null;
 	}
 	/** Adds the action listener to the menu(s) and menu item(s).
-	 * @param menu
-	 * @param ml
+	 * @param menu menu to add to
+	 * @param ml listener to add
 	 */
 	public void addActionListener(final int menu, final ActionListener ml) {
 		if (App.isSet(menu, FILE)) {
@@ -257,6 +257,7 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 			Help_About.addActionListener(ml);
 		}
 	}
+	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if (e.getActionCommand().equals("help"))
 			showHelpDialog();

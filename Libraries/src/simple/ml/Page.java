@@ -144,7 +144,7 @@ public class Page implements Iterable<Tag>, TagParentListener {
 		log.debug("tag cache done");
 	}
 	/**Adds the children of this tag to the cache recursively.
-	 * @param tag
+	 * @param tag tag to add
 	 */
 	private void addToCache(final Tag tag) {
 		if (tag.isSelfClosing() || !tag.hasChild()) return;
@@ -177,7 +177,7 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	}
 	/**
 	 * Generates the pretty print of the page.
-	 * @return
+	 * @return the formatted source
 	 */
 	public String formattedSource() {
 		final StringBuilder buf = new StringBuilder(2048);

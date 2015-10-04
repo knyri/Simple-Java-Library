@@ -46,16 +46,16 @@ public final class Util{
 		return (long)(lLengthInMilliseconds*format.getFrameRate()/1000);
 	}
 	/**Calculates the stream length in bytes for the data excluding header information.
-	 * @param format
-	 * @param milli
+	 * @param format audio format
+	 * @param milli length in milliseconds
 	 * @return The stream length in bytes minus header information
 	 */
 	public static long milli2Bytes(AudioFormat format,long milli){
 		return (long)(format.getFrameRate()*format.getFrameSize()*(milli/1000f));
 	}
 	/**Calculates the stream length in bytes for the data excluding header information.
-	 * @param format
-	 * @param milli
+	 * @param format audio format
+	 * @param bytes length of the stream in bytes
 	 * @return The stream length in bytes minus header information
 	 */
 	public static long bytes2Milli(AudioFormat format,long bytes){
@@ -64,9 +64,9 @@ public final class Util{
 	/**Calculates the length of the stream in bytes.
 	 * NOTE: This does <strong>not</strong> check for {@linkplain AudioSystem#NOT_SPECIFIED} and may return gibberish if the
 	 * frame length or frame size are set to this value.
-	 * @param format
-	 * @param frames
-	 * @return
+	 * @param format audio format
+	 * @param frames length in frames
+	 * @return The length in bytes
 	 */
 	public static long frames2Bytes(AudioFormat format,long frames){
 		return format.getFrameSize()*frames;
@@ -74,24 +74,24 @@ public final class Util{
 	/**Calculates the length of the stream in milliseconds.
 	 * NOTE: This does <strong>not</strong> check for {@linkplain AudioSystem#NOT_SPECIFIED} and may return gibberish if the
 	 * frame length or frame rate are set to this value.
-	 * @param af
-	 * @param frameLength
+	 * @param af audio format
+	 * @param frameLength length in frames
 	 * @return The length of the stream in milliseconds.
 	 */
 	public static long frames2milli(AudioFormat af,long frameLength){
 		return (long)((frameLength/af.getFrameRate())*1000);
 	}
 	/** The length of the stream in samples.
-	 * @param af
-	 * @param frameLength
+	 * @param af audio format
+	 * @param frameLength length in frames
 	 * @return Length of the stream in samples
 	 */
 	public static long frames2samples(AudioFormat af,long frameLength){
 		return frameLength*(af.getFrameSize()/(af.getSampleSizeInBits()/8));
 	}
 	/** Number of samples per frame.
-	 * @param af
-	 * @return
+	 * @param af audio format
+	 * @return samples per frame
 	 */
 	public static int getSamplesPerFrame(AudioFormat af){
 		return af.getFrameSize()/(af.getSampleSizeInBits()/8);
@@ -103,7 +103,7 @@ public final class Util{
 	/**Calculates the length of the stream in seconds.
 	 * NOTE: This does <strong>not</strong> check for {@linkplain AudioSystem#NOT_SPECIFIED} and may return gibberish if the
 	 * frame length or frame rate are set to this value.
-	 * @param ais
+	 * @param ais the audio input stream
 	 * @return The length of the stream in milliseconds.
 	 */
 	public static long getMilliLength(AudioInputStream ais){
@@ -113,27 +113,26 @@ public final class Util{
 	/**Calculates the length of the stream in bytes.
 	 * NOTE: This does <strong>not</strong> check for {@linkplain AudioSystem#NOT_SPECIFIED} and may return gibberish if the
 	 * frame length or frame size are set to this value.
-	 * @param ais
+	 * @param ais the audio input stream
 	 * @return The length of the stream in bytes.
 	 */
 	public static long getByteLength(AudioInputStream ais){
 		return frames2Bytes(ais.getFormat(),ais.getFrameLength());
 	}
 	/** The length of the stream in samples.
-	 * @param ais
+	 * @param ais the audio input stream
 	 * @return Length of the stream in samples
 	 */
 	public static long getSampleLength(AudioInputStream ais){
 		return frames2samples(ais.getFormat(),ais.getFrameLength());
 	}
 	/** Number of samples per frame.
-	 * @param ais
-	 * @return
+	 * @param ais the audio input stream
+	 * @return samples per frame
 	 */
 	public static int getSamplesPerFrame(AudioInputStream ais){
 		return getSamplesPerFrame(ais.getFormat());
 	}
-	@SuppressWarnings("resource")
 	public static boolean changePCMFormatTo(AudioFormat to,File from) throws IOException, UnsupportedAudioFileException{
 			try(AudioInputStream ostream=AudioSystem.getAudioInputStream(from)){
 				AudioInputStream stream= null;

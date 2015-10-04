@@ -19,7 +19,7 @@ import javax.swing.SwingConstants;
  */
 public class ScrollableJPanel extends JPanel implements Scrollable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private boolean autoSizeWidth = false;
@@ -52,14 +52,16 @@ public class ScrollableJPanel extends JPanel implements Scrollable {
 	/**
 	 * Returns the preferred size of this JPanel
 	 * by calling this.getPreferredSize().
-	 * 
+	 *
 	 * @return The preferred size of the JPanel.
 	 * @see javax.swing.Scrollable#getPreferredScrollableViewportSize()
 	 */
+	@Override
 	public Dimension getPreferredScrollableViewportSize() {
 		return this.getPreferredSize();
 	}
 
+	@Override
 	public int getScrollableUnitIncrement(Rectangle visibleRect,
 			int orientation, int direction) {
 		int blockSize = 0;
@@ -72,6 +74,7 @@ public class ScrollableJPanel extends JPanel implements Scrollable {
 		return direction + 1;//direction may be 0 if the float is < .5
 	}
 
+	@Override
 	public int getScrollableBlockIncrement(Rectangle visibleRect,
 			int orientation, int direction) {
 		if (orientation == SwingConstants.HORIZONTAL) {
@@ -88,6 +91,7 @@ public class ScrollableJPanel extends JPanel implements Scrollable {
 	 * @return See superclass.
 	 * @see javax.swing.Scrollable#getScrollableTracksViewportWidth()
 	 */
+	@Override
 	public boolean getScrollableTracksViewportWidth() {
 		return autoSizeWidth;
 	}
@@ -99,6 +103,7 @@ public class ScrollableJPanel extends JPanel implements Scrollable {
 	 * @return Returns false.
 	 * @see javax.swing.Scrollable#getScrollableTracksViewportHeight()
 	 */
+	@Override
 	public boolean getScrollableTracksViewportHeight() {
 		return autoSizeHeight;
 	}
@@ -110,7 +115,7 @@ public class ScrollableJPanel extends JPanel implements Scrollable {
 	}
 	/**
 	 * Enables or disables both auto sizing at once.
-	 * @param b
+	 * @param b true or false
 	 */
 	public void setScrollableTracksViewportSize(boolean b) {
 		autoSizeWidth = b;

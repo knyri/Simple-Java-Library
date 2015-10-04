@@ -70,7 +70,7 @@ public final class do_gui {
 	 * <li>mWARN = Warning Message</li>
 	 * <li>mERR = Error Message</li>
 	 * </ul>
-	 * Values taken from {@link javax.swing.JOptionpane}.
+	 * Values taken from javax.swing.JOptionPane.
 	 * @see javax.swing.JOptionPane
 	 * @see #showMessage(String, String, int)
 	 * @see #showQuestionMessage(String, String, int)
@@ -990,7 +990,7 @@ public final class do_gui {
         }
     }
     /**
-     * Update component look & feel.<br>
+     * Update component look &amp; feel.<br>
      * Updates the look and feel of the JFileChoosers only.
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      */

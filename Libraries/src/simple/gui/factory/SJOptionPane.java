@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.gui.factory;
 
@@ -18,7 +18,7 @@ import simple.util.Utils;
  * @author Kenneth Pierce
  */
 public final class SJOptionPane {
-	private static JFileChooser mDirChoose   = null;   
+	private static JFileChooser mDirChoose   = null;
     private static JFileChooser mFileChoose  = null;
 	/**
 	 * These are the message types and determines what icon will be displayed.
@@ -29,7 +29,7 @@ public final class SJOptionPane {
 	 * <li>mWARN = Warning Message</li>
 	 * <li>mERR = Error Message</li>
 	 * </ul>
-	 * Values taken from {@link javax.swing.JOPtionpane}.
+	 * Values taken from {@link javax.swing.JOptionPane}.
 	 * @see javax.swing.JOptionPane
 	 * @see #showMessage(String, String, int)
 	 * @see #showQuestionMessage(String, String, int)
@@ -66,7 +66,7 @@ public final class SJOptionPane {
 	//Simple Y/N/C
 	/**
 	 * Displays a JOptionPane dialog box that asks a question and returns the user's selection.
-	 * 
+	 *
 	 * @param mess Question to be displayed.
 	 * @param title Title of the Dialog box.
 	 * @param mOptions One of {@link #moYN}, {@link #moOC}, {@link #moYNC}.
@@ -79,7 +79,7 @@ public final class SJOptionPane {
 	/**
 	 * Displays a JOptionPane dialog box that displays a message.
 	 * Calls {@link javax.swing.JOptionPane#showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int)}.
-	 * 
+	 *
 	 * @param mess Message to be displayed.
 	 * @param title Title of the dialog box.
 	 * @param mType One of {@link simple.util.do_gui#mINF mINF},
@@ -94,7 +94,7 @@ public final class SJOptionPane {
 	/**
 	 * Prompts the user for text input.
 	 * Calls (@link javax.swing.JOptionPane#showInputDialog(java.lang.Object, java.lang.Object)}.
-	 * 
+	 *
 	 * @param message Message to be displayed.
 	 * @param initValue Initial value of the text box.
 	 * @return Contents of the input box.
@@ -105,7 +105,7 @@ public final class SJOptionPane {
 	/**
 	 * Prompts the used for text input.
 	 * Calls {@link javax.swing.JOptionPane#showInputDialog(java.lang.Object)}
-	 * 
+	 *
 	 * @param message Message to be displayed.
 	 * @return Contents of the input box.
 	 */
@@ -191,13 +191,13 @@ public final class SJOptionPane {
      * @return True is yes, false if no or closed with no selection.
      */
     public static boolean getConfirmation(Component parent, String str) {
-        int res = JOptionPane.showConfirmDialog(parent, 
+        int res = JOptionPane.showConfirmDialog(parent,
                                                 str,
                                                 "Confirmation",
-                                                JOptionPane.YES_NO_OPTION, 
-                                                JOptionPane.QUESTION_MESSAGE 
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE
                                                );
-        return(res == JOptionPane.YES_OPTION); 
+        return(res == JOptionPane.YES_OPTION);
     }
     /**
      * Opens a JFileChooser and returns the result.
@@ -270,7 +270,7 @@ public final class SJOptionPane {
      * Adapted from code by <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param parent Component to center on.
      * @return String of the directory path or null if nothing was selected or box closed abnormally.
-     */  
+     */
     public static File getDirName(Component parent) {
 
         if (mDirChoose == null) {
@@ -292,7 +292,7 @@ public final class SJOptionPane {
      * <br>author <a href="mailto:rana_b@yahoo.com">Rana Bhattacharyya</a>
      * @param parent Component to center on.
      * @return String of the directory path or null if nothing was selected.
-     */  
+     */
     public static File[] getDirNames(Component parent) {
 
         if (mDirChoose == null) {

@@ -82,7 +82,8 @@ public final class MimeTypes {
 			log.debug("Server connection for MIME", e);
 			final HttpURLConnection con = (HttpURLConnection)e.openConnection();
 			String type;
-			con.setRequestProperty("Referer", referer);
+			if(referer != null)
+				con.setRequestProperty("Referer", referer);
 			con.setRequestMethod("HEAD");
 			con.connect();
 			type = con.getContentType();
@@ -207,7 +208,7 @@ public final class MimeTypes {
 	}
 	/**Get's the MIME type from the raw header value. Some strange servers
 	 * include extra after the mime.
-	 * @param rawContent
+	 * @param rawContent raw content of the Content-Type header
 	 * @return The MIME type.
 	 */
 	public static String getMimeFromContentType(final String rawContent) {

@@ -102,7 +102,7 @@ public final class Tag implements Iterable<Tag> {
 	 * If it is set to <code>true</code> and this tag has children then the
 	 * children will be copied to the parent. If there is no parent then the
 	 * children will be destroyed.
-	 * @param b
+	 * @param b true or false
 	 */
 	public void setSelfClosing(final boolean b) {
 		selfClosing = b;
@@ -117,7 +117,7 @@ public final class Tag implements Iterable<Tag> {
 	}
 	/** Finds the child by name. Children with the same name can be
 	 * differentiated like so <i>name;0 name;1</i>.
-	 * @param name
+	 * @param name path to the tag or tag name
 	 * @return The child or null if it was not found.
 	 */
 	public final Tag getChild(final String name) {
@@ -135,8 +135,9 @@ public final class Tag implements Iterable<Tag> {
 		}
 		return null;
 	}
-	/**Alias for (Tag){@link #getChild(int)}.
-	 * @param index
+	/**
+	 * Gets the child at the index
+	 * @param index Index of the wanted child
 	 * @return The child at the index.
 	 */
 	public final Tag getChildAt(final int index) {
@@ -189,6 +190,10 @@ public final class Tag implements Iterable<Tag> {
 		}
 		return null;
 	}
+	/**
+	 * A string of this tag. Does not include child tags.
+	 * @return A string representing this tag
+	 */
 	public String toStringTagOnly() {
 		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
@@ -321,8 +326,8 @@ public final class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * @param key
-	 * @return
+	 * @param key Property key
+	 * @return property value
 	 * @deprecated Use {{@link #getProperty(CIString)}
 	 */
 	@Deprecated
@@ -332,18 +337,18 @@ public final class Tag implements Iterable<Tag> {
 
 	/**
 	 * Use is discouraged unless building a page from a file.
-	 * @param key
-	 * @param value
-	 * @return
+	 * @param key Property key
+	 * @param value property value
+	 * @return this
 	 */
 	public Tag setProperty(final String key, final String value) {
 		return setProperty(new CIString(key), value);
 	}
 
 	/**
-	 * @param key
-	 * @return
-	 * @deprecated Use {{@link #removeProperty(CIString)}
+	 * @param key property key
+	 * @return property value
+	 * @deprecated Use {@link #removeProperty(simple.CIString)}
 	 */
 	@Deprecated
 	public String removeProperty(final String key) {
@@ -351,9 +356,9 @@ public final class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * @param key
-	 * @return
-	 * @deprecated Use {{@link #hasProperty(CIString)}
+	 * @param key property key
+	 * @return property value
+	 * @deprecated Use {@link #hasProperty(simple.CIString)}
 	 */
 	@Deprecated
 	public boolean hasProperty(final String key) {
@@ -470,6 +475,7 @@ public final class Tag implements Iterable<Tag> {
 	/**
 	 * Adds a child Node and sets this as the node's parent. Does nothing if <code><var>node</var>==null</code>.
 	 * @param cnode Node to be added as a child.
+	 * @param index index to insert the child
 	 * @return this
 	 */
 	public final Tag insertChild(Tag cnode, int index) {
@@ -556,14 +562,14 @@ public final class Tag implements Iterable<Tag> {
 		return this;
 	}
 	/**Removes the key/value pair.
-	 * @param key
+	 * @param key the key
 	 * @return The value associated with the key.
 	 */
 	public final String removeProperty(CIString key) {
 		return properties.remove(key);
 	}
 	/**
-	 * @param key
+	 * @param key the key
 	 * @return True if the properties table contains the specified key.
 	 */
 	public final boolean hasProperty(CIString key) {
@@ -576,5 +582,7 @@ public final class Tag implements Iterable<Tag> {
 	public final int getDepth() {
 		return depth;
 	}
-
+	public final Tag[] getChildren(){
+		return children.toArray(new Tag[children.size()]);
+	}
 }

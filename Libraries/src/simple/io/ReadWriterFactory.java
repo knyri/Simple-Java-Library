@@ -47,6 +47,7 @@ public final class ReadWriterFactory {
 	 * @deprecated
 	 * @see RWUtil#readFully(Reader)
 	 */
+	@Deprecated
 	public static String readFully(final Reader reader) throws IOException {
 		return RWUtil.readFully(reader);
 	}
@@ -57,6 +58,7 @@ public final class ReadWriterFactory {
 	 * @deprecated
 	 * @see RWUtil#readInto(Reader, StringBuilder)
 	 */
+	@Deprecated
 	public static void readInto(final Reader reader, final StringBuilder buf) throws IOException {
 		RWUtil.readInto(reader, buf);
 	}
@@ -70,18 +72,20 @@ public final class ReadWriterFactory {
 	 * @deprecated
 	 * @see RWUtil#readUntil(Reader, char)
 	 */
+	@Deprecated
 	public static String readUntil(final Reader in, final char end) throws IOException {
 		return RWUtil.readUntil(in, end);
 	}
 	/**
 	 * Reads until <code>end</code> is reached. The returned String includes the end character.
 	 * @param in Reader to read from.
-	 * @param end Character to stop at.
+	 * @param limit Maximum number of bytes to read
 	 * @return String of read characters.
 	 * @throws IOException
 	 * @deprecated
 	 * @see RWUtil#readUntil(Reader, int)
 	 */
+	@Deprecated
 	public static String readUntil(final Reader in,final int limit) throws IOException{
 		return RWUtil.readUntil(in, limit);
 	}
@@ -95,6 +99,7 @@ public final class ReadWriterFactory {
 	 * @deprecated
 	 * @see RWUtil#readUntil(Reader, String, boolean)
 	 */
+	@Deprecated
 	public static String readUntil(final Reader rd, final String end, final boolean throwEOF) throws IOException, EOFException {
 		return RWUtil.readUntil(rd, end, throwEOF);
 	}
@@ -106,6 +111,7 @@ public final class ReadWriterFactory {
 	 * @deprecated
 	 * @see RWUtil#readUntil(Reader, String)
 	 */
+	@Deprecated
 	public static String readUntil(final Reader rd, final String end) throws IOException {
 		return RWUtil.readUntil(rd,end,false);
 	}
@@ -116,6 +122,7 @@ public final class ReadWriterFactory {
 	 * @deprecated
 	 * @see RWUtil#skipWhitespace(Reader)
 	 */
+	@Deprecated
 	public static int skipWhitespace(final Reader rd) throws IOException {
 		return RWUtil.skipWhitespace(rd);
 	}

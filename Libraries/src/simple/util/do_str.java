@@ -47,8 +47,8 @@ public final class do_str {
 		return do_str.indexOf(list, c, 0) != -1;
 	}
 	/** Returns the index of the first occurrence such that startsWith(s,f,offset) is true.
-	 * @param s The string to search
-	 * @param f The string to find
+	 * @param haystack The string to search
+	 * @param needle The string to find
 	 * @param offset The starting index
 	 * @return The index f is found or -1
 	 */
@@ -63,8 +63,8 @@ public final class do_str {
 		return offset;
 	}
 	/** Returns the index of the first occurrence such that startsWith(s,f,offset) is true.
-	 * @param s The string to search
-	 * @param f The string to find
+	 * @param haystack The string to search
+	 * @param needle The string to find
 	 * @param offset The starting index
 	 * @param limit Index to stop searching at(inclusive)
 	 * @return The index f is found or -1
@@ -86,8 +86,8 @@ public final class do_str {
 		return offset;
 	}
 	/**Exists only to add indexOf(char,int) to classes like StringBuilder.
-	 * @param s The haystack
-	 * @param f The needle
+	 * @param haystack The string to search
+	 * @param needle The string to find
 	 * @param offset Index to start from
 	 * @return The index of <code>f</code> or -1.
 	 */
@@ -95,8 +95,8 @@ public final class do_str {
 		return do_str.indexOf(haystack,needle,offset,haystack.length()-1);
 	}
 	/**indexOf(..) with a twist. Will only search to the limit specified.
-	 * @param s The haystack
-	 * @param f The needle
+	 * @param haystack The string to search
+	 * @param needle The string to find
 	 * @param offset Index to start from
 	 * @param limit Index to stop at(inclusive)
 	 * @return The index of <code>f</code> or -1.
@@ -109,8 +109,8 @@ public final class do_str {
 		return -1;
 	}
 	/** Returns the index after the first occurrence such that startsWith(s,f,offset) is true.
-	 * @param s The string to search
-	 * @param f The string to find
+	 * @param haystack The string to search
+	 * @param needle The string to find
 	 * @param offset The starting index
 	 * @return The index f is found or -1
 	 */
@@ -124,8 +124,8 @@ public final class do_str {
 		return offset+needle.length();
 	}
 	/** Returns the index after the first occurrence such that startsWith(s,f,offset) is true.
-	 * @param s The string to search
-	 * @param f The string to find
+	 * @param haystack The string to search
+	 * @param needle The string to find
 	 * @param offset The starting index
 	 * @param limit Index to stop searching at(inclusive)
 	 * @return The index f is found or -1
@@ -147,8 +147,8 @@ public final class do_str {
 		return offset+needle.length();
 	}
 	/** Returns the index of the first occurrence of any character in <code>list</code>.
-	 * @param s String to search
-	 * @param list List of characters to search for
+	 * @param haystack String to search
+	 * @param needles List of characters to search for
 	 * @param offset Index to start searching
 	 * @param limit Index to stop searching(inclusive)
 	 * @return The index where one of the listed characters were found or -1.
@@ -167,8 +167,8 @@ public final class do_str {
 		return -1;
 	}
 	/** Returns the index of the first occurrence of any character in <code>list</code>.
-	 * @param s String to search
-	 * @param list List of characters to search for
+	 * @param haystack String to search
+	 * @param needles List of characters to search for
 	 * @param offset Index to start searching
 	 * @return The index where one of the listed characters were found or -1.
 	 */
@@ -176,8 +176,8 @@ public final class do_str {
 		return do_str.indexOfAny(haystack, needles, offset, haystack.length()-1);
 	}
 	/** Returns the index of the first occurrence of any character in <code>list</code>.
-	 * @param s String to search
-	 * @param list List of characters to search for
+	 * @param haystack String to search
+	 * @param needles List of characters to search for
 	 * @return The index where one of the listed characters were found or -1.
 	 */
 	public static final int indexOfAny(final CharSequence haystack, final CharSequence needles) {
@@ -399,6 +399,7 @@ public final class do_str {
 		return offset;
 	}
 	/**
+	 * Basically a start with where order doesn't matter.
 	 * Compares two <code>String</code>s on a partial basis. Order is not
 	 * important.
 	 *
@@ -576,10 +577,14 @@ public final class do_str {
 	public static final String padLeft(final int cols, final char pad, final String input) {
 		if (cols<=input.length())
 			return input;
-		final StringBuffer buf = new StringBuffer(input);
+		final char[] buf = new char[cols];
 		final int diff = cols-input.length();
-		for (int i = 0; i<diff; i++) {
-			buf.insert(0,pad);
+		int i= 0;
+		for (; i<diff; i++) {
+			buf[i]= pad;
+		}
+		for (; i<cols; i++) {
+			buf[i]= input.charAt(i-diff);
 		}
 		return buf.toString();
 	}
@@ -597,7 +602,8 @@ public final class do_str {
 	public static final String padRight(final int cols, final char pad, final String input) {
 		if (cols<=input.length())
 			return input;
-		final StringBuffer buf = new StringBuffer(input);
+		final StringBuffer buf = new StringBuffer(cols);
+		buf.append(input);
 		final int diff = cols-input.length();
 		for (int i = 0; i<diff; i++) {
 			buf.append(pad);

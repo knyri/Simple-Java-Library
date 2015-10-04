@@ -17,8 +17,8 @@ public class SQLTableModel extends AbstractTableModel {
 	private List<String> colNames;
 	private boolean[][] changed;
 	/**
-	 * @param values
-	 * @param colNames
+	 * @param values values
+	 * @param colNames column names
 	 */
 	public SQLTableModel(List<List<Object>> values, List<String> colNames) {
 		this.values = values;

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package simple.util;
 
@@ -86,7 +86,7 @@ public final class Time {
 	 *  m: minute in hour (0-59)
 	 *  s: second in minute (0-59)
 	 *  z: millisecond in second (0-999)
-	 *  t<h|m|s|z>: total. "tm" would give the total minutes
+	 *  t(h|m|s|z): total. "tm" would give the total minutes
 	 *  You can pad with 0's by repeating the letter.
 	 *  For h, H, m, and s the max padding is 2.
 	 *  For z it is 3.

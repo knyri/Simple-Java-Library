@@ -29,7 +29,7 @@ public class CsvReader implements Closeable{
 		in= new BufferedReader(new FileReader(file));
 	}
 	/**
-	 * @param file
+	 * @param file the file to open
 	 * @throws FileNotFoundException
 	 */
 	public CsvReader(File file) throws FileNotFoundException{
