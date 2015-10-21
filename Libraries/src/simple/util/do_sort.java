@@ -1,6 +1,8 @@
 package simple.util;
 
 import java.io.File;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Not sure if I use these. Created as an assignment for a database management class.
@@ -62,7 +64,7 @@ public final class do_sort {
 		/* Start at 1st element and shift elements down
 		 * until a value lower than key is found and
 		 * shift that one doen until a lower is found
-		 * and shit that one down...
+		 * and shift that one down...
 		 */
 		int key, pos;
 		for(int j=1; j<data.length; j++) {
@@ -156,6 +158,45 @@ public final class do_sort {
 		}
 	}
 //	============ start qsort ===========
+	public static <T> void quickSort(List<T> data, Comparator<T> comparer){
+		quickSort(data, comparer, 0, data.size()-1);
+	}
+	public static <T> void swap(List<T> data, int a, int b){
+		T aT = data.get(a);
+		data.set(a, data.get(b));
+		data.set(b, aT);
+	}
+	public static <T> void quickSort(List<T> data, Comparator<T> comparer, int left, int right){
+		if(left<right) {
+			int l = left,
+				r = right;
+			final T mid = data.get((left + right)/2);
+			// Keep going until we've hit the middle
+			while(l<=r) {
+				while(comparer.compare(data.get(l), mid) < 0 && l<right)
+					++l;
+				while(comparer.compare(data.get(r), mid) > 0 && r>left)
+					--r;
+				if(l<=r) {
+					swap(data, r, l);
+					/* Keeps it from hitting an infinite loop
+					 * also keeps it from sorting a large number
+					 * of size 2 arrays which slows it down
+					 * considerably and can cause stack overflows.
+					 */
+					++l;
+					--r;
+				}
+			}
+			// quick-sort left part if r has not reached the left end
+			if (left < r)
+				quickSort(data, comparer, left, r);
+
+			// quick sort right part if l has not reached the right end
+			if (l<right)
+				quickSort(data, comparer, l, right);
+		}
+	}
 	public static void quickSort(final int data[]) {
 		quickSort(data, 0, data.length-1);
 	}
