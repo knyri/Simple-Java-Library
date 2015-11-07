@@ -1,4 +1,4 @@
-package simple.ml;
+package simple.parser.css;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -10,6 +10,9 @@ import java.text.ParseException;
 import simple.io.DoubleParsePosition;
 import simple.io.RWUtil;
 import simple.io.ReadWriterFactory;
+import simple.parser.ml.Page;
+import simple.parser.ml.ParserConstants;
+import simple.parser.ml.Tag;
 import simple.util.do_str;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
@@ -24,7 +27,7 @@ public class CssParser{
 	protected static final Log log = LogFactory.getLogFor(CssParser.class);
 	/** See {@link #parse(CharSequence, ParserConstants)} for important notes.
 	 * @param src The text.
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
 	 * @throws ParseException
 	 * @throws IOException
 	 */
@@ -33,7 +36,7 @@ public class CssParser{
 	}
 	/** See {@link #parse(Reader, ParserConstants)} for important notes.
 	 * @param in The Reader.
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
 	 * @throws ParseException
 	 * @throws IOException
 	 */
@@ -314,8 +317,8 @@ public class CssParser{
 	 * This is done since the CDATA could be split by a sub-tag.(e.g. [p] text [span]text[/span] text [/p])
 	 * @param src The text.
 	 * @param pconst Options specific to this source's format.
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
-	 * @see simple.ml.ParserConstants
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
+	 * @see simple.parser.ml.ParserConstants
 	 * @throws ParseException
 	 * @throws IOException
 	 */

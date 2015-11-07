@@ -1,7 +1,7 @@
 /**
  *
  */
-package simple.ml;
+package simple.parser.ml;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -49,7 +49,7 @@ public class InlineLooseParser {
 	/** See {@link #parse(CharSequence, ParserConstants)} for important notes.
 	 * @param src The text.
 	 * @param buildCache wether or not to build the tag cache
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
 	 * @throws ParseException
 	 * @throws IOException
 	 */
@@ -66,8 +66,8 @@ public class InlineLooseParser {
 	 * @param src The text.
 	 * @param pconst Options specific to this source's format.
 	 * @param buildCache wether or not to build the tag cache
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
-	 * @see simple.ml.ParserConstants
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
+	 * @see simple.parser.ml.ParserConstants
 	 * @throws ParseException
 	 * @throws IOException
 	 */
@@ -76,7 +76,7 @@ public class InlineLooseParser {
 	}
 	/** See {@link #parse(Reader, ParserConstants)} for important notes.
 	 * @param in The Reader.
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
 	 * @throws ParseException
 	 * @throws IOException
 	 */
@@ -86,7 +86,7 @@ public class InlineLooseParser {
 	/** See {@link #parse(Reader, ParserConstants)} for important notes.
 	 * @param in The Reader.
 	 * @param buildCache wether or not to build the tag cache
-	 * @return A {@link simple.ml.Page Page} object that represents the source.
+	 * @return A {@link simple.parser.ml.Page Page} object that represents the source.
 	 * @throws ParseException
 	 * @throws IOException
 	 */

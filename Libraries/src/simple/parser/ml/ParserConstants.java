@@ -1,7 +1,7 @@
 /**
  *
  */
-package simple.ml;
+package simple.parser.ml;
 
 import java.io.File;
 import java.io.FileReader;

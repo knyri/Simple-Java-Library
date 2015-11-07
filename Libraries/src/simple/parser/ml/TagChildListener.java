@@ -1,4 +1,4 @@
-package simple.ml;
+package simple.parser.ml;
 
 public interface TagChildListener{
 	public void childTagAdded(Tag parent, Tag child);

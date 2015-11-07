@@ -1,4 +1,4 @@
-package simple.io;
+package simple.parser.csv;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import simple.io.ParseException;
 
 public class CsvReader implements Closeable{
 	private int row=0;

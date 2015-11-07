@@ -1,4 +1,4 @@
-package simple.HTML;
+package simple.html;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,10 +10,10 @@ import java.util.List;
 
 import simple.CIString;
 import simple.io.RWUtil;
-import simple.ml.InlineLooseParser;
-import simple.ml.Page;
-import simple.ml.Tag;
 import simple.net.Uri;
+import simple.parser.ml.InlineLooseParser;
+import simple.parser.ml.Page;
+import simple.parser.ml.Tag;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
@@ -22,9 +22,9 @@ import simple.util.logging.LogFactory;
  * provides this information statically.<br>
  * File read: mimeTypes.conf.xml in the base package.<br>
  * depends on {@link simple.CIString},
-{@link simple.ml.InlineLooseParser},
-{@link simple.ml.Page},
-{@link simple.ml.Tag},
+{@link simple.parser.ml.InlineLooseParser},
+{@link simple.parser.ml.Page},
+{@link simple.parser.ml.Tag},
 {@link simple.net.Uri},
 {@link simple.io.ReadWriterFactory},
 {@link simple.util.logging.Log},
