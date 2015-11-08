@@ -11,6 +11,10 @@ import java.util.List;
 
 import simple.io.ParseException;
 
+/**
+ * @author Ken Pierce
+ *
+ */
 public class CsvReader implements Closeable{
 	private int row=0;
 	private final BufferedReader in;
