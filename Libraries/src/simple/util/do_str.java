@@ -108,6 +108,69 @@ public final class do_str {
 		}
 		return -1;
 	}
+	/**Exists only to add indexOf(char,int) to classes like StringBuilder.
+	 * @param haystack The string to search
+	 * @param needle The string to find
+	 * @param offset Index to start from
+	 * @return The index of <code>f</code> or -1.
+	 */
+	public static final int indexOf(final CharSequence haystack, final char needle, char quote, final int offset) {
+		return do_str.indexOf(haystack,needle, quote, offset, haystack.length()-1);
+	}
+	/**indexOf(..) with a twist. Will only search to the limit specified.
+	 * @param haystack The string to search
+	 * @param needle The string to find
+	 * @param offset Index to start from
+	 * @param limit Index to stop at(inclusive)
+	 * @return The index of <code>f</code> or -1.
+	 */
+	public static final int indexOf(final CharSequence haystack, final char needle, char quote, int offset, final int limit) {
+		if (offset>limit || offset<0) return -1;
+		boolean quoted= false;
+		for (;offset<=limit;offset++) {
+			if(haystack.charAt(offset)==quote){
+				quoted = !quoted;
+			} else
+			if (haystack.charAt(offset)==needle && !quoted){
+				return offset;
+			}
+		}
+		return -1;
+	}
+	/**Exists only to add indexOf(char,int) to classes like StringBuilder.
+	 * @param haystack The string to search
+	 * @param needle The string to find
+	 * @param offset Index to start from
+	 * @return The index of <code>f</code> or -1.
+	 */
+	public static final int indexOfQuoted(final CharSequence haystack, final char needle, final int offset) {
+		return do_str.indexOfQuoted(haystack,needle, offset, haystack.length()-1);
+	}
+	/**indexOf(..) with a twist. Will only search to the limit specified.
+	 * @param haystack The string to search
+	 * @param needle The string to find
+	 * @param offset Index to start from
+	 * @param limit Index to stop at(inclusive)
+	 * @return The index of <code>f</code> or -1.
+	 */
+	public static final int indexOfQuoted(final CharSequence haystack, final char needle, int offset, final int limit) {
+		if (offset>limit || offset<0) return -1;
+		boolean
+			squoted= false,
+			dquoted= false;
+		for (;offset<=limit;offset++) {
+			if(haystack.charAt(offset)== '"' && !squoted){
+				dquoted = !dquoted;
+			} else
+			if(haystack.charAt(offset)== '\'' && !dquoted){
+				squoted = !squoted;
+			} else
+			if (haystack.charAt(offset)==needle && !dquoted && !squoted){
+				return offset;
+			}
+		}
+		return -1;
+	}
 	/** Returns the index after the first occurrence such that startsWith(s,f,offset) is true.
 	 * @param haystack The string to search
 	 * @param needle The string to find

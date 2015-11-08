@@ -54,7 +54,11 @@ public final class RWUtil {
 	public static String readUntil(final Reader in,final int limit) throws IOException{
 		final char[] cbuf = new char[limit];
 		final int read=in.read(cbuf);
-		if(read==-1)return null;else return new String(Arrays.copyOfRange(cbuf, 0, read));
+		if(read==-1){
+			return null;
+		} else {
+			return new String(Arrays.copyOfRange(cbuf, 0, read));
+		}
 	}
 	/** Reads until <code>end</code> is found or the end of the stream is reached.
 	 * @param rd
@@ -103,5 +107,117 @@ public final class RWUtil {
 			c = rd.read();
 		} while(c!=-1);
 		return c;
+	}
+	/**
+	 * Reads until <code>end</code> is reached. The returned String includes the end character.<br>
+	 * As a result of this behaviour, an empty string means that the end has been reached.<br>
+	 * Ignores <var>end</var> if inside <var>quote</var>.
+	 * @param in Reader to read from.
+	 * @param end Character to stop at.
+	 * @param quote quote character
+	 * @return String of read characters.
+	 * @throws IOException
+	 */
+	public static String readUntil(final Reader in, final char end, char quote) throws IOException {
+		final StringBuilder buf = new StringBuilder(255);
+		final char[] cbuf = new char[1];
+		boolean quoted= false;
+		while((in.read(cbuf)!=-1)){
+			buf.append(cbuf[0]);
+			if (cbuf[0]==end && !quoted) {
+				break;
+			} else if (cbuf[0] == quote){
+				quoted = !quoted;
+			}
+		}
+		return buf.toString();
+	}
+
+	/** Reads until <code>end</code> is found or the end of the stream is reached.<br>
+	 * Ignores <var>end</var> if inside <var>quote</var>.
+	 * @param rd
+	 * @param end
+	 * @param throwEOF Weather or not it should throw an EOFException if EOF is reached.
+	 * @return The content read including the <code>end</code> string. Returns null if the first character read is EOF.
+	 * @throws IOException
+	 * @throws EOFException
+	 */
+	public static String readUntil(final Reader rd, final String end, final boolean throwEOF, char quote) throws IOException, EOFException {
+		final StringBuilder buf = new StringBuilder(100);
+		final char[] c = new char[1];
+		int read = 0;
+		boolean quoted= false;
+		while((read=rd.read(c))!=-1) {
+			buf.append(c[0]);
+			if (end.length() <= buf.length())
+				if(c[0] == quote){
+					quoted = !quoted;
+				}else if (quoted && buf.substring(buf.length()-end.length()).equalsIgnoreCase(end)) {
+					break;
+				}
+		}
+		if (read==-1 && throwEOF) throw new EOFException("End of file reached before '"+end+"' was found.");
+		if (buf.length()==0) return null;
+		return buf.toString();
+	}
+	/**
+	 * Reads until <code>end</code> is reached. The returned String will include the end character unless the
+	 * end is reached before the end character is found.<br>
+	 * As a result of this behaviour, an empty string means that the end has been reached.<br>
+	 * Ignores <var>end</var> if inside " or '.
+	 * @param in Reader to read from.
+	 * @param end Character to stop at.
+	 * @return String of read characters.
+	 * @throws IOException
+	 */
+	public static String readUntilQuoted(final Reader in, final char end) throws IOException {
+		final StringBuilder buf = new StringBuilder(255);
+		final char[] cbuf = new char[1];
+		boolean
+			squoted= false,
+			dquoted= false;
+		while((in.read(cbuf)!=-1)){
+			buf.append(cbuf[0]);
+			if (cbuf[0]==end && !dquoted && !squoted) {
+				break;
+			} else if (cbuf[0] == '"' && !squoted){
+				dquoted = !dquoted;
+			} else if (cbuf[0] == '\'' && !dquoted){
+				squoted = !squoted;
+			}
+		}
+		return buf.toString();
+	}
+
+	/** Reads until <code>end</code> is found or the end of the stream is reached.<br>
+	 * Ignores <var>end</var> if inside " or '.
+	 * @param rd
+	 * @param end
+	 * @param throwEOF Weather or not it should throw an EOFException if EOF is reached.
+	 * @return The content read including the <code>end</code> string. Returns null if the first character read is EOF.
+	 * @throws IOException
+	 * @throws EOFException
+	 */
+	public static String readUntilQuoted(final Reader rd, final String end, final boolean throwEOF) throws IOException, EOFException {
+		final StringBuilder buf = new StringBuilder(100);
+		final char[] c = new char[1];
+		int read = 0;
+		boolean
+			squoted= false,
+			dquoted= false;
+		while((read=rd.read(c))!=-1) {
+			buf.append(c[0]);
+			if (end.length() <= buf.length())
+				if (c[0] == '"' && !squoted){
+					dquoted = !dquoted;
+				} else if (c[0] == '\'' && !dquoted){
+					squoted = !squoted;
+				}else if (!dquoted && !squoted && buf.substring(buf.length()-end.length()).equalsIgnoreCase(end)) {
+					break;
+				}
+		}
+		if (read==-1 && throwEOF) throw new EOFException("End of file reached before '"+end+"' was found.");
+		if (buf.length()==0) return null;
+		return buf.toString();
 	}
 }
