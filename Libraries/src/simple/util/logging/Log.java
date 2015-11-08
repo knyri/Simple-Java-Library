@@ -4,27 +4,25 @@
 package simple.util.logging;
 
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import simple.io.WriterOutputStream;
-
 /** The preferred method for getting a log is to use {@link LogFactory#getLogFor(Class)}.<br>
  * This ensures that only one log will be used per class and each log outputs to
  * the same stream. Unless you don't want this behavior.<br>
  * Note: all log functions return true when an error has occurred.
  * <hr>
- * Depends on {@link simple.io.WriterOutputStream}
  * <br>Created: Oct 21, 2010
  * @author Kenneth Pierce
  */
 public final class Log {
 	private ErrorCodeResolver ecr=LogFactory.DEFAULTECR;
-	private PrintStream _out;
+	private PrintWriter _out;
 	private final String _cName;
 	private boolean _printTime = false,
 		_printDate=false;
@@ -47,14 +45,14 @@ public final class Log {
 	}
 	public Log(final OutputStream os, final Class<?> clazz) {
 		_cName = clazz.getCanonicalName();
-		if (os instanceof PrintStream)
-			_out = (PrintStream)os;
-		else
-			_out = new PrintStream(os);
+		_out = new PrintWriter(new OutputStreamWriter(os));
 	}
 	public Log(final Writer os, final Class<?> clazz) {
 		_cName = clazz.getCanonicalName();
-		_out = new PrintStream(new WriterOutputStream(os));
+		if (os instanceof PrintWriter)
+			_out = (PrintWriter)os;
+		else
+			_out = new PrintWriter(os);
 	}
 	public void setPrintTime(final boolean b) {
 		_printTime = b;
@@ -92,13 +90,13 @@ public final class Log {
 		this.section.put(section, options);
 	}
 	public void setStream(final OutputStream os) {
-		if (os instanceof PrintStream)
-			_out = (PrintStream)os;
-		else
-			_out = new PrintStream(os);
+		_out = new PrintWriter(new OutputStreamWriter(os));
 	}
 	public void setStream(final Writer os) {
-		_out = new PrintStream(new WriterOutputStream(os));
+		if (os instanceof PrintWriter)
+			_out = (PrintWriter)os;
+		else
+			_out = new PrintWriter(os);
 	}
 	public final boolean println() {
 		_out.println();

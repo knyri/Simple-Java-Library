@@ -4,9 +4,10 @@
 package simple.util.logging;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
@@ -36,7 +37,7 @@ import simple.io.FileUtil;
 public final class LogFactory {
 	private static HashMap<Class<?>, Log> logCache = new HashMap<Class<?>, Log>();
 	//private static final Log _log = new Log(LogFactory.class);
-	private static PrintStream globalStream = System.out;
+	private static PrintWriter globalStream = new PrintWriter(System.out);
 	private static byte logOptions = (byte)0xFF;
 	private static boolean printTime=false,printDate=false;
 	private static final Timer updater=new Timer();
@@ -106,7 +107,7 @@ public final class LogFactory {
 	 * Also updates existing logs.
 	 * @param stream
 	 */
-	public static void setGlobalLogStream(final PrintStream stream) {
+	public static void setGlobalLogStream(final PrintWriter stream) {
 		synchronized(logCache){
 			globalStream = stream;
 			//_log.setStream(stream);
@@ -120,7 +121,7 @@ public final class LogFactory {
 	 * @param clazz
 	 * @param stream
 	 */
-	public static void setLogStreamFor(final Class<?> clazz, final PrintStream stream) {
+	public static void setLogStreamFor(final Class<?> clazz, final PrintWriter stream) {
 		getLogFor(clazz).setStream(stream);
 	}
 	/**Sets the global output file for all log streams created by this factory.
@@ -130,11 +131,10 @@ public final class LogFactory {
 	 * @throws IOException if file creation fails.
 	 * @see java.io.File#createNewFile()
 	 */
-	@SuppressWarnings("resource")
 	public static void setGlobalLogFile(final File file, final boolean append) throws IOException {
 		if(!FileUtil.createFile(file))
 			throw new IOException("The file could not be created. No reason given.");
-		setGlobalLogStream(new PrintStream(new FileOutputStream(file, append)));
+		setGlobalLogStream(new PrintWriter(new FileWriter(file, append)));
 	}
 	/**Sets the output file for the specified class.
 	 * @param clazz target class log
@@ -143,13 +143,12 @@ public final class LogFactory {
 	 * @throws IOException if file creation fails
 	 * @see java.io.File#createNewFile()
 	 */
-	@SuppressWarnings("resource")
 	public static void setLogFileFor(final Class<?> clazz, final File file, final boolean append) throws IOException {
 		if(!FileUtil.createFile(file))
 			throw new IOException("The file could not be created. No reason given.");
-		setLogStreamFor(clazz, new PrintStream(new FileOutputStream(file, append)));
+		setLogStreamFor(clazz, new PrintWriter(new FileWriter(file, append)));
 	}
-	public static PrintStream getGlobalLogStream() {
+	public static PrintWriter getGlobalLogStream() {
 		return globalStream;
 	}
 	/**This should be called before instantiating any classes that use this
