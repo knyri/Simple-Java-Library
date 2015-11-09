@@ -234,54 +234,47 @@ public final class Tag implements Iterable<Tag> {
 		return buf.toString();
 	}
 	public String toStringFormatted(final int depth) {
-		if (getName().equals(CDATA) || getName().equals(META)) return getContent()+"\n";
+		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(HTMLCOMM)) return getContent()+"\n";
-		final StringBuilder buf = new StringBuilder(300);
-		String tabs=do_str.repeat('\t', depth);
-		buf.append(tabs);
-		buf.append('<');
-		buf.append(getName());
-		for (final CIString key : properties.keySet()) {
-			buf.append(" "+key+"=\""+properties.get(key)+"\"");
-		}
-		if (isSelfClosing()) {
-			buf.append("/>\n");
-			return buf.toString();
-		}
-		buf.append('>');
-		if(hasChild())
-			buf.append('\n');
-		for(Tag t: this){
-			buf.append(t.toStringFormatted(tabs+"\t"));
-		}
-		buf.append(tabs);
-		buf.append("</"+getName()+">\n");
-		return buf.toString();
+		if (getName().equals(META) || getName().equals(HTMLCOMM)) return getContent()+"\n";
+		return toStringFormatted(do_str.repeat('\t', depth));
 	}
 	protected String toStringFormatted(final String tabs){
-		if (getName().equals(CDATA) || getName().equals(META)) return getContent()+"\n";
+		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(HTMLCOMM)) return getContent()+"\n";
+		if (getName().equals(META) || getName().equals(HTMLCOMM)) return getContent()+"\n";
 		final StringBuilder buf = new StringBuilder(300);
-		buf.append(tabs);
+		boolean format= hasParent() && getParent().childCount() > 1;
+		if(format)
+			buf.append(tabs);
 		buf.append('<');
 		buf.append(getName());
 		for (final CIString key : properties.keySet()) {
 			buf.append(" "+key+"=\""+properties.get(key)+"\"");
 		}
 		if (isSelfClosing()) {
-			buf.append("/>\n");
+			buf.append("/>");
+			if(format){
+				buf.append('\n');
+			}
 			return buf.toString();
 		}
 		buf.append('>');
-		if(hasChild())
+		if(childCount() > 1){
 			buf.append('\n');
-		for(Tag t: this){
-			buf.append(t.toStringFormatted(tabs+"\t"));
+			for(Tag t: this){
+				buf.append(t.toStringFormatted(tabs+"\t"));
+			}
+			buf.append(tabs);
+		}else{
+			for(Tag t: this){
+				buf.append(t.toStringFormatted(tabs));
+			}
 		}
-		buf.append(tabs);
-		buf.append("</"+getName()+">\n");
+		buf.append("</"+getName()+">");
+		if(format){
+			buf.append('\n');
+		}
 		return buf.toString();
 	}
 	@Override
