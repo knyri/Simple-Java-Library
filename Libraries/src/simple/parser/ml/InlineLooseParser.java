@@ -105,25 +105,23 @@ public class InlineLooseParser {
 			final StringBuilder buf = new StringBuilder(500);
 			char c;
 			int retc;
-			//int index = 0;
 			String tmp;
 			while (true) {
 				pos.reset();
 				//log.debug("---- LOOP ----");
 				if (buf.length()==0) {
 					retc = RWUtil.skipWhitespace(bin);
-					c= (char)retc;
-					//log.debug("retc="+retc+":c='"+c+"'");
 					if (retc==-1)
 						break;
-					//index +=1;
+					c= (char)retc;
 					buf.append(c);
 				} else {
 					c = buf.charAt(0);
 				}
 				if (c!='<') {
 					buf.append(RWUtil.readUntil(bin, '<'));
-					if (buf.charAt(buf.length()-1)=='<') {
+					boolean eof= buf.charAt(buf.length()-1)!='<';
+					if (!eof) {
 						buf.deleteCharAt(buf.length()-1);
 					}
 	//				log.debug("CDATA", buf);
@@ -138,7 +136,8 @@ public class InlineLooseParser {
 						page.addTag(new Tag(Tag.CDATA, buf.toString(), true), null);
 					}
 					buf.setLength(0);
-					buf.append('<');
+					if(!eof)
+						buf.append('<');
 					continue;
 				}
 				buf.append(RWUtil.readUntil(bin, '>'));
@@ -218,6 +217,18 @@ public class InlineLooseParser {
 							buf.setLength(0);
 							continue;
 						}else if(ttmp.toUpperCase().equals("<!DOCTYPE")){
+							// Checking for <!DOCTYPE dmodule [
+							int idx= 9;
+							while(idx < buf.length() && Character.isWhitespace(buf.charAt(idx))) idx++;
+							if(idx < buf.length() && Character.isAlphabetic(buf.charAt(idx))){
+								while(idx < buf.length() && Character.isAlphabetic(buf.charAt(idx))) idx++;
+								if(idx < buf.length() && Character.isWhitespace(buf.charAt(idx))){
+									while(idx < buf.length() && Character.isWhitespace(buf.charAt(idx))) idx++;
+									if(idx < buf.length() && buf.charAt(idx) == '[' && !buf.substring(buf.length()-2).equals("]>")){
+										buf.append(RWUtil.readUntil(bin,"]>"));
+									}
+								}
+							}
 	//						log.debug("DOCTYPE");
 							tag=new Tag(Tag.META,buf.toString(),true);
 							page.addTag(tag, null);
