@@ -464,11 +464,17 @@ public class InlineLooseParser {
 			pos.end = do_str.indexOfAny(src, "= ", pos.start, limits.end);
 			if (!pos.validEnd())
 				break;
+			if(src.charAt(pos.end) == ' '){
+				pos.end= Math.min(do_str.skipWhitespace(src, pos.end), limits.end);
+			}
 
 			attrn = src.subSequence(pos.start, pos.end).toString().trim();
 			try {
 				if (src.charAt(pos.end)=='=') {//distinguish between name=value and name
 					pos.start = pos.end = pos.end+1;
+					if(src.charAt(pos.end) == ' '){
+						pos.start= pos.end= Math.min(do_str.skipWhitespace(src, pos.end), limits.end);
+					}
 					if (src.charAt(pos.start)=='\'') {
 						do {
 							pos.end = do_str.indexOf(src, '\'', pos.start+1, limits.end);
