@@ -433,13 +433,14 @@ public final class do_str {
 	public static final boolean endsWith(final CharSequence haystack, final CharSequence needle, final int offset) {
 		return do_str.startsWith(haystack,needle,offset-needle.length());
 	}
-	/** Skips spaces, tabs, new lines and carriage returns.
+	/**
+	 * Skips anything that makes Character.isWhitespace return true.
 	 * @param s
 	 * @param offset Place to start
 	 * @return Index where the whitespace ends.
 	 */
 	public static final int skipWhitespace(final CharSequence s, int offset) {
-		while (offset < s.length() && (s.charAt(offset)==' ' || s.charAt(offset)=='\t' || s.charAt(offset)=='\n' || s.charAt(offset)=='\r'))
+		while (offset < s.length() && Character.isWhitespace(s.charAt(offset)))
 		{ offset++; }
 		return offset;
 	}
