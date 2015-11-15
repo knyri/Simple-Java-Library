@@ -45,6 +45,25 @@ public final class RWUtil {
 		return buf.toString();
 	}
 	/**
+	 * Reads until <code>end</code> is reached. The returned String includes the end character.<br>
+	 * As a result of this behaviour, an empty string means that the end has been reached.
+	 * @param in Reader to read from.
+	 * @param end Character to stop at.
+	 * @return String of read characters.
+	 * @throws IOException
+	 */
+	public static String readUntilAny(final Reader in, final String end) throws IOException {
+		final StringBuilder buf = new StringBuilder(255);
+		final char[] cbuf = new char[1];
+		while((in.read(cbuf)!=-1)){
+			buf.append(cbuf[0]);
+			if (end.indexOf(cbuf[0]) != -1) {
+				break;
+			}
+		}
+		return buf.toString();
+	}
+	/**
 	 * Reads until <code>end</code> is reached. The returned String includes the end character.
 	 * @param in Reader to read from.
 	 * @param limit Maximum number of bytes to read
