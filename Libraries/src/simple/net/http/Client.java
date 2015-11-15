@@ -104,15 +104,16 @@ public final class Client{
 			for(Header header:headers)
 				req.setHeader(header);
 		}
-		try(CloseableHttpResponse response= context==null? client.execute(req) : client.execute(req,context)){
-			if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
-				Header location=response.getFirstHeader("Location");
-				log.debug("Redirect",uri+" --TO-- "+location);
-				if(location!=null) return get(new Uri(response.getFirstHeader("Location").getValue()),headers,context);
+		CloseableHttpResponse response= context==null? client.execute(req) : client.execute(req,context);
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null){
+				return get(new Uri(response.getFirstHeader("Location").getValue()),headers,context);
 			}
-			log.debug("Response",response);
-			return response;
 		}
+		log.debug("Response",response);
+		return response;
 	}
 	public CloseableHttpResponse post(Uri uri,Header[] headers,String data, Charset charset,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
@@ -128,18 +129,17 @@ public final class Client{
 			else
 				req.setEntity(new StringEntity(data, charset));
 		}
-		try(CloseableHttpResponse response = (context==null) ? client.execute(req) : client.execute(req,context)){
-			log.debug("Request",req.getRequestLine().toString());
-			log.debug("Request",req.getAllHeaders());
-			if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
-				// redirection
-				Header location=response.getFirstHeader("Location");
-				log.debug("Redirect",uri+" --TO-- "+location);
-				if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,charset,context);
+		CloseableHttpResponse response = (context==null) ? client.execute(req) : client.execute(req,context);
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
+			// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null){
+				return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,charset,context);
 			}
-			log.debug("Response",response);
-			return response;
 		}
+		log.debug("Response",response);
+		return response;
 	}
 	public CloseableHttpResponse post(Uri uri,Header[] headers,String data,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
@@ -151,18 +151,17 @@ public final class Client{
 		if(data!=null){
 			req.setEntity(new StringEntity(data));
 		}
-		try(CloseableHttpResponse response= (context==null) ? client.execute(req) : client.execute(req,context)){
-			log.debug("Request",req.getRequestLine().toString());
-			log.debug("Request",req.getAllHeaders());
-			if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
-				// redirection
-				Header location=response.getFirstHeader("Location");
-				log.debug("Redirect",uri+" --TO-- "+location);
-				if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,context);
+		CloseableHttpResponse response= (context==null) ? client.execute(req) : client.execute(req,context);
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
+			// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null){
+				return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,context);
 			}
-			log.debug("Response",response);
-			return response;
 		}
+		log.debug("Response",response);
+		return response;
 	}
 	public CloseableHttpResponse post(Uri uri,Header[] headers,ClientParam[] data,String format,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
@@ -182,16 +181,15 @@ public final class Client{
 				req.setEntity(new MultipartFormEntity(data,boundary));
 			}
 		}
-		try(CloseableHttpResponse response= (context==null) ? client.execute(req) : client.execute(req,context)){
-			if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
-				// redirection
-				Header location=response.getFirstHeader("Location");
-				log.debug("Redirect",uri+" --TO-- "+location);
-				if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,format,context);
-			}
-			log.debug("Response",response);
-			return response;
+		CloseableHttpResponse response= (context==null) ? client.execute(req) : client.execute(req,context);
+		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
+			// redirection
+			Header location=response.getFirstHeader("Location");
+			log.debug("Redirect",uri+" --TO-- "+location);
+			if(location!=null) return post(new Uri(response.getFirstHeader("Location").getValue()),headers,data,format,context);
 		}
+		log.debug("Response",response);
+		return response;
 	}
 	private static final HttpRequestRetryHandler RetryHandler=new HttpRequestRetryHandler(){
 		@Override
@@ -232,7 +230,7 @@ public final class Client{
 		HttpClientBuilder conBuilder= HttpClientBuilder.create();
 		conBuilder.setDefaultHeaders(Arrays.asList(defaults));
 		conBuilder.setUserAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.6.1000 Chrome/30.0.1599.101 Safari/537.36");
-		
+
 		if(log.getPrint(LogLevel.DEBUG)){
 			conBuilder.addInterceptorFirst(
 				new HttpRequestInterceptor(){
