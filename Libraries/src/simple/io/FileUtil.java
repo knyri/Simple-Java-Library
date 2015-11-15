@@ -277,17 +277,19 @@ public final class FileUtil{
 	 * @return true if the range is identical
 	 */
 	public static boolean compareBytes(byte[] b1, byte[] b2, int offset, int length) {
-		if (offset < b1.length && offset < b2.length) {
-			if (offset+length > b1.length)
-				length = b1.length - offset;
-			if (offset+length > b2.length)
-				length = b2.length - offset;
-			int max = offset+length;
-			for (; offset<max; offset++) {
-				if (b1[offset]!=b2[offset]) return false;
-			}
-		} else {
+		if (offset > b1.length || offset > b2.length) {
 			return false;
+		}
+		// Adjust length to not go past the end
+		if (offset+length > b1.length)
+			length = b1.length - offset;
+		if (offset+length > b2.length)
+			length = b2.length - offset;
+
+		int max = offset+length;
+		for (; offset<max; offset++) {
+			if (b1[offset]!=b2[offset])
+				return false;
 		}
 		return true;
 	}
@@ -299,29 +301,25 @@ public final class FileUtil{
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	@SuppressWarnings("resource")
 	public static boolean compareBytes(File f1, File f2) throws FileNotFoundException, IOException {
-		if (f1!=null&&f2!=null&&f1.exists()&&f2.exists())
-			if (f1.length()==f2.length()) {
-				int read = 0;
-				FileInputStream in1 = new FileInputStream(f1),
-						in2 = new FileInputStream(f2);
+		if (f1==null || f2==null || !f1.exists() || !f2.exists() || f1.length()!=f2.length()){
+			return false;
+		}
+		int read = 0;
+		try(FileInputStream in1 = new FileInputStream(f1)){
+			try(FileInputStream in2 = new FileInputStream(f2)){
 				byte[] b1 = new byte[1024];
 				byte[] b2 = new byte[1024];
 				read = in1.read(b1);
 				in2.read(b2);
 				for (;read != -1;) {
-					if (!compareBytes(b1,b2,0,read)) return false;
+					if (!compareBytes(b1,b2,0,read))
+						return false;
 					read = in1.read(b1);
 					in2.read(b2);
 				}
-				close(in1);
-				close(in2);
-			} else {
-				return false;
 			}
-		else
-			return false;
+		}
 		return true;
 	}
 	/**
@@ -333,29 +331,25 @@ public final class FileUtil{
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	@SuppressWarnings("resource")
 	public static boolean compareBytes(File f1, File f2, int buffSize) throws FileNotFoundException, IOException {
-		if (f1!=null&&f2!=null&&f1.exists()&&f2.exists())
-			if (f1.length()==f2.length()) {
-				int read = 0;
-				FileInputStream in1 = new FileInputStream(f1),
-						in2 = new FileInputStream(f2);
+		if (f1 == null || f2==null || !f1.exists() || !f2.exists() || f1.length() != f2.length()){
+			return false;
+		}
+		int read = 0;
+		try(FileInputStream in1 = new FileInputStream(f1)){
+			try(FileInputStream in2 = new FileInputStream(f2)){
 				byte[] b1 = new byte[buffSize];
 				byte[] b2 = new byte[buffSize];
 				read = in1.read(b1);
 				in2.read(b2);
 				for (;read != -1;) {
-					if (!compareBytes(b1,b2,0,read)) return false;
+					if (!compareBytes(b1,b2,0,read))
+						return false;
 					read = in1.read(b1);
 					in2.read(b2);
 				}
-				close(in1);
-				close(in2);
-			} else {
-				return false;
 			}
-		else
-			return false;
+		}
 		return true;
 	}
 	/**Adds all the files to a giant LinkedList. Can add them recursively.
