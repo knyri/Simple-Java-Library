@@ -223,8 +223,9 @@ public final class do_str {
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+haystack.length()+"]"); else return -1;
 		if (offset<0)
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative."); else return -1;
+		int j;
 		for (;offset<=limit;offset++) {
-			for (int j = 0; j < needles.length(); j++)
+			for (j= 0; j < needles.length(); j++)
 				if (haystack.charAt(offset)==needles.charAt(j)) return offset;
 		}
 		return -1;
