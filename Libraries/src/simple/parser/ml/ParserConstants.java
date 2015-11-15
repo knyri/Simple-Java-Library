@@ -85,17 +85,41 @@ public final class ParserConstants {
 	 * @param tag the tag name
 	 */
 	public void addOptionalEnder(final String tag) {
+		addOptionalEnder(new CIString(tag));
+	}
+	/**Adds this tag as a tag that may or may not have a closing tag.
+	 * @param tag the tag name
+	 */
+	public void addOptionalEnder(final CIString tag) {
 //		log.debug("Add Optional Ender",tag);
-		OPTIONALEND.add(new CIString(tag));
+		OPTIONALEND.add(tag.intern());
+	}
+	/**
+	 * Convenience method for addOptionalEnder(otag); addOptionalEnderEnd(otag, etags);
+	 * Adds this tag as a tag that will close the optional end tag when it opens.
+	 * For example an opening "li" tag will close the previous "li" tag.
+	 * @param otag The optional tag name
+	 * @param etag The tag name that ends this tag
+	 */
+	public void addOptionalEnder(CIString otag, final CIString... etags) {
+//		log.debug("Add Option ender end",etag+" ends "+otag);
+		otag= otag.intern();
+		OPTIONALEND.add(otag);
+		for(CIString etag: etags){
+			OPTIONALENDEND.add(otag, etag.intern());
+		}
 	}
 	/**Adds this tag as a tag that will close the optional end tag when it opens.
 	 * For example an opening "li" tag will close the previous "li" tag.
 	 * @param otag The optional tag name
 	 * @param etag The tag name that ends this tag
 	 */
-	public void addOptionalEnderEnd(final CIString otag, final CIString etag) {
+	public void addOptionalEnderEnd(CIString otag, final CIString... etags) {
 //		log.debug("Add Option ender end",etag+" ends "+otag);
-		OPTIONALENDEND.add(otag, etag);
+		otag= otag.intern();
+		for(CIString etag: etags){
+			OPTIONALENDEND.add(otag, etag.intern());
+		}
 	}
 	/**Adds this tag as a tag that will close the optional end tag when it opens.
 	 * For example an opening li tag will close the previous li tag.
@@ -103,29 +127,41 @@ public final class ParserConstants {
 	 * @param etag The tag name that ends this tag
 	 */
 	public void addOptionalEnderEnd(final String otag, final String etag) {
-//		log.debug("Add Option ender end",etag+" ends "+otag);
-		OPTIONALENDEND.add(new CIString(otag), new CIString(etag));
+		addOptionalEnderEnd(new CIString(otag), new CIString(etag));
+	}
+	/**Defines this tag as never having content or sub-tags. Tags like "br" and "hr" belong here.
+	 * @param tag The tag name
+	 */
+	public void addSelfCloser(final CIString tag) {
+//		log.debug("Add self closer",tag);
+		SELFCLOSER.add(tag.intern());
 	}
 	/**Defines this tag as never having content or sub-tags. Tags like "br" and "hr" belong here.
 	 * @param tag The tag name
 	 */
 	public void addSelfCloser(final String tag) {
-//		log.debug("Add self closer",tag);
-		SELFCLOSER.add(new CIString(tag));
+		addSelfCloser(new CIString(tag));
 	}
+
 	/**Sets this tag as only containing PCDATA. Tags like "style" and "script" belong here.
 	 * @param tag name of the tag
 	 */
 	public void addPcdataTag(final String tag) {
+		addPcdataTag(new CIString(tag));
+	}
+	/**Sets this tag as only containing PCDATA. Tags like "style" and "script" belong here.
+	 * @param tag name of the tag
+	 */
+	public void addPcdataTag(final CIString tag) {
 //		log.debug("Add PCDATA tag",tag);
-		PCDATA.add(new CIString(tag));
+		PCDATA.add(tag.intern());
 	}
 	/**Checks to see if the end tag is optional for this tag.
 	 * @param tag the tag name
 	 * @return true if the end tag is optional for this tag.
 	 */
 	public boolean isOptionalEnder(final String tag) {
-		return OPTIONALEND.contains(new CIString(tag));
+		return isOptionalEnder(new CIString(tag));
 	}
 	/**Checks to see if the end tag is optional for this tag.
 	 * @param tag the tag name
@@ -147,7 +183,7 @@ public final class ParserConstants {
 	 * @return true if the contents of tag are to be treated as PCDATA
 	 */
 	public boolean isPcdataTag(final String tag) {
-		return PCDATA.contains(new CIString(tag));
+		return isPcdataTag(new CIString(tag));
 	}
 	/**Checks to see if the tag contains PCDATA.
 	 * @param tag the tag name
@@ -161,7 +197,7 @@ public final class ParserConstants {
 	 * @return true if the tag closes itself.
 	 */
 	public boolean isSelfCloser(final String tag) {
-		return SELFCLOSER.contains(new CIString(tag));
+		return isSelfCloser(new CIString(tag));
 	}
 	/**Checks to see if tag is a self-closer.
 	 * @param tag the tag name
