@@ -197,7 +197,7 @@ public final class Tag implements Iterable<Tag> {
 	public String toStringTagOnly() {
 		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(HTMLCOMM)) return getContent()+"\n";
+		if (getName().equals(HTMLCOMM)) return getContent();
 		final StringBuilder buf = new StringBuilder(300);
 		buf.append('<');
 		buf.append(getName());
@@ -215,9 +215,9 @@ public final class Tag implements Iterable<Tag> {
 	public String toString() {
 		if (getName().equals(CDATA) || getName().equals(META)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(HTMLCOMM)) return "\n"+getContent();
+		if (getName().equals(HTMLCOMM)) return getContent();
 		final StringBuilder buf = new StringBuilder(300);
-		buf.append("\n<");
+		buf.append("<");
 		buf.append(getName());
 		for (final CIString key : properties.keySet()) {
 			buf.append(" "+key+"=\""+properties.get(key)+"\"");
@@ -236,16 +236,15 @@ public final class Tag implements Iterable<Tag> {
 	public String toStringFormatted(final int depth) {
 		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(META) || getName().equals(HTMLCOMM)) return getContent()+"\n";
+		if (getName().equals(HTMLCOMM)  || getName().equals(META)) return getContent()+'\n';
 		return toStringFormatted(do_str.repeat('\t', depth));
 	}
 	protected String toStringFormatted(final String tabs){
 		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
-		if (getName().equals(META) || getName().equals(HTMLCOMM)) return getContent()+"\n";
+		if (getName().equals(HTMLCOMM) || getName().equals(META)) return getContent()+'\n';
 		final StringBuilder buf = new StringBuilder(300);
-		boolean format= hasParent() && getParent().childCount() > 1;
-		if(format)
+		if(hasParent() && getParent().childCount() != 1)
 			buf.append(tabs);
 		buf.append('<');
 		buf.append(getName());
@@ -254,27 +253,21 @@ public final class Tag implements Iterable<Tag> {
 		}
 		if (isSelfClosing()) {
 			buf.append("/>");
-			if(format){
-				buf.append('\n');
-			}
 			return buf.toString();
 		}
 		buf.append('>');
-		if(childCount() > 1){
-			buf.append('\n');
-			for(Tag t: this){
-				buf.append(t.toStringFormatted(tabs+"\t"));
-			}
-			buf.append(tabs);
-		}else{
-			for(Tag t: this){
-				buf.append(t.toStringFormatted(tabs));
+		if(hasChild()){
+			if(childCount() == 1){
+				buf.append(getChild(0).toStringFormatted(tabs+"\t"));
+			}else{
+				buf.append('\n');
+				for(Tag t: this){
+					buf.append(t.toStringFormatted(tabs+"\t")).append('\n');
+				}
+				buf.append(tabs);
 			}
 		}
 		buf.append("</"+getName()+">");
-		if(format){
-			buf.append('\n');
-		}
 		return buf.toString();
 	}
 	@Override
