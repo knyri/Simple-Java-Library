@@ -20,15 +20,12 @@ import java.util.zip.InflaterInputStream;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -51,6 +48,7 @@ import simple.net.Uri;
 import simple.net.http.clientparams.ClientParam;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
+import simple.util.logging.LogLevel;
 /**
  * <hr>
  * <br>
@@ -66,10 +64,10 @@ public final class Client{
 	private final HttpHost proxy;
 	private final CloseableHttpClient client;
 	public static final Header[] defaults=new Header[]{
-		new BasicHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-		,new BasicHeader("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.3")
-		,new BasicHeader("Accept-Encoding","gzip,deflate")
-		,new BasicHeader("Accept-Language","en-US,en;q=0.8")
+		new BasicHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
+		new BasicHeader("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.3"),
+		new BasicHeader("Accept-Encoding","gzip,deflate"),
+		new BasicHeader("Accept-Language","en-US,en;q=0.8")
 	};
 	public static final String FORMAT_URLENCODED="application/x-www-form-urlencoded",FORMAT_FORMDATA="multipart/form-data";
 	public void addCookie(org.apache.http.cookie.Cookie cookie){
@@ -92,10 +90,13 @@ public final class Client{
 			cookies= (BasicCookieStore)ois.readObject();
 		}
 	}
-	public HttpResponse get(Uri uri,Header[] headers) throws ClientProtocolException, IOException{
+	public CloseableHttpResponse get(Uri uri) throws ClientProtocolException, IOException{
+		return get(uri,null,null);
+	}
+	public CloseableHttpResponse get(Uri uri,Header[] headers) throws ClientProtocolException, IOException{
 		return get(uri,headers,null);
 	}
-	public HttpResponse get(Uri uri,Header[] headers,HttpContext context) throws ClientProtocolException, IOException{
+	public CloseableHttpResponse get(Uri uri,Header[] headers,HttpContext context) throws ClientProtocolException, IOException{
 		HttpGet req=new HttpGet(uri.toString());
 		req.setHeaders(defaults);
 
@@ -104,8 +105,6 @@ public final class Client{
 				req.setHeader(header);
 		}
 		try(CloseableHttpResponse response= context==null? client.execute(req) : client.execute(req,context)){
-			log.debug("Request",req.getRequestLine().toString());
-			log.debug("Request Headers",req.getAllHeaders());
 			if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
 				Header location=response.getFirstHeader("Location");
 				log.debug("Redirect",uri+" --TO-- "+location);
@@ -115,10 +114,7 @@ public final class Client{
 			return response;
 		}
 	}
-	public HttpResponse get(Uri uri) throws ClientProtocolException, IOException{
-		return get(uri,null,null);
-	}
-	public HttpResponse post(Uri uri,Header[] headers,String data, Charset charset,HttpContext context) throws ClientProtocolException, IOException{
+	public CloseableHttpResponse post(Uri uri,Header[] headers,String data, Charset charset,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
 
 		req.setHeaders(defaults);
@@ -145,7 +141,7 @@ public final class Client{
 			return response;
 		}
 	}
-	public HttpResponse post(Uri uri,Header[] headers,String data,HttpContext context) throws ClientProtocolException, IOException{
+	public CloseableHttpResponse post(Uri uri,Header[] headers,String data,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
 		req.setHeaders(defaults);
 		if(headers!=null){
@@ -168,7 +164,7 @@ public final class Client{
 			return response;
 		}
 	}
-	public HttpResponse post(Uri uri,Header[] headers,ClientParam[] data,String format,HttpContext context) throws ClientProtocolException, IOException{
+	public CloseableHttpResponse post(Uri uri,Header[] headers,ClientParam[] data,String format,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri.toString());
 		req.setHeaders(defaults);
 		// I assume this is proper enough
@@ -187,8 +183,6 @@ public final class Client{
 			}
 		}
 		try(CloseableHttpResponse response= (context==null) ? client.execute(req) : client.execute(req,context)){
-			log.debug("Request",req.getRequestLine().toString());
-			log.debug("Request",req.getAllHeaders());
 			if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
 				// redirection
 				Header location=response.getFirstHeader("Location");
@@ -236,17 +230,20 @@ public final class Client{
 	 */
 	private HttpClientBuilder init(){
 		HttpClientBuilder conBuilder= HttpClientBuilder.create();
-		// Let the server know we want compressed if available
-		conBuilder.addInterceptorFirst(
-			new HttpRequestInterceptor(){
-				@Override
-				public void process(final HttpRequest request,final HttpContext context) throws HttpException,IOException{
-					if(!request.containsHeader("Accept-Encoding")){
-						request.addHeader("Accept-Encoding","gzip,deflate");
+		conBuilder.setDefaultHeaders(Arrays.asList(defaults));
+		conBuilder.setUserAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.6.1000 Chrome/30.0.1599.101 Safari/537.36");
+		
+		if(log.getPrint(LogLevel.DEBUG)){
+			conBuilder.addInterceptorFirst(
+				new HttpRequestInterceptor(){
+					@Override
+					public void process(final HttpRequest request,final HttpContext context) throws HttpException,IOException{
+						log.debug(request);
 					}
-				}
-			});
+				});
+		}
 		// Expand if compressed
+		/* 2015-11-13 Seems the new HttpClient expands automatically... Keeping in case the ever changes.
 		conBuilder.addInterceptorFirst(new HttpResponseInterceptor(){
 				@Override
 				public void process(final HttpResponse response,final HttpContext context) throws HttpException,IOException{
@@ -269,6 +266,7 @@ public final class Client{
 					}
 				}
 			});
+		/**/
 		// set the proxy host
 		if(proxy != null)
 			conBuilder.setProxy(proxy);
