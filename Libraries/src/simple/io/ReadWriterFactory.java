@@ -7,12 +7,17 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 /**
  * Convenience methods for Readers.
@@ -27,6 +32,16 @@ public final class ReadWriterFactory {
 	 */
 	public static BufferedReader getBufferedReader(final File file) throws FileNotFoundException {
 		return new BufferedReader(new FileReader(file));
+	}
+	/**
+	 * Convenience method for <code>new BufferedReader(new InputStreamReader(new FileInputStream(file), cs)</code>
+	 * @param file
+	 * @param cs
+	 * @return a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedReader getBufferedReader(final File file, Charset cs) throws FileNotFoundException {
+		return new BufferedReader(new InputStreamReader(new FileInputStream(file), cs));
 	}
 	/**
 	 * Wraps a Reader in a BufferedReader.
@@ -133,6 +148,15 @@ public final class ReadWriterFactory {
 	 */
 	public static BufferedWriter getBufferedWriter(final File file) throws IOException {
 		return new BufferedWriter(new FileWriter(file));
+	}
+	/**
+	 * @param file
+	 * @param cs
+	 * @return a FileWriter wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedWriter getBufferedWriter(final File file, Charset cs) throws IOException {
+		return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),cs));
 	}
 	/**
 	 * Wraps a Writer in a BufferedWriter.
