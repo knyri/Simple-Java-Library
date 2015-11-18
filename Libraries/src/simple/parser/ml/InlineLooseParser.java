@@ -119,6 +119,9 @@ public class InlineLooseParser {
 					c = buf.charAt(0);
 				}
 				if (c!='<') {
+					// No tag, CDATA
+log.debug("no tag",buf);
+					// Read until a tag
 					buf.append(RWUtil.readUntil(bin, '<'));
 					if (buf.charAt(buf.length()-1)=='<') {
 						buf.deleteCharAt(buf.length()-1);
@@ -139,7 +142,11 @@ public class InlineLooseParser {
 					continue;
 				}
 				buf.append(RWUtil.readUntilAny(bin, "><"));
-				if(buf.charAt(buf.length()-1) == '<'){
+				/*
+				 *  buf.charAt(1) != '!' - Don't do it if it's a special tag!
+				 */
+				if(buf.charAt(buf.length()-1) == '<' && buf.charAt(1) != '!'){
+//log.debug("ending <",buf);
 					// Unescaped <, treat as CDATA
 					// <3 cause this bug to be found
 					if (buf.charAt(buf.length()-1)=='<') {
@@ -162,6 +169,7 @@ public class InlineLooseParser {
 				}
 				// Check for << or < followed by whitespace
 				if(buf.charAt(1)=='<' || do_str.isWhiteSpace(buf.charAt(1))){
+//log.debug("<<",buf);
 					//un-escaped <
 					int index=1;
 					while(buf.charAt(index)=='<' || do_str.isWhiteSpace(buf.charAt(index))){index++;}
@@ -201,8 +209,10 @@ public class InlineLooseParser {
 					continue;
 				}
 				// rare case where < is the last character?
-				if(buf.length()<2)break;
-	//			log.debug("buf",buf);
+				if(buf.length()<2){
+					log.debug("When does this happen?!?",buf);
+					break;
+				}
 				/*
 				 * This thing
 				 * <? ?>
@@ -229,6 +239,7 @@ public class InlineLooseParser {
 				if (buf.charAt(1)=='!'){
 					// <!DOCTYPE
 					if (buf.length()>9){
+						//TODO: Make this more generalized for <! tags
 						final String ttmp=buf.substring(0,9).toUpperCase();
 						if(ttmp.startsWith("<!CDATA")){//NOTE: SGML CDATA
 							if (!buf.substring(buf.length()-3).equals("]]>")) {
@@ -250,17 +261,20 @@ public class InlineLooseParser {
 						}else if(ttmp.equals("<!DOCTYPE")){
 							// Checking for <!DOCTYPE dmodule [
 							int idx= 9;
+							//skip whitespace
 							while(idx < buf.length() && Character.isWhitespace(buf.charAt(idx))) idx++;
 							if(idx < buf.length() && Character.isAlphabetic(buf.charAt(idx))){
+								//skip name
 								while(idx < buf.length() && Character.isAlphabetic(buf.charAt(idx))) idx++;
-								if(idx < buf.length() && Character.isWhitespace(buf.charAt(idx))){
+								if(idx < buf.length() && ( Character.isWhitespace(buf.charAt(idx)) || buf.charAt(idx) == '[' )){
+									//skip whitespace
 									while(idx < buf.length() && Character.isWhitespace(buf.charAt(idx))) idx++;
 									if(idx < buf.length() && buf.charAt(idx) == '[' && !buf.substring(buf.length()-2).equals("]>")){
 										buf.append(RWUtil.readUntil(bin,"]>"));
 									}
 								}
 							}
-	//						log.debug("DOCTYPE");
+//log.debug("DOCTYPE", buf);
 							tag=new Tag(Tag.META,buf.toString(),true);
 							page.addTag(tag, null);
 							if(buildCache){
