@@ -27,6 +27,12 @@ public final class CIString implements CharSequence {
 	public String toString() {
 		return string;
 	}
+	public int compareTo(CIString s){
+		return string.compareToIgnoreCase(s.string);
+	}
+	public int compareTo(String s){
+		return string.compareToIgnoreCase(s);
+	}
 	/**
 	 * Works like String.intern(). This does not have a memory limit.<br>
 	 * NOTE: The original string will be lost! Do not use if you need it.
