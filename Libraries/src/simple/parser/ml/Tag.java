@@ -233,12 +233,20 @@ public final class Tag implements Iterable<Tag> {
 		buf.append("</"+getName()+">");
 		return buf.toString();
 	}
+	/**
+	 * @param depth
+	 * @return
+	 */
 	public String toStringFormatted(final int depth) {
 		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
 		if (getName().equals(HTMLCOMM)  || getName().equals(META)) return getContent()+'\n';
 		return toStringFormatted(do_str.repeat('\t', depth));
 	}
+	/**
+	 * @param tabs
+	 * @return
+	 */
 	protected String toStringFormatted(final String tabs){
 		if (getName().equals(CDATA)) return getContent();
 		if (getName().equals(SGMLCDATA)) return "<!CDATA[["+getContent()+"]]>";
@@ -246,10 +254,16 @@ public final class Tag implements Iterable<Tag> {
 		final StringBuilder buf = new StringBuilder(300);
 		if(hasParent() && getParent().childCount() != 1)
 			buf.append(tabs);
-		buf.append('<');
-		buf.append(getName());
+		buf
+			.append('<')
+			.append(getName());
 		for (final CIString key : properties.keySet()) {
-			buf.append(" "+key+"=\""+properties.get(key)+"\"");
+			buf
+				.append(" ")
+				.append(key)
+				.append("=\"")
+				.append(properties.get(key))
+				.append("\"");
 		}
 		if (isSelfClosing()) {
 			buf.append("/>");
@@ -262,12 +276,17 @@ public final class Tag implements Iterable<Tag> {
 			}else{
 				buf.append('\n');
 				for(Tag t: this){
-					buf.append(t.toStringFormatted(tabs+"\t")).append('\n');
+					buf
+						.append(t.toStringFormatted(tabs+"\t"))
+						.append('\n');
 				}
 				buf.append(tabs);
 			}
 		}
-		buf.append("</"+getName()+">");
+		buf
+			.append("</")
+			.append(getName())
+			.append(">");
 		return buf.toString();
 	}
 	@Override
@@ -525,6 +544,14 @@ public final class Tag implements Iterable<Tag> {
 		}
 		return this;
 	}
+	public final Map<CIString, String> getProperties(){
+		return properties;
+	}
+	/**
+	 * Adds these properties to this tag
+	 * @param props Properties to set
+	 * @return this
+	 */
 	public final Tag setProperties(Map<CIString,String> props){
 		properties.putAll(props);
 		return this;

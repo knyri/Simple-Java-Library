@@ -34,7 +34,7 @@ import simple.util.logging.LogLevel;
  */
 public class InlineLooseParser {
 	protected static final Log log = LogFactory.getLogFor(InlineLooseParser.class);
-	static final Hashtable<String, CIString> cicache= new Hashtable<String, CIString>();
+	private static final Hashtable<String, CIString> cicache= new Hashtable<String, CIString>();
 	private static CIString get(String s){
 		CIString r= cicache.get(s);
 		if(r == null){
@@ -120,7 +120,7 @@ public class InlineLooseParser {
 				}
 				if (c!='<') {
 					// No tag, CDATA
-log.debug("no tag",buf);
+//log.debug("no tag",buf);
 					// Read until a tag
 					buf.append(RWUtil.readUntil(bin, '<'));
 					if (buf.charAt(buf.length()-1)=='<') {
@@ -220,7 +220,7 @@ log.debug("no tag",buf);
 				if(buf.charAt(1)=='?'){
 					if (!buf.substring(buf.length()-2).equals("?>"))
 						buf.append(RWUtil.readUntil(bin,"?>"));
-					tag=new Tag(Tag.CDATA, buf.toString(), true);
+					tag=new Tag(Tag.META, buf.toString(), true);
 					if (cur != null) {
 						cur.addChild(tag);
 					} else {

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import simple.CIString;
+import simple.util.ImmutableList;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
@@ -30,9 +31,17 @@ import simple.util.logging.LogFactory;
 public class Page implements Iterable<Tag>, TagParentListener {
 	private static final Log log = LogFactory.getLogFor(Page.class);
 	private final LinkedList<Tag> roots = new LinkedList<Tag>();
+	private final ImmutableList<Tag> publicRoots= new ImmutableList<>(roots);
 	/** Cache of all tags by their entity name(not the full canonical name) */
 	private final HashMap<CIString, List<Tag>> cache = new HashMap<CIString, List<Tag>>();
 	public Page() {}
+	/**
+	 * Gets the list of root elements.
+	 * @return An immutable list of the root elements
+	 */
+	public final ImmutableList<Tag> getRoots(){
+		return publicRoots;
+	}
 	/**Adds a tag to the page.
 	 * @param tag Tag to be added.
 	 * @param where Qualified position to add the tag or null to add a new root tag.
@@ -178,7 +187,9 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	/**
 	 * Generates the pretty print of the page.
 	 * @return the formatted source
+	 * @deprecated Use a {@link PageFormatter}
 	 */
+	@Deprecated
 	public String formattedSource() {
 		final StringBuilder buf = new StringBuilder(2048);
 		for (final Tag tag : roots) {
