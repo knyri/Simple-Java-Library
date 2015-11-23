@@ -36,7 +36,9 @@ public final class DefaultPageFormatter extends PageFormatter {
 	}
 	private void format(Writer buf, Tag tag, final String indent) throws IOException{
 		if (tag.getName().equals(CDATA)){
-			buf.append(tag.getContent());
+			buf
+				.append(tag.getContent())
+				.append(EOL);
 			return;
 		}
 		if (tag.getName().equals(SGMLCDATA)){

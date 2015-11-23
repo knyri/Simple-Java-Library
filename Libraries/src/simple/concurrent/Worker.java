@@ -1,7 +1,7 @@
 /**
  *
  */
-package simple.thread;
+package simple.concurrent;
 
 import java.util.List;
 
@@ -9,17 +9,15 @@ import java.util.List;
  * @author Ken Pierce
  *
  */
-public abstract class WorkerThread<T> implements Runnable {
+public abstract class Worker<T> implements Runnable {
 	private final List<T> queue;
 	/**
 	 * @param queue
 	 */
-	public WorkerThread(List<T> queue) {
+	public Worker(List<T> queue) {
 		this.queue= queue;
 	}
 
-	@Override
-	public abstract void run();
 	/**
 	 * Removes and returns the item on the top of the queue.<br>
 	 * Returns null if the list is empty.
