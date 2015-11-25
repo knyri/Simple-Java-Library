@@ -298,7 +298,7 @@ public final class Tag implements Iterable<Tag> {
 				return false;
 			if (tmp.getContent()!=getContent() && getContent() != null && !getContent().equals(tmp.getContent()))
 				return false;
-			if (!tmp.children.containsAll(children))
+			if (children.size() != tmp.children.size() || !tmp.children.containsAll(children))
 				return false;
 			if (!tmp.properties.equals(properties))
 				return false;
