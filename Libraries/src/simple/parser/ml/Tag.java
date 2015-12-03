@@ -296,12 +296,15 @@ public final class Tag implements Iterable<Tag> {
 			final Tag tmp = (Tag)o;
 			if (tmp.getName()!=getName() && getName()!=null && !getName().equals(tmp.getName()))
 				return false;
-			if (tmp.getContent()!=getContent() && getContent() != null && !getContent().equals(tmp.getContent()))
+			if (tmp.getContent()!=getContent() && getContent() != null && !getContent().equals(tmp.getContent())){
 				return false;
-			if (children.size() != tmp.children.size() || !tmp.children.containsAll(children))
+			}
+			if (!tmp.properties.equals(properties)){
 				return false;
-			if (!tmp.properties.equals(properties))
+			}
+			if (children.size() != tmp.children.size() || !tmp.children.containsAll(children)){
 				return false;
+			}
 			return true;
 		}
 		return false;
