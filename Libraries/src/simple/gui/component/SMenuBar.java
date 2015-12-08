@@ -38,19 +38,23 @@ import simple.util.App;
 public final class SMenuBar extends JMenuBar implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final JMenu File = new JMenu("File");
-	private final JMenuItem File_Open = new JMenuItem("Open...");
-	private final JMenuItem File_Save = new JMenuItem("Save...");
-	private final JMenuItem File_Quit = new JMenuItem("Quit");
+	private final JMenuItem
+		File_Open = new JMenuItem("Open..."),
+		File_Save = new JMenuItem("Save..."),
+		File_Close = new JMenuItem("Close"),
+		File_Quit = new JMenuItem("Quit");
 	private final JMenu Options = new JMenu("Options");
 	private final JMenu Tools = new JMenu("Tools");
 	private final JMenu Help = new JMenu("Help");
-	private final JMenuItem Help_Help = new JMenuItem("Help");
-	private final JMenuItem Help_About = new JMenuItem("About");
+	private final JMenuItem
+		Help_Help = new JMenuItem("Help"),
+		Help_About = new JMenuItem("About");
 	private Component AboutDialog = null;
 	private Component HelpDialog = null;
 	public static final int FILE = 1,
 		FILE_OPEN = 2,
 		FILE_SAVE = 4,
+		FILE_CLOSE = 512,
 		FILE_QUIT = 8,
 		HELP = 16,
 		HELP_HELP = 32,
@@ -65,6 +69,8 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		File_Open.setMnemonic('o');
 		File_Save.setActionCommand("save");
 		File_Save.setMnemonic('s');
+		File_Close.setActionCommand("close");
+		File_Close.setMnemonic('c');
 		File_Quit.setActionCommand("quit");
 		File_Quit.setMnemonic('q');
 		Options.setActionCommand("option");
@@ -82,12 +88,15 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 	public SMenuBar(final int options) {
 		this();
 		this.options = options;
-		if (App.isSet(options,FILE)||App.isSet(options,FILE_OPEN)||App.isSet(options,FILE_SAVE)||App.isSet(options,FILE_QUIT)) {
+		if (App.isSet(options,FILE)||App.isSet(options,FILE_OPEN)||App.isSet(options,FILE_SAVE)||App.isSet(options,FILE_QUIT)||App.isSet(options,FILE_CLOSE)) {
 			if (App.isSet(options,FILE_OPEN)) {
 				File.add(File_Open);
 			}
 			if (App.isSet(options,FILE_SAVE)) {
 				File.add(File_Save);
+			}
+			if (App.isSet(options,FILE_CLOSE)) {
+				File.add(File_Close);
 			}
 			if (App.isSet(options, FILE_QUIT)) {
 				File.addSeparator();
@@ -115,14 +124,19 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		addActionListener(options, ml);
 	}
 	public void addToMenu(final int menu, final JMenuItem me) {
-		if (App.isSet(menu,FILE)||App.isSet(menu,FILE_OPEN)||App.isSet(menu,FILE_SAVE)) {
+		switch(menu){
+		case FILE:
 			addToFileMenu(me);
-		} else if (App.isSet(menu,OPTION)) {
+		break;
+		case OPTION:
 			Options.add(me);
-		} else if (App.isSet(menu,TOOLS)) {
+		break;
+		case TOOLS:
 			Tools.add(me);
-		} else if (App.isSet(menu,HELP)||App.isSet(menu,HELP_ABOUT)) {
+		break;
+		case HELP:
 			Help.add(me);
+		break;
 		}
 	}
 	public void addToFileMenu(final JMenuItem me) {
@@ -187,6 +201,9 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		if (App.isSet(menu, FILE_SAVE)) {
 			return File_Save;
 		}
+		if (App.isSet(menu, FILE_CLOSE)) {
+			return File_Close;
+		}
 		if (App.isSet(menu, FILE_QUIT)) {
 			return File_Quit;
 		}
@@ -209,6 +226,9 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		}
 		if (App.isSet(menu, FILE_SAVE)) {
 			return "save";
+		}
+		if (App.isSet(menu, FILE_CLOSE)) {
+			return "close";
 		}
 		if (App.isSet(menu, FILE_QUIT)) {
 			return "quit";
@@ -240,6 +260,9 @@ public final class SMenuBar extends JMenuBar implements ActionListener {
 		}
 		if (App.isSet(menu, FILE_SAVE)) {
 			File_Save.addActionListener(ml);
+		}
+		if (App.isSet(menu, FILE_CLOSE)) {
+			File_Close.addActionListener(ml);
 		}
 		if (App.isSet(menu, FILE_QUIT)) {
 			File_Quit.addActionListener(ml);
