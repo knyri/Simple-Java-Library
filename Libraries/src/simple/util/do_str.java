@@ -651,7 +651,7 @@ public final class do_str {
 		for (; i<cols; i++) {
 			buf[i]= input.charAt(i-diff);
 		}
-		return buf.toString();
+		return new String(buf);
 	}
 	/**
 	 * Pads <var>input</var> by inserting <var>pad</var> on the right<br>
