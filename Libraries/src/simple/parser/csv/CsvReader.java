@@ -6,7 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import simple.io.ParseException;
@@ -15,10 +16,11 @@ import simple.io.ParseException;
  * @author Ken Pierce
  *
  */
-public class CsvReader implements Closeable{
+public class CsvReader implements Closeable, Iterable<List<String>>{
 	private int row=0;
 	private final BufferedReader in;
 	private final char colSep, escape, quote;
+	private final String newLine;
 
 	/**
 	 * @param file The CSV file
@@ -32,6 +34,7 @@ public class CsvReader implements Closeable{
 		this.colSep= colSep;
 		this.escape= escape;
 		this.quote= quote;
+		this.newLine= newline;
 		in= new BufferedReader(new FileReader(file));
 	}
 	/**
@@ -44,9 +47,13 @@ public class CsvReader implements Closeable{
 	public int getRow(){
 		return row;
 	}
+	/**
+	 * @return A list containing the values or null if EOF
+	 * @throws IOException, ParseException
+	 */
 	public List<String> readRow() throws IOException, ParseException{
 		row++;
-		LinkedList<String> ret= new LinkedList<>();
+		ArrayList<String> ret= new ArrayList<>();
 		boolean hasescape= false,
 				inquote= false,
 				quoted= false;
@@ -56,7 +63,7 @@ public class CsvReader implements Closeable{
 		char ch;
 		while ((line= in.readLine()) != null){
 			if(inquote){
-				value.append("\r\n");
+				value.append(newLine);
 			}
 			for(idx= 0; idx < line.length(); idx++){
 				ch= line.charAt(idx);
@@ -119,10 +126,45 @@ public class CsvReader implements Closeable{
 				break;
 			}
 		}
+		if(line == null && ret.isEmpty()){
+			return null;
+		}
 		return ret;
 	}
 	@Override
 	public void close() throws IOException{
 		in.close();
+	}
+	@SuppressWarnings("resource")
+	@Override
+	public Iterator<List<String>> iterator() {
+		final CsvReader reader= this;
+		return new Iterator<List<String>>(){
+			List<String> next;
+			{
+				try {
+					next= reader.readRow();
+				} catch (Exception e) {
+					next= null;
+				}
+			}
+			@Override
+			public boolean hasNext() {
+				return next != null;
+			}
+			@Override
+			public List<String> next() {
+				List<String> ret= next;
+				try {
+					next= reader.readRow();
+				} catch (Exception e) {
+					next= null;
+				}
+				return ret;
+			}
+			@Override
+			public void remove() {
+			}
+		};
 	}
 }
