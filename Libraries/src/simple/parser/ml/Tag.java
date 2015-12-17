@@ -601,4 +601,28 @@ public final class Tag implements Iterable<Tag> {
 	public final Tag[] getChildren(){
 		return children.toArray(new Tag[children.size()]);
 	}
+	/**
+	 * Returns the text content of this tag and
+	 * it's sub tags. Similar to HTML's Node.textContent.
+	 * @return The text content of this tag and sub-tags
+	 */
+	public String getTextContent(){
+		if(this.getName().equals(Tag.CDATA)){
+			return this.getContent();
+		}
+		StringBuilder buf= new StringBuilder();
+		for(Tag tag: children){
+			tag.getText(buf);
+		}
+		return buf.toString();
+	}
+	private void getText(StringBuilder buf){
+		if(this.getName().equals(Tag.CDATA)){
+			buf.append(this.getContent());
+		}else{
+			for(Tag tag: children){
+				tag.getText(buf);
+			}
+		}
+	}
 }
