@@ -301,10 +301,12 @@ public final class Log {
 		_out.print(_cName);
 		_out.print(": {");
 		final Iterator<?> iter = msg.iterator();
-		_out.print(iter.next());
-		while (iter.hasNext()) {
-			_out.print(sep);
+		if(iter.hasNext()){
 			_out.print(iter.next());
+			while (iter.hasNext()) {
+				_out.print(sep);
+				_out.print(iter.next());
+			}
 		}
 		_out.println('}');
 		}
@@ -319,10 +321,12 @@ public final class Log {
 		_out.print(ref);
 		_out.print(" : {");
 		final Iterator<?> iter = msg.iterator();
-		_out.print(iter.next());
-		while (iter.hasNext()) {
-			_out.print(sep);
+		if(iter.hasNext()){
 			_out.print(iter.next());
+			while (iter.hasNext()) {
+				_out.print(sep);
+				_out.print(iter.next());
+			}
 		}
 		_out.println('}');
 		}
