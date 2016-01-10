@@ -18,6 +18,22 @@ import java.util.Vector;
  */
 public final class do_array {
 	private do_array() {}
+	public static <E> int indexOf(E[] a, E v){
+		for(int i=0; i<a.length; i++){
+			if(a[i].equals(v)){
+				return i;
+			}
+		}
+		return -1;
+	}
+	public static <E> int lastIndexOf(E[] a, E v){
+		for(int i=a.length-1; i>-1; i++){
+			if(a[i].equals(v)){
+				return i;
+			}
+		}
+		return -1;
+	}
 	/**Converts an Enumeration into something use-able by a for-loop.
 	 * @param <E>
 	 * @param e The enumeration to convert
