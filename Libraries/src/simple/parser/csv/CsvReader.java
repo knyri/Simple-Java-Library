@@ -164,6 +164,7 @@ public class CsvReader implements Closeable, Iterable<List<String>>{
 			}
 			@Override
 			public void remove() {
+				throw new UnsupportedOperationException();
 			}
 		};
 	}
