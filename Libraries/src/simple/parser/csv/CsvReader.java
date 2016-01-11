@@ -83,7 +83,28 @@ public class CsvReader implements Closeable, Iterable<List<String>>{
 							inquote= false;
 						}
 					}else if(quote == escape){
-						if((idx + 1) < line.length() && line.charAt(idx+1) == quote){
+						if(value.length() == 0){
+							if((idx + 2) < line.length()){
+								if(line.charAt(idx+1) == quote){
+									if(line.charAt(idx+2) == colSep){
+										//empty cell
+										idx++;
+									}else{
+										value.append(quote);
+										idx++;
+									}
+								}else{
+									inquote= true;
+									quoted= true;
+								}
+							}else if((idx + 1) < line.length() && line.charAt(idx+1) == quote){
+								//empty cell
+								idx++;
+							}else{
+								inquote= true;
+								quoted= true;
+							}
+						}else if((idx + 1) < line.length() && line.charAt(idx+1) == quote){
 							value.append(quote);
 							idx++;
 						}else{

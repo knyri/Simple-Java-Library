@@ -734,7 +734,10 @@ public final class do_str {
 	/**Compares two strings to see which comes first.
 	 * @param orig
 	 * @param comp
-	 * @return positive if <var>orig</var> comes before <var>comp</var> aplhabetically. Lowercase comes before uppercase.
+	 * @return  1 if <var>orig</var> comes before <var>comp</var> aplhabetically.
+	 * 			-1 if <var>comp</var> comes before <var>orig</var> aplhabetically.
+	 * 			0 if they are equal.
+	 * 			Lowercase comes before uppercase.
 	 */
 	public static final int compare(final String orig, final String comp) {
 		final int stop = Math.min(orig.length(), comp.length());
