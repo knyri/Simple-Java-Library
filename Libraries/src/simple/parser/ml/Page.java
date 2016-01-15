@@ -36,6 +36,37 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	private final HashMap<CIString, List<Tag>> cache = new HashMap<CIString, List<Tag>>();
 	public Page() {}
 	/**
+	 * Based on the cache.
+	 * @return Number of tags in this page
+	 */
+	public final long getTagCount(){
+		long count=0;
+		for(List<Tag> tags: cache.values()){
+			count+= tags.size();
+		}
+		return count;
+	}
+	/**
+	 * Time consuming count as it iterates over all tags.
+	 * @return the true number of tags
+	 */
+	public final long getTrueTagCount(){
+		long count= publicRoots.size();
+		for(Tag root: publicRoots){
+			if(root.hasChild()){
+				count += countTags(root);
+			}
+		}
+		return count;
+	}
+	private static final long countTags(Tag tag){
+		long count= tag.childCount();
+		for(Tag child: tag){
+			count+= countTags(child);
+		}
+		return count;
+	}
+	/**
 	 * Gets the list of root elements.
 	 * @return An immutable list of the root elements
 	 */
