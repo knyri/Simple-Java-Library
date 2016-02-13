@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import simple.CIString;
@@ -126,14 +127,70 @@ public final class Tag implements Iterable<Tag> {
 		if (fname.length==2) {
 			count = Integer.parseInt(fname[1]);
 		}
-		for (final Tag node: children) {//iterate through all the children
+		for (final Tag node: children) {
 			if (node.getName().equals(fname[0])) {
 				if (count>0) {
 					count--;
-				} else return node;
+				} else{
+					return node;
+				}
 			}
 		}
 		return null;
+	}
+	/**
+	 * Finds the first tag with this name
+	 * @param name
+	 * @return
+	 */
+	public final Tag getChild(final CIString name) {
+		for (final Tag node: children) {
+			if (node.getName().equals(name)) {
+				return node;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Finds the nth occurrence of the tag. (0 based)
+	 * @param name
+	 * @param count
+	 * @return
+	 */
+	public final Tag getChild(final CIString name, int count) {
+		for (final Tag node: children) {
+			if (node.getName().equals(name)) {
+				if (count>0) {
+					count--;
+				} else{
+					return node;
+				}
+			}
+		}
+		return null;
+	}
+	/**
+	 * Faster than the String counterpart
+	 * @param tagName
+	 * @return
+	 */
+	public final List<Tag> getChildren(CIString tagName){
+		List<Tag> tags= new LinkedList<>();
+		for (final Tag node: children) {
+			if (node.getName().equals(tagName)) {
+				tags.add(node);
+			}
+		}
+		return tags;
+	}
+	public final List<Tag> getChildren(String tagName){
+		List<Tag> tags= new LinkedList<>();
+		for (final Tag node: children) {
+			if (node.getName().equals(tagName)) {
+				tags.add(node);
+			}
+		}
+		return tags;
 	}
 	/**
 	 * Gets the child at the index
