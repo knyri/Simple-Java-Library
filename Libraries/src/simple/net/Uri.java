@@ -400,18 +400,21 @@ public final class Uri {
 		return type;
 	}
 	/**
+	 * http, ftp, https, etc
 	 * @return the scheme
 	 */
 	public final String getScheme() {
 		return scheme;
 	}
 	/**
+	 * example.com
 	 * @return the domain
 	 */
 	public final String getDomain() {
 		return domain;
 	}
 	/**
+	 * www.example.com
 	 * @return the host
 	 */
 	public final String getHost() {
@@ -802,7 +805,8 @@ public final class Uri {
 		dump(new Uri("urn:gallery:booboo?k=90#/d2plxsb"));
 		dump(new Uri("index.php?page=post&s=list&tags=parent:654648"));
 	}
-	private static void dump(Uri p){
+	*/
+	public static void dump(Uri p){
 		System.out.println("baseURL:"+p.getOriginalUri());
 		System.out.println("type:   "+p.getType());
 		System.out.println("scheme: "+p.getScheme());
