@@ -1,6 +1,3 @@
-/**
- *
- */
 package simple.parser.ml;
 
 import java.util.Collection;
@@ -13,7 +10,9 @@ import java.util.Map;
 import simple.CIString;
 import simple.util.do_str;
 
-/**<hr>
+/**
+ * Iterable - Iterates over children
+ * <hr>
  * Other dependencies:<br>
  * simple.CIString<br>
  * simple.util.tree.FullNode
@@ -21,13 +20,24 @@ import simple.util.do_str;
  * @author Kenneth Pierce
  */
 public final class Tag implements Iterable<Tag> {
-	public static final String CDATA = "CDATA", META = "DOCTYPE", SGMLCDATA = "SGMLCDATA", HTMLCOMM = "HCOM";
+	public static final CIString
+		CDATA = new CIString("CDATA"),
+		META = new CIString("DOCTYPE"),
+		SGMLCDATA = new CIString("SGMLCDATA"),
+		HTMLCOMM = new CIString("HCOM");
 	protected final LinkedList<Tag> children = new LinkedList<Tag>();
 	protected HashMap<CIString,String> properties = new HashMap<CIString,String>();
 	private Tag parent = null;
 	private CIString nName = null;
 	private String content = null;
+	/**
+	 * Used to sync add/remove child operations
+	 */
 	private final Object sync=new Object();
+	/**
+	 * How far in the tree this Tag is.
+	 * 0 is root.
+	 */
 	private int depth=0;
 
 
@@ -37,41 +47,63 @@ public final class Tag implements Iterable<Tag> {
 	private boolean selfClosing = false;
 	//private static final Log log = LogFactory.getLogFor(Tag.class);
 	public Tag() {
-		this(false);
+		this(CIString.EMPTY, null, null, false);
 	}
 
 	public Tag(final String name, final Tag parent,	final String content) {
+		this(new CIString(name), parent, content, false);
+	}
+	public Tag(final String name, final Tag parent) {
+		this(new CIString(name), parent, null, false);
+	}
+	public Tag(final String name, final String content) {
+		this(new CIString(name), null, content, false);
+	}
+	public Tag(final String name) {
+		this(new CIString(name), null, null, false);
+	}
+	public Tag(final String name, final boolean selfClosing) {
+		this(new CIString(name), null, null, selfClosing);
+	}
+	public Tag(final String name, final String content, final boolean selfClosing) {
+		this(new CIString(name), null, content, selfClosing);
+	}
+	public Tag(final String name, final Tag parent, final boolean selfClosing) {
+		this(new CIString(name), parent, null, selfClosing);
+	}
+	public Tag(final String name, final Tag parent, final String content, final boolean selfClosing) {
+		this(new CIString(name), parent, content, selfClosing);
+	}
+	public Tag(final boolean selfClosing) {
+		this(CIString.EMPTY, null, null, selfClosing);
+	}
+	public Tag(final CIString name, final Tag parent,	final String content) {
 		this(name, parent, content, false);
 	}
 
-	public Tag(final String name, final Tag parent) {
+	public Tag(final CIString name, final Tag parent) {
 		this(name, parent, null, false);
 	}
-
-	public Tag(final String name, final String content) {
+	public Tag(final CIString name, final String content) {
 		this(name, null, content, false);
 	}
-
-	public Tag(final String name) {
+	public Tag(final CIString name) {
 		this(name, null, null, false);
 	}
-	public Tag(final String name, final boolean selfClosing) {
+	public Tag(final CIString name, final boolean selfClosing) {
 		this(name, null, null, selfClosing);
 	}
-	public Tag(final String name, final String content, final boolean selfClosing) {
+	public Tag(final CIString name, final String content, final boolean selfClosing) {
 		this(name, null, content, selfClosing);
 	}
-	public Tag(final String name, final Tag parent, final boolean selfClosing) {
+	public Tag(final CIString name, final Tag parent, final boolean selfClosing) {
 		this(name, parent, null, selfClosing);
 	}
-	public Tag(final String name, final Tag parent, final String content, final boolean selfClosing) {
+	public Tag(final CIString name, final Tag parent, final String content, final boolean selfClosing) {
 		setName(name);
 		setParent(parent);
 		setContent(content);
 		this.selfClosing = selfClosing;
-	}
-	public Tag(final boolean selfClosing) {
-		this("", null, null, selfClosing);
 	}
 
 	public void addParentListener(TagParentListener l){
@@ -168,6 +200,19 @@ public final class Tag implements Iterable<Tag> {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Searches this tag and all child tags for a tag
+	 * with this name.
+	 * @param name
+	 * @return A list
+	 */
+	public final List<Tag> findTag(CIString name){
+		List<Tag> ret= getChildren(name);
+		for (final Tag node: children) {
+			ret.addAll(node.findTag(name));
+		}
+		return ret;
 	}
 	/**
 	 * Faster than the String counterpart
@@ -574,8 +619,9 @@ public final class Tag implements Iterable<Tag> {
 	 */
 	public Tag removeChild(Tag child) {
 		synchronized(sync){
-			if(children.remove(child))
+			if(children.remove(child)){
 				fireChildRemoved(child);
+			}
 		}
 		return this;
 	}
