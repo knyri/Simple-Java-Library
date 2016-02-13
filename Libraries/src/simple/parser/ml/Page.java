@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import simple.CIString;
+import simple.util.FixedSizeArrayList;
 import simple.util.ImmutableList;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
@@ -30,6 +31,7 @@ import simple.util.logging.LogFactory;
  */
 public class Page implements Iterable<Tag>, TagParentListener {
 	private static final Log log = LogFactory.getLogFor(Page.class);
+	private static final List<Tag> EMPTY= new FixedSizeArrayList<Tag>(new Tag[0]);
 	private final LinkedList<Tag> roots = new LinkedList<Tag>();
 	private final ImmutableList<Tag> publicRoots= new ImmutableList<>(roots);
 	/** Cache of all tags by their entity name(not the full canonical name) */
@@ -139,10 +141,11 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	 * Will be inaccurate if the cache is not rebuilt after
 	 * the page is modified.
 	 * @param name Name of the tags wanted.
-	 * @return A Vector containing the tags.
+	 * @return A List containing the tags.
 	 */
 	public List<Tag> getTags(final CIString name) {
-		return cache.get(name);
+		List<Tag> ret= cache.get(name);
+		return ret == null ? EMPTY : ret;
 	}
 	void addTagToCache(Tag t){
 		List<Tag> tmp= cache.get(t.getName());
