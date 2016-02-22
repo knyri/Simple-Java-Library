@@ -22,10 +22,8 @@ import javax.net.ssl.SSLHandshakeException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
@@ -46,9 +44,6 @@ import org.apache.http.protocol.HttpCoreContext;
 
 import simple.io.FileUtil;
 import simple.net.http.clientparams.ClientParam;
-import simple.util.logging.Log;
-import simple.util.logging.LogFactory;
-import simple.util.logging.LogLevel;
 /**
  * <hr>
  * <br>
@@ -57,7 +52,7 @@ import simple.util.logging.LogLevel;
  * @author Kenneth Pierce
  */
 public final class Client{
-	private static final Log log=LogFactory.getLogFor(Client.class);
+//	private static final Log log=LogFactory.getLogFor(Client.class);
 	// Needed anymore?
 	//private final HashMap<String,DefaultHttpClient> cache=new HashMap<String,DefaultHttpClient>();
 	private final CookieStore cookies;
@@ -149,12 +144,12 @@ public final class Client{
 
 		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){// redirection
 			Header location=response.getFirstHeader("Location");
-			log.debug("Redirect("+response.getStatusLine().getStatusCode()+")",uri+" --TO-- "+location);
+//			log.debug("Redirect("+response.getStatusLine().getStatusCode()+")",uri+" --TO-- "+location);
 			if(location!=null){
 				return get(location.getValue(),headers,context);
 			}
 		}
-		log.debug("Response",response);
+//		log.debug("Response",response);
 		return response;
 	}
 
@@ -206,12 +201,12 @@ public final class Client{
 		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
 			// redirection
 			Header location=response.getFirstHeader("Location");
-			log.debug("Redirect("+response.getStatusLine().getStatusCode()+")",uri+" --TO-- "+location);
+//			log.debug("Redirect("+response.getStatusLine().getStatusCode()+")",uri+" --TO-- "+location);
 			if(location!=null){
 				return post(location.getValue(),headers,data,charset,context);
 			}
 		}
-		log.debug("Response",response);
+//		log.debug("Response",response);
 		return response;
 	}
 
@@ -259,12 +254,12 @@ public final class Client{
 
 		if(response.getStatusLine().getStatusCode()==301 || response.getStatusLine().getStatusCode()==302){
 			Header location=response.getFirstHeader("Location");
-			log.debug("Redirect("+response.getStatusLine().getStatusCode()+")",uri+" --TO-- "+location);
+//			log.debug("Redirect("+response.getStatusLine().getStatusCode()+")",uri+" --TO-- "+location);
 			if(location!=null){
 				return post(location.getValue(),headers,data,format,context);
 			}
 		}
-		log.debug("Response",response);
+//		log.debug("Response",response);
 		return response;
 	}
 	/**
@@ -319,7 +314,7 @@ public final class Client{
 			.setUserAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.6.1000 Chrome/30.0.1599.101 Safari/537.36")
 			.setDefaultCookieStore(cookies);
 
-		if(log.getPrint(LogLevel.DEBUG)){
+		/*if(log.getPrint(LogLevel.DEBUG)){
 			conBuilder.addInterceptorFirst(
 				new HttpRequestInterceptor(){
 					@Override
@@ -327,7 +322,7 @@ public final class Client{
 						log.debug(request);
 					}
 				});
-		}
+		}*/
 		// Expand if compressed
 		/* 2015-11-13 Seems the new HttpClient expands automatically... Keeping in case the ever changes.
 		conBuilder.addInterceptorFirst(new HttpResponseInterceptor(){
