@@ -110,7 +110,7 @@ public final class Client{
 	/**
 	 * Fetches the URI
 	 * @param uri The item to fetch
-	 * @param headers The headers to set
+	 * @param headers Nullable. The headers to set
 	 * @return The response
 	 * @throws ClientProtocolException  in case of an http protocol error
 	 * @throws IOException in case of a problem or the connection was aborted
@@ -122,12 +122,13 @@ public final class Client{
 	/**
 	 * Fetches the URI
 	 * @param uri URI to fetch
-	 * @param headers request headers to set
-	 * @param context Execution context
+	 * @param headers Nullable. request headers to set
+	 * @param context Nullable. Execution context
 	 * @return The response
 	 * @throws ClientProtocolException  in case of an http protocol error
 	 * @throws IOException in case of a problem or the connection was aborted
 	 */
+	@SuppressWarnings("resource")
 	public CloseableHttpResponse get(String uri, Header[] headers, HttpContext context) throws ClientProtocolException, IOException{
 		HttpGet req=new HttpGet(uri);
 
@@ -178,6 +179,7 @@ public final class Client{
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("resource")
 	public CloseableHttpResponse post(String uri,Header[] headers,String data, Charset charset,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri);
 
@@ -221,6 +223,7 @@ public final class Client{
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("resource")
 	public CloseableHttpResponse post(String uri,Header[] headers,ClientParam[] data,PostDataType format,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri);
 
@@ -265,7 +268,7 @@ public final class Client{
 	/**
 	 * Retries 5 times.
 	 */
-	private static final HttpRequestRetryHandler RetryHandler=new HttpRequestRetryHandler(){
+	public static final HttpRequestRetryHandler RetryHandler=new HttpRequestRetryHandler(){
 		@Override
 		public boolean retryRequest(IOException exception,int executionCount,HttpContext context){
 			if(executionCount>=5){
@@ -289,6 +292,11 @@ public final class Client{
 			return false;
 		}
 	};
+	public Client(CloseableHttpClient client){
+		this.proxy= null;
+		this.cookies= null;
+		this.client= client;
+	}
 	public Client(HttpHost proxy, CookieStore cookies){
 		this.proxy= proxy;
 		if(cookies != null){
@@ -304,15 +312,21 @@ public final class Client{
 	public Client(){
 		this(null, null);
 	}
+	public static HttpClientBuilder getDefault(){
+		return HttpClientBuilder.create()
+			.useSystemProperties()
+			.setDefaultHeaders(Arrays.asList(defaults))
+			.setUserAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.6.1000 Chrome/30.0.1599.101 Safari/537.36")
+			.setRetryHandler(RetryHandler);
+	}
 	/**
 	 * Initializes the connection builder
 	 */
 	private HttpClientBuilder init(){
-		HttpClientBuilder conBuilder= HttpClientBuilder.create();
+		HttpClientBuilder conBuilder= getDefault();
 		conBuilder
-			.setDefaultHeaders(Arrays.asList(defaults))
-			.setUserAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.6.1000 Chrome/30.0.1599.101 Safari/537.36")
 			.setDefaultCookieStore(cookies);
+
 
 		/*if(log.getPrint(LogLevel.DEBUG)){
 			conBuilder.addInterceptorFirst(
@@ -351,7 +365,6 @@ public final class Client{
 		// set the proxy host
 		if(proxy != null)
 			conBuilder.setProxy(proxy);
-		conBuilder.setRetryHandler(RetryHandler);
 
 		return conBuilder;
 	}
