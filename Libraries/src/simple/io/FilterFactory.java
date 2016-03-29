@@ -19,6 +19,12 @@ public final class FilterFactory {
 		File file = new File(dir);
 		return file.listFiles(createFilenameFilter(ext));
 	}
+	public static final FilenameFilter dirFilter= new FilenameFilter(){
+		@Override
+		public boolean accept(File dir, String file){
+			return new File(dir, file).isDirectory();
+		}
+	};
 	/**
 	 * Case insensitive extension filename filter.
 	 * @param list List of wanted extensions
