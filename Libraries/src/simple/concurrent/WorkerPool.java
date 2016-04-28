@@ -14,16 +14,26 @@ public class WorkerPool<T> implements Runnable{
 	private final Worker<T> worker;
 	private final List<T> pool;
 	private boolean running= false,done= false;
-	private final Thread[] threads= new Thread[Runtime.getRuntime().availableProcessors()];
+	private final Thread[] threads;
+
 	/**
-	 *
+	 * @param worker The worker that will do the work
+	 * @param pool The pool of items to work on
+	 * @param threads Thread count
+	 */
+	public WorkerPool(Worker<T> worker, List<T> pool, int threads) {
+		this.worker= worker;
+		this.pool= Collections.synchronizedList(pool);
+		worker.setPool(this.pool);
+		this.threads= new Thread[threads];
+	}
+	/**
+	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.
 	 * @param worker The worker that will do the work
 	 * @param pool The pool of items to work on
 	 */
 	public WorkerPool(Worker<T> worker, List<T> pool) {
-		this.worker= worker;
-		this.pool= Collections.synchronizedList(pool);
-		worker.setPool(this.pool);
+		this(worker, pool, Runtime.getRuntime().availableProcessors());
 	}
 	@Override
 	public void run(){
