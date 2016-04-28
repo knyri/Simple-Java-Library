@@ -27,6 +27,7 @@ public class WorkerPool<T> implements Runnable{
 	}
 	@Override
 	public void run(){
+		running= true;
 		for (int i= 0; i < threads.length; i++){
 			threads[i]= new Thread(worker);
 			threads[i].start();
