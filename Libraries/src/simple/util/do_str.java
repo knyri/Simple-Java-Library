@@ -667,13 +667,16 @@ public final class do_str {
 	public static final String padRight(final int cols, final char pad, final String input) {
 		if (cols<=input.length())
 			return input;
-		final StringBuffer buf = new StringBuffer(cols);
-		buf.append(input);
-		final int diff = cols-input.length();
-		for (int i = 0; i<diff; i++) {
-			buf.append(pad);
+		char[] buf= new char[cols];
+		int i= 0;
+		for(; i < input.length(); i++){
+			buf[i]= input.charAt(i);
 		}
-		return buf.toString();
+		for(; i < buf.length; i++){
+			buf[i]= pad;
+		}
+
+		return new String(buf);
 	}
 	/**
 	 * Sorts a list descending by the char's value.<br>
