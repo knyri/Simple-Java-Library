@@ -15,6 +15,7 @@ public class WorkerPool<T> implements Runnable{
 	private final List<T> pool;
 	private boolean running= false,done= false;
 	private final Thread[] threads;
+	private final int poolSize;
 
 	/**
 	 * @param worker The worker that will do the work
@@ -26,6 +27,7 @@ public class WorkerPool<T> implements Runnable{
 		this.pool= Collections.synchronizedList(pool);
 		worker.setPool(this.pool);
 		this.threads= new Thread[threads];
+		poolSize= pool.size();
 	}
 	/**
 	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.
@@ -42,6 +44,9 @@ public class WorkerPool<T> implements Runnable{
 			threads[i]= new Thread(worker);
 			threads[i].start();
 		}
+	}
+	public int getTotal(){
+		return poolSize;
 	}
 	/**
 	 * Waits until all worker threads are complete.
@@ -113,8 +118,13 @@ public class WorkerPool<T> implements Runnable{
 	 */
 	public static abstract class Worker<T> implements Runnable {
 		private List<T> pool= null;
+		private int poolSize;
 		private void setPool(List<T> pool){
 			this.pool= pool;
+			poolSize= pool.size();
+		}
+		protected final int getTotal(){
+			return poolSize;
 		}
 		/**
 		 * @return The next Object to work on or null
