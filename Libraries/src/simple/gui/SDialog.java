@@ -1,6 +1,7 @@
 package simple.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
@@ -60,6 +61,9 @@ public class SDialog extends JDialog {
 	public SDialog (Frame frame, String title, boolean modal) {
 		this(frame, title, modal, null, null, null, null, null);
 	}
+	public SDialog(Dialog owner, String title, boolean modal) {
+		this(owner, title, modal, null, null, null, null, null);
+	}
 	/**
 	 * @param frame Frame to center on.
 	 * @param title
@@ -71,6 +75,41 @@ public class SDialog extends JDialog {
 	 * @param centerm Layout manager for the center frame or null.
 	 */
 	public SDialog (Frame frame, String title, boolean modal, LayoutManager topm, LayoutManager leftm, LayoutManager rightm, LayoutManager bottomm, LayoutManager centerm) {
+		super(frame, title, modal);
+		if (topm==null){
+			top=new JPanel();
+			top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS));
+		}else
+			top=new JPanel(topm);
+		if (leftm==null){
+			left=new JPanel();
+			left.setLayout(new BoxLayout(left,BoxLayout.Y_AXIS));
+		}else
+			left = new JPanel(leftm);
+		if (rightm == null){
+			right=new JPanel();
+			right.setLayout(new BoxLayout(right,BoxLayout.Y_AXIS));
+		}else
+			right = new JPanel(rightm);
+		if (bottomm == null){
+			bottom=new JPanel();
+			bottom.setLayout(new BoxLayout(bottom,BoxLayout.X_AXIS));
+		}else
+			bottom = new JPanel(bottomm);
+		if (centerm == null){
+			center=new JPanel();
+			center.setLayout(new BoxLayout(center,BoxLayout.Y_AXIS));
+		}else
+			center = new JPanel(centerm);
+		JPanel content = new JPanel(new BorderLayout());
+		content.add(top, BorderLayout.NORTH);
+		content.add(left, BorderLayout.WEST);
+		content.add(center);
+		content.add(right, BorderLayout.EAST);
+		content.add(bottom, BorderLayout.SOUTH);
+		this.setContentPane(content);
+	}
+	public SDialog (Dialog frame, String title, boolean modal, LayoutManager topm, LayoutManager leftm, LayoutManager rightm, LayoutManager bottomm, LayoutManager centerm) {
 		super(frame, title, modal);
 		if (topm==null){
 			top=new JPanel();
