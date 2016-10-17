@@ -318,4 +318,18 @@ public final class do_array {
 		System.arraycopy(ary,0,tmp,0,ary.length);
 		return tmp;
 	}
+	public static interface Map<E>{
+		public E map(E value);
+	}
+	/**
+	 * Runs the function on each value and replaces it with the returned.
+	 * Modifies the passed array.
+	 * @param ary
+	 * @param map
+	 */
+	public static <E> void map(E[] ary, Map<E> map){
+		for(int i= 0; i < ary.length; i++){
+			ary[i]= map.map(ary[i]);
+		}
+	}
 }
