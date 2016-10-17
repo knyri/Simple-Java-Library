@@ -42,8 +42,8 @@ public final class Tag implements Iterable<Tag> {
 
 
 
-	private final LinkedList<TagParentListener> parentListeners= new LinkedList<TagParentListener>();
-	private final LinkedList<TagChildListener> childListeners= new LinkedList<TagChildListener>();
+	private LinkedList<TagParentListener> parentListeners;
+	private LinkedList<TagChildListener> childListeners;
 	private boolean selfClosing = false;
 	//private static final Log log = LogFactory.getLogFor(Tag.class);
 	public Tag() {
@@ -77,7 +77,7 @@ public final class Tag implements Iterable<Tag> {
 	public Tag(final boolean selfClosing) {
 		this(CIString.EMPTY, null, null, selfClosing);
 	}
-	public Tag(final CIString name, final Tag parent,	final String content) {
+	public Tag(final CIString name, final Tag parent, final String content) {
 		this(name, parent, content, false);
 	}
 
@@ -107,24 +107,36 @@ public final class Tag implements Iterable<Tag> {
 	}
 
 	public void addParentListener(TagParentListener l){
+		if(parentListeners == null){
+			parentListeners= new LinkedList<>();
+		}
 		parentListeners.add(l);
 	}
 	public void addChildListener(TagChildListener l){
+		if(childListeners == null){
+			childListeners= new LinkedList<>();
+		}
 		childListeners.add(l);
 	}
 	private void fireNewParent(Tag oldP, Tag newP){
-		for(TagParentListener p: parentListeners){
-			p.newParentTag(this, oldP, newP);
+		if(parentListeners != null){
+			for(TagParentListener p: parentListeners){
+				p.newParentTag(this, oldP, newP);
+			}
 		}
 	}
 	private void fireNewChild(Tag child){
-		for(TagChildListener p: childListeners){
-			p.childTagAdded(this, child);
+		if(childListeners != null){
+			for(TagChildListener p: childListeners){
+				p.childTagAdded(this, child);
+			}
 		}
 	}
 	private void fireChildRemoved(Tag child){
-		for(TagChildListener p: childListeners){
-			p.childTagRemoved(this, child);
+		if(childListeners != null){
+			for(TagChildListener p: childListeners){
+				p.childTagRemoved(this, child);
+			}
 		}
 	}
 

@@ -232,16 +232,32 @@ public class Page implements Iterable<Tag>, TagParentListener {
 		}
 		return buf.toString();
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
 	@Override
 	public Iterator<Tag> iterator() {
-		final List<Tag> tags = new LinkedList<Tag>();
-		for(final List<Tag> taglist: cache.values()) {
-			tags.addAll(taglist);
-		}
-		return tags.iterator();
+		return new Iterator<Tag>() {
+			private Iterator<Tag> iter = roots.iterator();
+			private final LinkedList<Iterator<Tag>> iterators= new LinkedList<>();
+			Tag current;
+			@Override
+			public boolean hasNext() {
+				if(current != null && current.hasChild()){
+					// Move down the tree
+					iterators.addLast(iter);
+					iter= current.iterator();
+				}
+				while(!iter.hasNext() && !iterators.isEmpty()){
+					// move up the tree
+					iter= iterators.removeLast();
+				}
+				return iter.hasNext();
+			}
+			@Override
+			public Tag next() {
+				return current= iter.next();
+			}
+			@Override
+			public void remove() {iter.remove();}
+		};
 	}
 	@Override
 	public void newParentTag(Tag child, Tag oldP, Tag newP){
