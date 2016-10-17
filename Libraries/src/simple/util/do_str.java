@@ -175,7 +175,7 @@ public final class do_str {
 	 * @param haystack The string to search
 	 * @param needle The string to find
 	 * @param offset The starting index
-	 * @return The index f is found or -1
+	 * @return The index f is found plus the length of f or -1
 	 */
 	public static final int indexAfter(final CharSequence haystack, final CharSequence needle, int offset) {
 		final int max = haystack.length()-needle.length();
@@ -191,7 +191,7 @@ public final class do_str {
 	 * @param needle The string to find
 	 * @param offset The starting index
 	 * @param limit Index to stop searching at(inclusive)
-	 * @return The index f is found or -1
+	 * @return The index f is found plus the length of f or -1
 	 */
 	public static final int indexAfter(final CharSequence haystack, final CharSequence needle, int offset, final int limit) {
 		if (limit < offset)
@@ -692,8 +692,8 @@ public final class do_str {
 	 */
 	public static final String[] sort(final String[] list) {
 		String tmp = null;
-		boolean change = true;
-		while (change) {
+		boolean change;
+		do{
 			change = false;
 			for (int i = 0;i<list.length-1;i++) {
 				if (do_str.compare(list[i], list[i+1])<0) {
@@ -703,7 +703,7 @@ public final class do_str {
 					change = true;
 				}
 			}
-		}
+		}while(change);
 		return list;
 	}
 	/**
@@ -720,8 +720,8 @@ public final class do_str {
 	 */
 	public static final String[] sortReverse(final String[] list) {
 		String tmp = null;
-		boolean change = true;
-		while (change) {
+		boolean change;
+		do {
 			change = false;
 			for (int i = 0;i<list.length-1;i++) {
 				if (do_str.compare(list[i], list[i+1])>0) {
@@ -731,7 +731,7 @@ public final class do_str {
 					change = true;
 				}
 			}
-		}
+		}while(change);
 		return list;
 	}
 	/**Compares two strings to see which comes first.

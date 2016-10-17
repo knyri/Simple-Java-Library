@@ -535,21 +535,20 @@ public class InlineLooseParser {
 		tag.setName(src.subSequence(limits.start+1, pos.end).toString().trim());
 		String attrn = "";
 		while (true) {
-			pos.start = pos.end+1;
-			pos.start = do_str.skipWhitespace(src, pos.start);
+			pos.start = do_str.skipWhitespace(src, pos.end + 1);
 			pos.end = do_str.indexOfAny(src, "= ", pos.start, limits.end);
 			if (!pos.validEnd())
 				break;
-			if(src.charAt(pos.end) == ' '){
-				pos.end= Math.min(do_str.skipWhitespace(src, pos.end), limits.end);
+			if(do_str.isWhiteSpace(src.charAt(pos.end))){
+				pos.end= Math.min(do_str.skipWhitespace(src, pos.end + 1), limits.end);
 			}
 
 			attrn = src.subSequence(pos.start, pos.end).toString().trim();
 			try {
 				if (src.charAt(pos.end)=='=') {//distinguish between name=value and name
 					pos.start = pos.end = pos.end+1;
-					if(src.charAt(pos.end) == ' '){
-						pos.start= pos.end= Math.min(do_str.skipWhitespace(src, pos.end), limits.end);
+					if(do_str.isWhiteSpace(src.charAt(pos.end))){
+						pos.start= pos.end= Math.min(do_str.skipWhitespace(src, pos.end + 1), limits.end);
 					}
 					if (src.charAt(pos.start)=='\'') {
 						do {
