@@ -25,7 +25,7 @@ public class WorkerPool<T> implements Runnable{
 	public WorkerPool(Worker<T> worker, List<T> pool, int threads) {
 		this.worker= worker;
 		this.pool= Collections.synchronizedList(pool);
-		worker.setPool(this.pool);
+		worker.setPool(this);
 		this.threads= new Thread[threads];
 		poolSize= pool.size();
 	}
@@ -98,7 +98,12 @@ public class WorkerPool<T> implements Runnable{
 		return pool.size();
 	}
 	public boolean isRunning(){
-		return running;
+		for (int i= 0; i < threads.length; i++){
+			if(threads[i].isAlive()){
+				return true;
+			}
+		}
+		return false;
 	}
 	public boolean isDone(){
 		return done;
@@ -117,24 +122,23 @@ public class WorkerPool<T> implements Runnable{
 	 * Does the dirty work
 	 */
 	public static abstract class Worker<T> implements Runnable {
-		private List<T> pool= null;
-		private int poolSize;
-		private void setPool(List<T> pool){
+		private WorkerPool<T> pool= null;
+		private void setPool(WorkerPool<T> pool){
 			this.pool= pool;
-			poolSize= pool.size();
 		}
 		protected final int getTotal(){
-			return poolSize;
+			return pool.poolSize;
 		}
 		/**
 		 * @return The next Object to work on or null
 		 */
 		protected final T getNext(){
-			synchronized(pool){
-				if(pool.isEmpty()){
+			synchronized(pool.pool){
+				if(pool.pool.isEmpty()){
+					pool.done = true;
 					return null;
 				}
-				return pool.remove(pool.size()-1);
+				return pool.pool.remove(pool.pool.size()-1);
 			}
 		}
 
