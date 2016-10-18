@@ -162,18 +162,20 @@ public final class FileUtil{
 	 * @since 4-19-2012
 	 */
 	public static String stripExtension(File file){
-		String fileStr= file.toString();
-		int idx=fileStr.lastIndexOf(File.separatorChar);
+		return stripExtension(file.toString());
+	}
+	public static String stripExtension(String file){
+		int idx=file.lastIndexOf(File.separatorChar);
 		if(idx==-1)
-			idx=fileStr.lastIndexOf('.');
+			idx=file.lastIndexOf('.');
 		else{
-			String fname=fileStr.substring(idx);
-			idx=fname.lastIndexOf('.');
-			if(idx==-1)return fileStr;
-			return fileStr.substring(0,fileStr.length()-fname.length()+idx);
+			String fname=file.substring(idx);
+			int dot=fname.lastIndexOf('.');
+			if(dot==-1 || dot < idx)return file;
+			return file.substring(0,file.length()-fname.length()+dot);
 		}
-		if(idx==-1)return fileStr;
-		return fileStr.substring(0,idx);
+		if(idx==-1)return file;
+		return file.substring(0,idx);
 	}
 	/**
 	 * Copies from input directly to output.
