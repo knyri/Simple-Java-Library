@@ -3,6 +3,7 @@
  */
 package simple.io;
 
+import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
@@ -337,22 +338,17 @@ public final class FileUtil{
 		if (f1 == null || f2==null || !f1.exists() || !f2.exists() || f1.length() != f2.length()){
 			return false;
 		}
-		int read = 0;
-		try(FileInputStream in1 = new FileInputStream(f1)){
-			try(FileInputStream in2 = new FileInputStream(f2)){
-				byte[] b1 = new byte[buffSize];
-				byte[] b2 = new byte[buffSize];
-				read = in1.read(b1);
-				in2.read(b2);
-				for (;read != -1;) {
-					if (!compareBytes(b1,b2,0,read))
+		int read1 = 0, read2 = 0;
+		try(InputStream in1 = new BufferedInputStream(new FileInputStream(f1), buffSize)){
+			try(InputStream in2 = new BufferedInputStream(new FileInputStream(f2), buffSize)){
+				for (read1= in1.read(), read2= in2.read(); read2 != -1 && read1  != -1; read1= in1.read(), read2= in2.read()) {
+					if (read1 != read2){
 						return false;
-					read = in1.read(b1);
-					in2.read(b2);
+					}
 				}
 			}
 		}
-		return true;
+		return read2 == -1 && read1  == -1;
 	}
 	/**Adds all the files to a giant LinkedList. Can add them recursively.
 	 * NOTE: will not add directories. Might add symbolic links.
