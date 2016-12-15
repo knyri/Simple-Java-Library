@@ -21,22 +21,22 @@ public final class DataUtil{
 			return new byte[]{b};
 		}
 		public static byte[] toByteArray(short b){
-			byte[] ret= new byte[Short.BYTES];
-			for(int i= Short.BYTES - 1, shift= 0; i >= 0; i--, shift+= 8){
+			byte[] ret= new byte[Short.SIZE/2];
+			for(int i= Short.SIZE/2 - 1, shift= 0; i >= 0; i--, shift+= 8){
 				ret[i]= (byte)((b >> shift) & 0xff);
 			}
 			return ret;
 		}
 		public static byte[] toByteArray(int b){
-			byte[] ret= new byte[Integer.BYTES];
-			for(int i= Integer.BYTES - 1, shift= 0; i >= 0; i--, shift+= 8){
+			byte[] ret= new byte[Integer.SIZE/2];
+			for(int i= Integer.SIZE/2 - 1, shift= 0; i >= 0; i--, shift+= 8){
 				ret[i]= (byte)((b >> shift) & 0xff);
 			}
 			return ret;
 		}
 		public static byte[] toByteArray(long b){
-			byte[] ret= new byte[Long.BYTES];
-			for(int i= Long.BYTES - 1, shift= 0; i >= 0; i--, shift+= 8){
+			byte[] ret= new byte[Long.SIZE/2];
+			for(int i= Long.SIZE/2 - 1, shift= 0; i >= 0; i--, shift+= 8){
 				ret[i]= (byte)((b >> shift) & 0xff);
 			}
 			return ret;
@@ -88,7 +88,7 @@ public final class DataUtil{
 		// =================================================
 
 		public static long getLong(byte[] b, int offset){
-			int end= Math.min(b.length - offset, Long.BYTES) + offset;
+			int end= Math.min(b.length - offset, Long.SIZE/2) + offset;
 			long ret= 0;
 			for (; offset < end; offset++) {
 				ret = (ret << 8) | (b[offset] & 0xFF);
@@ -96,7 +96,7 @@ public final class DataUtil{
 			return ret;
 		}
 		public static long getUnsignedInt(byte[] b, int offset){
-			int end= Math.min(b.length - offset,Integer.BYTES) + offset;
+			int end= Math.min(b.length - offset,Integer.SIZE/2) + offset;
 			long ret= 0;
 			for (; offset < end; offset++) {
 				ret = (ret << 8) | (b[offset] & 0xFF);
@@ -104,7 +104,7 @@ public final class DataUtil{
 			return ret;
 		}
 		public static int getInt(byte[] b, int offset){
-			int end= Math.min(b.length - offset,Integer.BYTES) + offset;
+			int end= Math.min(b.length - offset,Integer.SIZE/2) + offset;
 			int ret= 0;
 			for (; offset < end; offset++) {
 				ret = (ret << 8) | (b[offset] & 0xFF);
@@ -115,7 +115,7 @@ public final class DataUtil{
 			return (short)getUnsignedShort(b, offset);
 		}
 		public static int getUnsignedShort(byte[] b, int offset){
-			int end= Math.min(b.length - offset,Short.BYTES) + offset;
+			int end= Math.min(b.length - offset,Short.SIZE/2) + offset;
 			int ret= 0;
 			for (; offset < end; offset++) {
 				ret = (ret << 8) | (b[offset] & 0xFF);
@@ -138,22 +138,22 @@ public final class DataUtil{
 			return new byte[]{b};
 		}
 		public static byte[] toByteArray(short b){
-			byte[] ret= new byte[Short.BYTES];
-			for(int i= Short.BYTES - 1, shift= Short.SIZE - 8; i >= 0; i--, shift-= 8){
+			byte[] ret= new byte[Short.SIZE/2];
+			for(int i= Short.SIZE/2 - 1, shift= Short.SIZE - 8; i >= 0; i--, shift-= 8){
 				ret[i]= (byte)((b >> shift) & 0xff);
 			}
 			return ret;
 		}
 		public static byte[] toByteArray(int b){
-			byte[] ret= new byte[Integer.BYTES];
-			for(int i= Integer.BYTES - 1, shift= Integer.SIZE - 8; i >= 0; i--, shift-= 8){
+			byte[] ret= new byte[Integer.SIZE/2];
+			for(int i= Integer.SIZE/2 - 1, shift= Integer.SIZE - 8; i >= 0; i--, shift-= 8){
 				ret[i]= (byte)((b >> shift) & 0xff);
 			}
 			return ret;
 		}
 		public static byte[] toByteArray(long b){
-			byte[] ret= new byte[Long.BYTES];
-			for(int i= Long.BYTES - 1, shift= Long.SIZE - 8; i >= 0; i--, shift-= 8){
+			byte[] ret= new byte[Long.SIZE/2];
+			for(int i= Long.SIZE/2 - 1, shift= Long.SIZE - 8; i >= 0; i--, shift-= 8){
 				ret[i]= (byte)((b >> shift) & 0xff);
 			}
 			return ret;
@@ -205,8 +205,8 @@ public final class DataUtil{
 
 		public static long getLong(byte[] b, int offset){
 			int end;
-			if(b.length - offset > Long.BYTES){
-				end= Long.BYTES + offset;
+			if(b.length - offset > Long.SIZE/2){
+				end= Long.SIZE/2 + offset;
 				b= Arrays.copyOfRange(b,0,end);
 			}else{
 				end= b.length;
@@ -220,8 +220,8 @@ public final class DataUtil{
 		}
 		public static int getInt(byte[] b, int offset){
 			int end;
-			if(b.length - offset > Integer.BYTES){
-				end= Integer.BYTES + offset;
+			if(b.length - offset > Integer.SIZE/2){
+				end= Integer.SIZE/2 + offset;
 				b= Arrays.copyOfRange(b,0,end);
 			}else{
 				end= b.length;
@@ -235,8 +235,8 @@ public final class DataUtil{
 		}
 		public static long getUnsignedInt(byte[] b, int offset){
 			int end;
-			if(b.length - offset > Integer.BYTES){
-				end= Integer.BYTES + offset;
+			if(b.length - offset > Integer.SIZE/2){
+				end= Integer.SIZE/2 + offset;
 				b= Arrays.copyOfRange(b,0,end);
 			}else{
 				end= b.length;
@@ -253,8 +253,8 @@ public final class DataUtil{
 		}
 		public static int getUnsignedShort(byte[] b, int offset){
 			int end;
-			if(b.length - offset > Short.BYTES){
-				end= Short.BYTES + offset;
+			if(b.length - offset > Short.SIZE/2){
+				end= Short.SIZE/2 + offset;
 				b= Arrays.copyOfRange(b,0,end);
 			}else{
 				end= b.length;
