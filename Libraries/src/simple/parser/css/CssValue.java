@@ -37,7 +37,7 @@ public abstract class CssValue{
  * Getters w/ defaults
  * ***************/
 	public Object get(CIString k, Object d){
-		Object ret= values.getOrDefault(k,d);
+		Object ret= values.get(k);
 		return ret == null ? d : ret;
 	}
 	public Integer getInteger(CIString k, Integer d){
