@@ -152,6 +152,22 @@ public final class RWUtil {
 		return buf.toString();
 	}
 
+
+	public static String readUntilAny(final Reader in, final String end, char quote) throws IOException {
+		final StringBuilder buf = new StringBuilder(255);
+		final char[] cbuf = new char[1];
+		boolean quoted= false;
+		while((in.read(cbuf)!=-1)){
+			buf.append(cbuf[0]);
+			if (end.indexOf(cbuf[0]) != -1 && !quoted) {
+				break;
+			} else if (cbuf[0] == quote){
+				quoted = !quoted;
+			}
+		}
+		return buf.toString();
+	}
+
 	/** Reads until <code>end</code> is found or the end of the stream is reached.<br>
 	 * Ignores <var>end</var> if inside <var>quote</var>.
 	 * @param rd

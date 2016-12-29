@@ -944,4 +944,16 @@ public final class do_str {
 		}
 		return buf.toString();
 	}
+
+	public static final String ltrim(String str){
+		int i= 0, len= str.length();
+		for(;i < len && Character.isWhitespace(str.charAt(i)); i++);
+		return str.substring(i);
+	}
+
+	public static final String rtrim(String str){
+		int i= str.length() - 1;
+		for(;i > -1 && Character.isWhitespace(str.charAt(i));i--);
+		return str.substring(0, i);
+	}
 }
