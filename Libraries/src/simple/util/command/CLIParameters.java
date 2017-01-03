@@ -6,13 +6,13 @@ import java.util.HashSet;
 /**
  * Parses passed args based on this format:
  * Automatically stops parameter and flag parsing when none of these forms are seen.
- * 
+ *
  * Params:
  * -param value
  * --param=value
  * --param
  * 		unsets the parameter
- * 
+ *
  * Flags:
  * /f
  * 		sets one flag
@@ -22,7 +22,7 @@ import java.util.HashSet;
  * 		sets many flags
  * /-fjk
  * 		unsets many flags
- * 
+ *
  * --
  * 		Stops parameter and flag parsing
  *
@@ -73,13 +73,13 @@ public class CLIParameters {
 					}
 					String[] kv= args[i].split("=", 2);
 					if(kv.length == 1){
-						params.remove(kv[0]);
+						params.remove(kv[0].substring(2));
 					}else{
-						params.put(kv[0], kv[1]);
+						params.put(kv[0].substring(2), kv[1]);
 					}
 				}else{
 					// -key value
-					params.put(args[i], args[++i]);
+					params.put(args[i].substring(1), args[++i]);
 				}
 			break;
 			default:
@@ -88,14 +88,14 @@ public class CLIParameters {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return The number of arguments parsed
 	 */
 	public int argsParsed(){
 		return argsParsed;
 	}
-	
+
 	public boolean hasFlag(Character flag){
 		if(caseSensitive){
 			return flags.contains(flag);
@@ -103,7 +103,7 @@ public class CLIParameters {
 			return flags.contains(Character.toLowerCase(flag));
 		}
 	}
-	
+
 	public String getValue(String key){
 		return params.get(key);
 	}
