@@ -104,6 +104,13 @@ public class CLIParameters {
 		}
 	}
 
+	public String getValue(String key, String def){
+		// longer form used for java 7 compatibility
+		if(params.get(key) == null){
+			return def;
+		}
+		return params.get(key);
+	}
 	public String getValue(String key){
 		return params.get(key);
 	}
