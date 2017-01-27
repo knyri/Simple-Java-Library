@@ -126,8 +126,14 @@ public class WorkerPool<T> implements Runnable{
 		private void setPool(WorkerPool<T> pool){
 			this.pool= pool;
 		}
+		protected final int getRemaining(){
+			return pool.itemsRemaining();
+		}
 		protected final int getTotal(){
 			return pool.poolSize;
+		}
+		protected final int getThreadCount(){
+			return pool.threadCount();
 		}
 		/**
 		 * @return The next Object to work on or null
