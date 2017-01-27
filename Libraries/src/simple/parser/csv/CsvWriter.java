@@ -1,5 +1,6 @@
 package simple.parser.csv;
 
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +19,14 @@ public class CsvWriter implements Closeable {
 	 */
 	private boolean SOL= true;
 
+	public CsvWriter(Writer file, char colSep, char quote, char escape, String newline) throws IOException {
+		this.colSep= colSep;
+		this.escaped= new String(new char[]{escape,quote});
+		this.quote= ""+quote;
+		this.newLine= newline;
+		out= file;
+	}
+
 	/**
 	 * @param file The CSV file
 	 * @param colSep The column character. Default: ','
@@ -27,11 +36,7 @@ public class CsvWriter implements Closeable {
 	 * @throws IOException
 	 */
 	public CsvWriter(File file, char colSep, char quote, char escape, String newline) throws IOException {
-		this.colSep= colSep;
-		this.escaped= new String(new char[]{escape,quote});
-		this.quote= ""+quote;
-		this.newLine= newline;
-		out= new FileWriter(file);
+		this(new BufferedWriter(new FileWriter(file), 4096), colSep, quote, escape, newline);
 	}
 	/**
 	 * @param file the file to open
