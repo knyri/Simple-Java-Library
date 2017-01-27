@@ -54,7 +54,9 @@ public class CsvWriter implements Closeable {
 			SOL= false;
 		}
 		out.write(quote.charAt(0));
-		out.write(string.replace(quote, escaped));
+		if(string != null){
+			out.write(string.replace(quote, escaped));
+		}
 		out.write(quote.charAt(0));
 	}
 	public void writeln() throws IOException{
