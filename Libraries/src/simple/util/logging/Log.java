@@ -111,9 +111,9 @@ public final class Log {
 		return _out.checkError();
 	}
 	public final boolean log(final LogLevel type, final Object msg){return _log(type,msg,options);}
-	public final boolean log(final LogLevel type, final Exception msg){return _log(type,msg,options);}
+	public final boolean log(final LogLevel type, final Throwable msg){return _log(type,msg,options);}
 	public final boolean log(final LogLevel type, final Dictionary<?,?> msg){return _log(type,msg,options);}
-	public final boolean log(final LogLevel type, final String msg, final Exception e){return _log(type,msg,e,options);}
+	public final boolean log(final LogLevel type, final String msg, final Throwable e){return _log(type,msg,e,options);}
 	public final boolean log(final LogLevel type, final Iterable<?> msg){return _log(type,msg,',',options);}
 	public final boolean log(final LogLevel type, final Object[] msg){return _log(type,msg,',',options);}
 	public final boolean log(final LogLevel type, final byte[] msg){return _log(type,msg,',',options);}
@@ -157,7 +157,7 @@ public final class Log {
 		if(options==null)	options=this.options;
 		return _log(type,msg,options);
 	}
-	public final boolean log(final String section,final LogLevel type, final Exception msg) {
+	public final boolean log(final String section,final LogLevel type, final Throwable msg) {
 		Byte options = this.section.get(section);
 		if(options==null)	options=this.options;
 		return _log(type,msg,options);
@@ -172,7 +172,7 @@ public final class Log {
 		if(options==null)	options=this.options;
 		return _log(type,ref,msg,options);
 	}
-	public final boolean log(final String section,final LogLevel type, final String msg, final Exception e) {
+	public final boolean log(final String section,final LogLevel type, final String msg, final Throwable e) {
 		Byte options = this.section.get(section);
 		if(options==null)	options=this.options;
 		return _log(type,msg,e,options);
@@ -241,7 +241,7 @@ public final class Log {
 		}
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final Exception msg,byte options) {
+	private final boolean _log(final LogLevel type, final Throwable msg,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		synchronized(writeSync){
 		_out.println(_getPreMessage(type));
@@ -283,7 +283,7 @@ public final class Log {
 		}
 		return _out.checkError();
 	}
-	private final boolean _log(final LogLevel type, final String msg, final Exception e,byte options) {
+	private final boolean _log(final LogLevel type, final String msg, final Throwable e,byte options) {
 		if((options&type.getValue()) != type.getValue())return _out.checkError();
 		synchronized(writeSync){
 		_out.print(_getPreMessage(type));
@@ -593,10 +593,10 @@ public final class Log {
 	 */
 	public final boolean debugSect(final String section,final Object msg){return log(section,LogLevel.DEBUG, msg);}
 	public final boolean debugSect(final String section,final Object[] msg){return log(section,LogLevel.DEBUG, msg);}
-	public final boolean debugSect(final String section,final Exception msg){return log(section,LogLevel.DEBUG, msg);}
+	public final boolean debugSect(final String section,final Throwable msg){return log(section,LogLevel.DEBUG, msg);}
 	public final boolean debugSect(final String section,final Dictionary<?,?> msg){return log(section,LogLevel.DEBUG, msg);}
 	public final boolean debugSect(final String section,final String ref, final Object msg){return log(section,LogLevel.DEBUG, ref, msg);}
-	public final boolean debugSect(final String section,final String msg, final Exception e){return log(section,LogLevel.DEBUG, msg, e);}
+	public final boolean debugSect(final String section,final String msg, final Throwable e){return log(section,LogLevel.DEBUG, msg, e);}
 	public final boolean debug(final Object msg)	{return log(LogLevel.DEBUG, msg);}
 	public final boolean debug(final Iterable<? extends Object> msg)	{return log(LogLevel.DEBUG, msg);}
 	public final boolean debug(final Object[] msg)	{return log(LogLevel.DEBUG, msg);}
@@ -613,11 +613,11 @@ public final class Log {
 	public final boolean debug(final float[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
 	public final boolean debug(final long[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
 	public final boolean debug(final double[] msg,char sep)	{return log(LogLevel.DEBUG, msg,sep);}
-	public final boolean debug(final Exception msg)	{return log(LogLevel.DEBUG, msg);}
+	public final boolean debug(final Throwable msg)	{return log(LogLevel.DEBUG, msg);}
 	public final boolean debug(final Dictionary<?,?> msg)	{return log(LogLevel.DEBUG, msg);}
 	public final boolean debug(final String ref,final Object msg)	{return log(LogLevel.DEBUG, ref, msg);}
 	public final boolean debug(String ref, final Iterable<? extends Object> msg)	{return log(LogLevel.DEBUG, ref,msg);}
-	public final boolean debug(final String msg,final Exception e)	{return log(LogLevel.DEBUG, msg, e);}
+	public final boolean debug(final String msg,final Throwable e)	{return log(LogLevel.DEBUG, msg, e);}
 	public final boolean debug(final String ref,final Object[] msg){return log(LogLevel.DEBUG, ref, msg,',');}
 	public final boolean debug(final String ref,final byte[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
 	public final boolean debug(final String ref,final int[] msg)	{return log(LogLevel.DEBUG, ref, msg,',');}
@@ -643,10 +643,10 @@ public final class Log {
 	public final boolean errorSect(final String section,final Object[] msg) {
 		return log(section,LogLevel.ERROR, msg);
 	}
-	public final boolean errorSect(final String section,final Exception msg) {
+	public final boolean errorSect(final String section,final Throwable msg) {
 		return log(section,LogLevel.ERROR, msg);
 	}
-	public final boolean errorSect(final String section,final String msg, final Exception e) {
+	public final boolean errorSect(final String section,final String msg, final Throwable e) {
 		return log(section,LogLevel.ERROR, msg, e);
 	}
 	public final boolean errorSect(final String section,final String ref, final Object msg) {
@@ -670,11 +670,11 @@ public final class Log {
 	public final boolean error(final float[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
 	public final boolean error(final long[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
 	public final boolean error(final double[] msg,char sep)	{return log(LogLevel.ERROR, msg,sep);}
-	public final boolean error(final Exception msg)	{return log(LogLevel.ERROR, msg);}
+	public final boolean error(final Throwable msg)	{return log(LogLevel.ERROR, msg);}
 	public final boolean error(final Iterable<? extends Object> msg)	{return log(LogLevel.ERROR, msg);}
 	public final boolean error(final Dictionary<?,?> msg)	{return log(LogLevel.ERROR, msg);}
 	public final boolean error(final String ref,final Object msg)	{return log(LogLevel.ERROR, ref, msg);}
-	public final boolean error(final String msg,final Exception e)	{return log(LogLevel.ERROR, msg, e);}
+	public final boolean error(final String msg,final Throwable e)	{return log(LogLevel.ERROR, msg, e);}
 	public final boolean error(final String ref,final Object[] msg){return log(LogLevel.ERROR, ref, msg,',');}
 	public final boolean error(final String ref,final byte[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
 	public final boolean error(final String ref,final int[] msg)	{return log(LogLevel.ERROR, ref, msg,',');}
@@ -699,10 +699,10 @@ public final class Log {
 	public final boolean warningSect(final String section,final Object[] msg) {
 		return log(section,LogLevel.WARNING, msg);
 	}
-	public final boolean warningSect(final String section,final Exception msg) {
+	public final boolean warningSect(final String section,final Throwable msg) {
 		return log(section,LogLevel.WARNING, msg);
 	}
-	public final boolean warningSect(final String section,final String msg, final Exception e) {
+	public final boolean warningSect(final String section,final String msg, final Throwable e) {
 		return log(section,LogLevel.WARNING, msg, e);
 	}
 	public final boolean warningSect(final String section,final String ref, final Object msg) {
@@ -726,12 +726,12 @@ public final class Log {
 	public final boolean warning(final float[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
 	public final boolean warning(final long[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
 	public final boolean warning(final double[] msg,char sep)	{return log(LogLevel.WARNING, msg,sep);}
-	public final boolean warning(final Exception msg)	{return log(LogLevel.WARNING, msg);}
+	public final boolean warning(final Throwable msg)	{return log(LogLevel.WARNING, msg);}
 	public final boolean warning(final Iterable<? extends Object> msg)	{return log(LogLevel.WARNING, msg);}
 	public final boolean warning(String ref,final Iterable<? extends Object> msg)	{return log(LogLevel.WARNING, ref,msg);}
 	public final boolean warning(final Dictionary<?,?> msg)	{return log(LogLevel.WARNING, msg);}
 	public final boolean warning(final String ref,final Object msg)	{return log(LogLevel.WARNING, ref, msg);}
-	public final boolean warning(final String msg,final Exception e)	{return log(LogLevel.WARNING, msg, e);}
+	public final boolean warning(final String msg,final Throwable e)	{return log(LogLevel.WARNING, msg, e);}
 	public final boolean warning(final String ref,final Object[] msg){return log(LogLevel.WARNING, ref, msg,',');}
 	public final boolean warning(final String ref,final byte[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
 	public final boolean warning(final String ref,final int[] msg)	{return log(LogLevel.WARNING, ref, msg,',');}
@@ -777,12 +777,12 @@ public final class Log {
 	public final boolean information(final float[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
 	public final boolean information(final long[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
 	public final boolean information(final double[] msg,char sep)	{return log(LogLevel.INFORMATION, msg,sep);}
-	public final boolean information(final Exception msg)	{return log(LogLevel.INFORMATION, msg);}
+	public final boolean information(final Throwable msg)	{return log(LogLevel.INFORMATION, msg);}
 	public final boolean information(final Dictionary<?,?> msg)	{return log(LogLevel.INFORMATION, msg);}
 	public final boolean information(final Iterable<? extends Object> msg)	{return log(LogLevel.INFORMATION, msg);}
 	public final boolean information(String ref,final Iterable<? extends Object> msg)	{return log(LogLevel.INFORMATION, ref,msg);}
 	public final boolean information(final String ref,final Object msg)	{return log(LogLevel.INFORMATION, ref, msg);}
-	public final boolean information(final String msg,final Exception e)	{return log(LogLevel.INFORMATION, msg, e);}
+	public final boolean information(final String msg,final Throwable e)	{return log(LogLevel.INFORMATION, msg, e);}
 	public final boolean information(final String ref,final Object[] msg){return log(LogLevel.INFORMATION, ref, msg,',');}
 	public final boolean information(final String ref,final byte[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
 	public final boolean information(final String ref,final int[] msg)	{return log(LogLevel.INFORMATION, ref, msg,',');}
