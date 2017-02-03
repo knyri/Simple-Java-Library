@@ -7,6 +7,25 @@ import java.io.StringWriter;
 import java.util.Arrays;
 
 public final class RWUtil {
+
+	/**
+	 * Attempts to fill output
+	 * @param reader
+	 * @param output
+	 * @return The number of characters read
+	 * @throws IOException
+	 */
+	public static int readFully(Reader reader, char[] output) throws IOException{
+		int read= 0, len= output.length, offset= 0;
+		do{
+			read= reader.read(output, offset, len - offset);
+			if(read == -1){
+				break;
+			}
+			offset+= read;
+		}while(offset < len);
+		return offset;
+	}
 	/**
 	 * Reads all available data from reader.
 	 * @param reader Source
