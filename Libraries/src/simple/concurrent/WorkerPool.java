@@ -44,6 +44,8 @@ public class WorkerPool<T> implements Runnable{
 			threads[i]= new Thread(worker);
 			threads[i].start();
 		}
+		activeThreads= threads.length;
+		lastCount= System.currentTimeMillis();
 	}
 	public int getTotal(){
 		return poolSize;
@@ -94,6 +96,33 @@ public class WorkerPool<T> implements Runnable{
 	public int threadCount(){
 		return threads.length;
 	}
+	private long lastCount= 0;
+	private int activeThreads= 0;
+	public int getActiveThreads(){
+		if(pool.size() < threads.length && 5000 < (lastCount - System.currentTimeMillis())){
+			lastCount= System.currentTimeMillis();
+			int count= 0;
+			for(Thread t : threads){
+				if(t.isAlive()){
+					count++;
+				}
+			}
+			activeThreads= count;
+		}
+		return activeThreads;
+	}
+	/**
+	 * Items left in the pool + active thread count
+	 * A more accurate representation of the work left to be done.
+	 * @return
+	 */
+	public int getEffectiveItemsRemaining(){
+		return getActiveThreads() + pool.size();
+	}
+	/**
+	 * Items left in the pool
+	 * @return
+	 */
 	public int itemsRemaining(){
 		return pool.size();
 	}
