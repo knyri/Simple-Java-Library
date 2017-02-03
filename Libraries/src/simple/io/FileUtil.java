@@ -4,7 +4,6 @@
 package simple.io;
 
 import java.io.BufferedInputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -86,46 +85,18 @@ public final class FileUtil{
 		return ((long)(number*precision))/precision;
 	}
 	/**
-	 * Flushes and closes the stream without throwing an exception
-	 * @param os the thing to close
+	 * Closes all the things without throwing an error. Can be null.
+	 * @param ac The things to close
 	 */
-	public static void close(final OutputStream os) {
-		if(os != null) {
-			try {os.close(); } catch(final Exception e) {}
+	public static final void close(AutoCloseable... ac){
+		if(ac != null){
+			for(AutoCloseable a : ac){
+				if(a == null){
+					continue;
+				}
+				try {a.close();} catch (Exception e) {}
+			}
 		}
-	}
-	/**
-	 * Closes the stream without throwing an exception
-	 * @param is the thing to close
-	 */
-	public static void close(final InputStream is) {
-		if(is != null) {
-			try {is.close();} catch(final Exception e) {}
-		}
-	}
-	/**
-	 * Closes the stream without throwing an exception
-	 * @param rd the thing to close
-	 */
-	public static void close(final Reader rd) {
-		if(rd != null) {
-			try{rd.close();}catch(final Exception e){}
-		}
-	}
-	/**
-	 * Flushes and closes the stream without throwing an exception
-	 * @param wr the thing to close
-	 */
-	public static void close(final Writer wr) {
-		if(wr != null) {
-			try {wr.close();}catch(final Exception e){}
-		}
-	}
-	/**Closes the object ignoring any errors made.
-	 * @param f the thing to close
-	 */
-	public static final void close(final Closeable f){
-		try{f.close();}catch(final Exception e){}
 	}
 	/**
 	 * @param file the file
