@@ -250,7 +250,7 @@ public final class Log implements AutoCloseable{
 	}
 	//workhorse loggers
 	private final boolean _log(LogLevel type, Object msg,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -260,7 +260,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, Throwable msg,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.println(_getPreMessage(type));
 			_out.print(_cName);
@@ -271,7 +271,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, Dictionary<?,?> msg,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -290,7 +290,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, Object msg,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -302,7 +302,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String msg, Throwable e,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -313,7 +313,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, Iterable<?> msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -331,7 +331,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, Iterable<?> msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -351,7 +351,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, byte[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -368,7 +368,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, int[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -385,7 +385,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, short[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -402,7 +402,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, long[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -419,7 +419,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, float[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -436,7 +436,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, double[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -453,7 +453,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, Object[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -470,7 +470,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, Object[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -489,7 +489,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, byte[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -508,7 +508,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, int[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -527,7 +527,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, short[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -546,7 +546,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, long[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -565,7 +565,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, float[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
@@ -584,7 +584,7 @@ public final class Log implements AutoCloseable{
 		return _out.checkError();
 	}
 	private final boolean _log(LogLevel type, String ref, double[] msg,char sep,byte options) {
-		if(isSet(options, type))return _out.checkError();
+		if(!isSet(options, type))return _out.checkError();
 		synchronized(writeSync){
 			_out.print(_getPreMessage(type));
 			_out.print(_cName);
