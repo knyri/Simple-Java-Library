@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,6 +90,16 @@ public final class FileUtil{
 	 * @param ac The things to close
 	 */
 	public static final void close(AutoCloseable... ac){
+		if(ac != null){
+			for(AutoCloseable a : ac){
+				if(a == null){
+					continue;
+				}
+				try {a.close();} catch (Exception e) {}
+			}
+		}
+	}
+	public static final void close(Collection<? extends AutoCloseable> ac){
 		if(ac != null){
 			for(AutoCloseable a : ac){
 				if(a == null){
