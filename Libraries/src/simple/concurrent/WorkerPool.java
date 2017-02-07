@@ -77,7 +77,7 @@ public class WorkerPool<T> implements Runnable{
 					waiter.wait(1000);
 				}
 			}catch(InterruptedException e){}
-			if(timeout > 0 && System.currentTimeMillis() - time > timeout){
+			if(timeout > 0 && (System.currentTimeMillis() - time) > timeout){
 				return;
 			}
 			wait= false;
@@ -85,7 +85,8 @@ public class WorkerPool<T> implements Runnable{
 				if(threads[i].isInterrupted()){
 					running= false;
 					throw new InterruptedException("A worker thread was interrupted.");
-				}else if (threads[i].isAlive()){
+				}
+				if (threads[i].isAlive()){
 					wait= true;
 				}
 			}
@@ -99,7 +100,7 @@ public class WorkerPool<T> implements Runnable{
 	private long lastCount= 0;
 	private int activeThreads= 0;
 	public int getActiveThreads(){
-		if(pool.size() < threads.length && 5000 < (lastCount - System.currentTimeMillis())){
+		if(pool.size() < threads.length && 5000 < (System.currentTimeMillis() - lastCount)){
 			lastCount= System.currentTimeMillis();
 			int count= 0;
 			for(Thread t : threads){
@@ -127,8 +128,8 @@ public class WorkerPool<T> implements Runnable{
 		return pool.size();
 	}
 	public boolean isRunning(){
-		for (int i= 0; i < threads.length; i++){
-			if(threads[i].isAlive()){
+		for(Thread t: threads){
+			if(t.isAlive()){
 				return true;
 			}
 		}
@@ -136,6 +137,12 @@ public class WorkerPool<T> implements Runnable{
 	}
 	public boolean isDone(){
 		return done;
+	}
+	/**
+	 * Calls stop on the worker.
+	 */
+	public void stop(){
+		worker.stop();
 	}
 	/**
 	 * Calls interrupt() on all the workers.
@@ -151,6 +158,17 @@ public class WorkerPool<T> implements Runnable{
 	 * Does the dirty work
 	 */
 	public static abstract class Worker<T> implements Runnable {
+		private volatile boolean stop= false;
+		/**
+		 * Sets the stop flag
+		 */
+		public void stop(){
+			stop= true;
+			this.pool.interruptThreads();
+		}
+		public boolean isStopped(){
+			return stop;
+		}
 		private WorkerPool<T> pool= null;
 		private void setPool(WorkerPool<T> pool){
 			this.pool= pool;
@@ -164,12 +182,17 @@ public class WorkerPool<T> implements Runnable{
 		protected final int getThreadCount(){
 			return pool.threadCount();
 		}
+		protected final void putBack(T item){
+			synchronized(pool.pool){
+				pool.pool.add(item);
+			}
+		}
 		/**
 		 * @return The next Object to work on or null
 		 */
 		protected final T getNext(){
 			synchronized(pool.pool){
-				if(pool.pool.isEmpty()){
+				if(stop || pool.pool.isEmpty()){
 					pool.done = true;
 					return null;
 				}
