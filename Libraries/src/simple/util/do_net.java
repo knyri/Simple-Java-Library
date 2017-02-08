@@ -17,21 +17,25 @@ import java.util.zip.InflaterInputStream;
  */
 public final class do_net {
 	private do_net() {};
-	/**Converts the input stream to the appropriate inflater if needed.
+	/**
+	 * Converts the input stream to the appropriate inflater if needed.
 	 * @param con
 	 * @return an input stream
 	 * @throws IOException
 	 */
 	public static InputStream getInputStream(HttpURLConnection con) throws IOException {
 		String encoding = con.getHeaderField("Content-Encoding");
-		if (encoding == null)
+		if (encoding == null){
 			return new BufferedInputStream(con.getInputStream());
-		if ("gzip".equals(encoding) || "x-gzip".equals(encoding))
+		}
+		if ("gzip".equals(encoding) || "x-gzip".equals(encoding)){
 			return new GZIPInputStream(new BufferedInputStream(con
 					.getInputStream()));
-		if ("deflate".equals(encoding))
+		}
+		if ("deflate".equals(encoding)){
 			return new InflaterInputStream(new BufferedInputStream(
 					con.getInputStream()));
+		}
 		return new BufferedInputStream(con.getInputStream());
 	}
 }

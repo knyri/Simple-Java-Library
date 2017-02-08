@@ -16,9 +16,6 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.swing.ImageIcon;
 
-import simple.util.logging.Log;
-import simple.util.logging.LogFactory;
-
 /**Provides convenience methods for applications.<br>
  * For exception-less methods, the exception will be logged using
  * {@link simple.util.logging.Log}.
@@ -27,21 +24,19 @@ import simple.util.logging.LogFactory;
  *
  */
 public final class App {
-	private static final Log log=LogFactory.getLogFor(App.class);
 	/**
 	 * Static true/false strings for use with storing true/false values in a
 	 * Properties or other object.
 	 */
-	public static final String TRUE="true",FALSE="false";
+	public static final String
+		TRUE="true",
+		FALSE="false";
 	/**Turns the boolean into a static internalized string.
 	 * @param tf The boolean
 	 * @return {@link #TRUE} or {@link #FALSE}
 	 */
 	public static final String TF(final boolean tf){
-		if(tf)
-			return TRUE;
-		else
-			return FALSE;
+		return tf ? TRUE : FALSE;
 	}
 	/**Turns the string into a boolean.
 	 * Does a <code>tf.equalsIgnoreCase({@link #TRUE})</code>
@@ -50,6 +45,9 @@ public final class App {
 	 */
 	public static final boolean TF(final String tf){
 		return tf.equalsIgnoreCase(TRUE);
+	}
+	public static boolean isEmpty(String str){
+		return str == null || str.isEmpty();
 	}
 	/**
 	 * Attempts to create a File object that references the location of the file.<br>
@@ -65,13 +63,14 @@ public final class App {
 	 * @throws URISyntaxException
 	 */
 	public static final File getResourceAsFile(final String location, final Class<?> loader) throws FileNotFoundException, URISyntaxException {
-		final URL tmp = loader.getClassLoader().getResource(location);
-		if (tmp==null){
-			final File f = new File(location);
-			if (!f.exists())
+		final URL tmp= loader.getClassLoader().getResource(location);
+		if (tmp == null){
+			final File f= new File(location);
+			if (!f.exists()){
 				throw new FileNotFoundException(location+" could not be found.");
-			else
+			}else{
 				return f;
+			}
 		}
 		return new File(tmp.toURI());
 	}
@@ -88,14 +87,19 @@ public final class App {
 	 * @throws FileNotFoundException Occurs if the loader returns a null
 	 */
 	public static final URL getResource(final String location, final Class<?> loader) throws FileNotFoundException {
-		URL file = loader.getClassLoader().getResource(location);
-		if (file==null){
-			final File f=new File(location);
-			if(!f.exists())
+		URL file= loader.getClassLoader().getResource(location);
+		if (file == null){
+			final File f= new File(location);
+			if(!f.exists()){
 				throw new FileNotFoundException(location+" could not be found.");
+			}
 			try{
-				file=f.toURI().toURL();
-			}catch(final MalformedURLException e){throw new FileNotFoundException(location+" could not be found.");}
+				file= f.toURI().toURL();
+			}catch(final MalformedURLException e){
+				FileNotFoundException fse= new FileNotFoundException(location + " could not be found.");
+				fse.initCause(e);
+				throw fse;
+			}
 		}
 		return file;
 	}
@@ -112,14 +116,14 @@ public final class App {
 	 * @throws FileNotFoundException Occurs if the loader returns a null
 	 */
 	public static final InputStream getResourceAsStream(final String location, final Class<?> loader) throws FileNotFoundException {
-		final InputStream file = loader.getClassLoader().getResourceAsStream(location);
-		if (file==null){
-			throw new FileNotFoundException(location+" could not be found.");
+		final InputStream file= loader.getClassLoader().getResourceAsStream(location);
+		if (file == null){
+			throw new FileNotFoundException(location + " could not be found.");
 		}
 		return file;
 	}
-	public static final ImageIcon createImageIcon(final String path, final String description,final Class<?> loader) throws FileNotFoundException {
-		final java.net.URL imgURL = getResource(path,loader);
+	public static final ImageIcon createImageIcon(final String path, final String description, final Class<?> loader) throws FileNotFoundException {
+		final java.net.URL imgURL= getResource(path, loader);
 		return new ImageIcon(imgURL, description);
 	}
 	public static final boolean playSound(final String file){
@@ -130,13 +134,13 @@ public final class App {
 	 * @return true on success. False if an error occurred.
 	 */
 	public static final boolean playSound(final File file){
-		try(Clip clip=AudioSystem.getClip()){
-			try(AudioInputStream ais = AudioSystem.getAudioInputStream(file)){
-				clip.open(ais);
-			}
+		try(
+			Clip clip= AudioSystem.getClip();
+			AudioInputStream ais= AudioSystem.getAudioInputStream(file)
+		){
+			clip.open(ais);
 			clip.start();
 		}catch(final Exception e){
-			log.error(e);
 			return false;
 		}
 		return true;
@@ -148,19 +152,23 @@ public final class App {
 	 * @return true on success. False if an error occurred.
 	 */
 	public static final boolean playSound(final File file, float gain){
-		try(Clip clip=AudioSystem.getClip()){
-			try(AudioInputStream ais = AudioSystem.getAudioInputStream(file)){
-				clip.open(ais);
-			}
+		try(
+			Clip clip= AudioSystem.getClip();
+			AudioInputStream ais= AudioSystem.getAudioInputStream(file)
+		){
+			clip.open(ais);
 			if(gain!=0){
-				final FloatControl gainControl=(FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-				if(gain>gainControl.getMaximum())gain=gainControl.getMaximum();
-				if(gain<gainControl.getMinimum())gain=gainControl.getMinimum();
+				final FloatControl gainControl= (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+				if(gain > gainControl.getMaximum()){
+					gain= gainControl.getMaximum();
+				}else
+				if(gain < gainControl.getMinimum()){
+					gain= gainControl.getMinimum();
+				}
 				gainControl.setValue(gain);
 			}
 			clip.start();
 		}catch(final Exception e){
-			log.error(e);
 			return false;
 		}
 		return true;
@@ -172,7 +180,7 @@ public final class App {
 	 * @return The result of <code>(options&amp;option)==option</code>
 	 */
 	public static boolean isSet(final int options, final int option) {
-		return (options&option)==option;
+		return (options & option) == option;
 	}
 	/**
 	 * Tests to see if the on bits in <var>option</var> are also on in <var>options</var>.
@@ -181,7 +189,7 @@ public final class App {
 	 * @return The result of <code>(options&amp;option)==option</code>
 	 */
 	public static boolean isSet(final long options, final long option) {
-		return (options&option)==option;
+		return ( options & option) == option;
 	}
 	public static enum LineEnding {
 		MAC("\r"),
@@ -197,20 +205,37 @@ public final class App {
 		public String getEnd() {
 			return ending;
 		}
+		/**
+		 * @param line
+		 * @return The LineEnding or null
+		 */
+		public static final LineEnding getLineEndingType(String line) {
+			if(line == null || line.isEmpty()){
+				return null;
+			}
+			int i= line.length() - 1;
+			for (; i>0; i--) {
+				if (line.charAt(i) != '\r' && line.charAt(i) != '\n'){
+					break;
+				}
+			}
+			String ending= line.substring(i);
+			for (LineEnding t: LineEnding.values()) {
+				if (t.isEnd(ending)){
+					return t;
+				}
+			}
+			return null;
+		}
 	};
 	/**
+	 * Moved to LineEnding
 	 * @param line
 	 * @return The LineEnding or null
+	 * @deprecated
 	 */
+	@Deprecated
 	public static final LineEnding getLineEndingType(String line) {
-		int i = line.length()-1;
-		for (;i>0;i--) {
-			if (line.charAt(i)!='\r' && line.charAt(i)!='\n') break;
-		}
-		String ending = line.substring(i);
-		for (LineEnding t : LineEnding.values()) {
-			if (t.isEnd(ending)) return t;
-		}
-		return null;
+		return LineEnding.getLineEndingType(line);
 	}
 }

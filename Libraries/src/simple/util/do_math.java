@@ -13,80 +13,92 @@ public final class do_math {
 	 * @return
 	 */
 	public static String round(double d, int places){
-		if(d == 0.0)return "0";
-		StringBuilder ret=new StringBuilder(Double.toString(d));
-		if(ret.length()<places+3)return ret.toString();
+		if(d == 0.0){
+			return "0";
+		}
+		StringBuilder ret= new StringBuilder(Double.toString(d));
+		if(ret.length() < (places + 3)){
+			return ret.toString();
+		}
 		int dot= ret.indexOf(".");
-		if(dot==-1 || dot+places+2 > ret.length()) return ret.toString();
-		if(ret.charAt(dot+places+1) > '4'){
+		if(dot==-1 || (dot + places + 2) > ret.length()){
+			return ret.toString();
+		}
+		if(ret.charAt(dot + places + 1) > '4'){
 loop:
-			for(int i= dot+places; i != -1; i--){
+			for(int i= dot + places; i != -1; i--){
 				switch(ret.charAt(i)){
 				case '9':
 					places--;
 				break;
+
 				case '.':
 				break;
+
 				default:
-					ret.setCharAt(i, (char)(ret.charAt(i)+1));
+					ret.setCharAt(i, (char)(ret.charAt(i) + 1));
 				break loop;
 				}
 			}
 		}else{
-			while(ret.charAt(dot+places) == '0') places--;
+			while(ret.charAt(dot + places) == '0'){
+				places--;
+			}
 		}
-		if(places>0)
+		if(places>0){
 			ret.setLength(dot+places+1);
-		else
+		}else{
 			ret.setLength(dot);
+		}
 		return ret.toString();
 	}
 	public static long sum(int[] x) {
-		long sum = 0;
-		for(int i = 0;i<x.length;i++) {
-			sum += x[i];
+		long sum= 0;
+		for(int i: x) {
+			sum+= i;
 		}
 		return sum;
 	}
 	public static long sum(short[] x) {
-		long sum = 0;
-		for(int i = 0;i<x.length;i++) {
-			sum += x[i];
+		long sum= 0;
+		for(short i: x) {
+			sum+= i;
 		}
 		return sum;
 	}
 	public static long sum(char[] x) {
-		long sum = 0;
-		for(int i = 0;i<x.length;i++) {
-			sum += x[i];
+		long sum= 0;
+		for(char i: x) {
+			sum+= i;
 		}
 		return sum;
 	}
 	public static double sum(float[] x) {
-		double sum = 0;
-		for(int i = 0;i<x.length;i++) {
-			sum += x[i];
+		double sum= 0;
+		for(float i: x) {
+			sum+= i;
 		}
 		return sum;
 	}
 	public static double sum(double[] x) {
 		double sum = 0;
-		for(int i = 0;i<x.length;i++) {
-			sum += x[i];
+		for(double i : x) {
+			sum += i;
 		}
 		return sum;
 	}
 	public static long sum(long[] x) {
-		long sum = 0;
-		for(int i = 0;i<x.length;i++) {
-			sum += x[i];
+		long sum= 0;
+		for(long i: x) {
+			sum+= i;
 		}
 		return sum;
 	}
 	public static long factorial(long n) {
-		long ans = 1;
-		for(; n>1 ; n--)
-			ans *= n;
+		long ans= 1;
+		for(; n > 1; n--){
+			ans*= n;
+		}
 		return ans;
 	}
 	private do_math(){}
