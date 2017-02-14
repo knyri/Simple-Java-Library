@@ -7,12 +7,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class CsvWriter implements Closeable {
-	private int row=0;
+	private int row= 0;
 	private final Writer out;
-	private final char colSep;
-	private final String newLine, escaped, quote;
+	private final char colSep, quote;
+	private final String newLine, escaped, quoteStr;
 
 	/**
 	 * Start of line
@@ -22,7 +23,8 @@ public class CsvWriter implements Closeable {
 	public CsvWriter(Writer file, char colSep, char quote, char escape, String newline) throws IOException {
 		this.colSep= colSep;
 		this.escaped= new String(new char[]{escape,quote});
-		this.quote= ""+quote;
+		this.quoteStr= ""+quote;
+		this.quote= quote;
 		this.newLine= newline;
 		out= file;
 	}
@@ -45,6 +47,13 @@ public class CsvWriter implements Closeable {
 	public CsvWriter(File file) throws IOException{
 		this(file, ',', '"', '"', "\r\n");
 	}
+	public CsvWriter(Writer file) throws IOException{
+		this(file, ',', '"', '"', "\r\n");
+	}
+	/**
+	 * The current row. Starts at 0
+	 * @return Current row
+	 */
 	public int getRow(){
 		return row;
 	}
@@ -52,39 +61,114 @@ public class CsvWriter implements Closeable {
 	public void close() throws IOException{
 		out.close();
 	}
+
 	private void writeValue(String string) throws IOException{
-		if(!SOL){
-			out.write(colSep);
+		out.write(quote);
+		if(string != null){
+			out.write(string.replace(quoteStr, escaped));
+		}
+		out.write(quote);
+	}
+	/**
+	 * Writes the string
+	 * @param string String to write
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter write(String string) throws IOException{
+		if(SOL){
+			SOL= false;
 		}else{
+			out.write(colSep);
+		}
+		writeValue(string);
+		return this;
+	}
+	/**
+	 * Writes the strings
+	 * @param strings Strings to write
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter write(String...strings) throws IOException{
+		int pos= 0;
+		final int end= strings.length;
+		if(end == 0){
+			return this;
+		}
+		if(SOL){
+			writeValue(strings[0]);
+			pos= 1;
 			SOL= false;
 		}
-		out.write(quote.charAt(0));
-		if(string != null){
-			out.write(string.replace(quote, escaped));
+		for(; pos < end; pos++ ){
+			out.write(colSep);
+			writeValue(strings[pos]);
 		}
-		out.write(quote.charAt(0));
+		return this;
 	}
-	public void writeln() throws IOException{
+	/**
+	 * Writes the string
+	 * @param strings Strings to write
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter write(Collection<String> strings) throws IOException{
+		if(strings.isEmpty()){
+			return this;
+		}
+		Iterator<String> iter= strings.iterator();
+		if(SOL){
+			writeValue(iter.next());
+			SOL= false;
+		}
+		while(iter.hasNext()){
+			out.write(colSep);
+			writeValue(iter.next());
+		}
+		return this;
+	}
+	/**
+	 * Writes the string and ends the line
+	 * @param string String to write
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter writeln(String string) throws IOException{
+		write(string);
+		return writeln();
+	}
+	/**
+	 * Ends the line
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter writeln() throws IOException{
 		out.write(newLine);
 		SOL= true;
 		row++;
+		return this;
 	}
-	public void writeln(String...strings) throws IOException{
+
+	/**
+	 * Writes the strings and ends the line
+	 * @param strings String to write
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter writeln(String...strings) throws IOException{
 		write(strings);
-		writeln();
+		return writeln();
 	}
-	public void write(String...strings) throws IOException{
-		for(String string: strings){
-			writeValue(string);
-		}
-	}
-	public void write(Collection<String> strings) throws IOException{
-		for(String string: strings){
-			write(string);
-		}
-	}
-	public void writeln(Collection<String> strings) throws IOException{
+
+	/**
+	 * Writes the strings and ends the line
+	 * @param strings Strings to write
+	 * @return this
+	 * @throws IOException
+	 */
+	public CsvWriter writeln(Collection<String> strings) throws IOException{
 		write(strings);
-		writeln();
+		return writeln();
 	}
 }
