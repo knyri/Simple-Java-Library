@@ -29,9 +29,19 @@ public final class FileUtil{
 	private FileUtil(){}
 	static final BlackHoleOutputStream voidos= new BlackHoleOutputStream();
 	static final BlackHoleWriter voidw= new BlackHoleWriter();
+	/**
+	 * discards everything read
+	 * @param in
+	 * @throws IOException
+	 */
 	public static void discard(InputStream in) throws IOException{
 		copy(in, voidos, 4096);
 	}
+	/**
+	 * discards everything read
+	 * @param in
+	 * @throws IOException
+	 */
 	public static void discard(Reader in) throws IOException{
 		copy(in, voidw, 4096);
 	}
@@ -102,6 +112,10 @@ public final class FileUtil{
 			}
 		}
 	}
+	/**
+	 * Closes all the things without throwing an error. Can be null.
+	 * @param ac The things to close
+	 */
 	public static void close(Collection<? extends AutoCloseable> ac){
 		if(ac != null){
 			for(AutoCloseable a : ac){
@@ -235,6 +249,13 @@ public final class FileUtil{
 		}
 		output.flush();
 	}
+	/**
+	 * @param input
+	 * @param output
+	 * @param bufferSize
+	 * @param numBytes Number of bytes to copy
+	 * @throws IOException
+	 */
 	public static void copy(final InputStream input, final OutputStream output, final int bufferSize, long numBytes ) throws IOException {
 		final byte[] buffer= new byte[bufferSize];
 		int n= 0;
