@@ -2,6 +2,9 @@ package simple.concurrent;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Creates threads equal to the number of available processors to do work
@@ -13,8 +16,11 @@ import java.util.List;
 public class WorkerPool<T> implements Runnable{
 	private final Worker<T> worker;
 	private final List<T> pool;
-	private boolean running= false,done= false;
-	private final Thread[] threads;
+//	private boolean running= false,done= false;
+	private boolean done= false;
+	private final ThreadPoolExecutor threadPool;
+	private final int threadCount;
+//	private final Thread[] threads;
 	private final int poolSize;
 
 	/**
@@ -26,8 +32,10 @@ public class WorkerPool<T> implements Runnable{
 		this.worker= worker;
 		this.pool= Collections.synchronizedList(pool);
 		worker.setPool(this);
-		this.threads= new Thread[threads];
+//		this.threads= new Thread[threads];
+		threadCount= threads;
 		poolSize= pool.size();
+		threadPool= new ThreadPoolExecutor(threads, threads, 5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(threads, true));
 	}
 	/**
 	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.
@@ -39,20 +47,29 @@ public class WorkerPool<T> implements Runnable{
 	}
 	@Override
 	public void run(){
-		running= true;
+		if(threadPool.isShutdown()){
+			return;
+		}
+//		running= true;
+		for (int i= 0; i < threadCount; i++){
+			threadPool.submit(worker);
+		}
+		threadPool.shutdown();
+/*
 		for (int i= 0; i < threads.length; i++){
 			threads[i]= new Thread(worker);
 			threads[i].start();
 		}
 		activeThreads= threads.length;
 		lastCount= System.currentTimeMillis();
+/**/
 	}
 	public int getTotal(){
 		return poolSize;
 	}
 	/**
 	 * Waits until all worker threads are complete.
-	 * @throws InterruptedException If one of the worker threads is interrupted.
+	 * @throws InterruptedException If interrupted while waiting.
 	 */
 	public void waitFor() throws InterruptedException{
 		waitFor(0);
@@ -60,17 +77,30 @@ public class WorkerPool<T> implements Runnable{
 	/**
 	 * @param timeout Time, in milliseconds, to wait for the threads to complete.
 	 * 		0 waits forever.
-	 * @throws InterruptedException If one of the worker threads is interrupted.
+	 * @throws InterruptedException If interrupted while waiting
 	 */
 	public void waitFor(long timeout) throws InterruptedException{
+		if(done){
+			return;
+		}
+/*
 		if(!running){
 			return;
 		}
+		running= true;
+*/
+		if(timeout == 0){
+			while(!done){
+				done= threadPool.awaitTermination(10, TimeUnit.SECONDS);
+			}
+		}else{
+			done= threadPool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+		}
+/*
 		final Object waiter= new Object();
 		long time= System.currentTimeMillis();
 		boolean wait;
 		int i;
-		running= true;
 		do{
 			try{
 				synchronized(waiter){
@@ -91,15 +121,18 @@ public class WorkerPool<T> implements Runnable{
 				}
 			}
 		}while(wait);
-		running= false;
-		done= true;
+/**/
+//		running= false;
+//		done= true;
 	}
 	public int threadCount(){
-		return threads.length;
+		return threadPool.getActiveCount();
 	}
-	private long lastCount= 0;
-	private int activeThreads= 0;
+//	private long lastCount= 0;
+//	private int activeThreads= 0;
 	public int getActiveThreads(){
+		return threadCount();
+/*
 		if(pool.size() < threads.length && 5000 < (System.currentTimeMillis() - lastCount)){
 			lastCount= System.currentTimeMillis();
 			int count= 0;
@@ -111,6 +144,7 @@ public class WorkerPool<T> implements Runnable{
 			activeThreads= count;
 		}
 		return activeThreads;
+/**/
 	}
 	/**
 	 * Items left in the pool + active thread count
@@ -128,31 +162,39 @@ public class WorkerPool<T> implements Runnable{
 		return pool.size();
 	}
 	public boolean isRunning(){
+		return threadPool.isTerminating();
+/*
 		for(Thread t: threads){
 			if(t.isAlive()){
 				return true;
 			}
 		}
 		return false;
+/**/
 	}
 	public boolean isDone(){
 		return done;
 	}
 	/**
-	 * Calls stop on the worker.
+	 * Sets the stop flag to signal the workers to stop gracefully.
+	 * Unless the stop flag is ignored.
 	 */
 	public void stop(){
 		worker.stop();
 	}
 	/**
-	 * Calls interrupt() on all the workers.
+	 * Sets the stop flag and calls interrupt() on all the workers.
 	 */
 	public void interruptThreads(){
+		worker.stop();
+		threadPool.shutdownNow();
+/*
 		for (int i= 0; i < threads.length; i++){
 			if(!threads[i].isInterrupted()){
 				threads[i].interrupt();
 			}
 		}
+/**/
 	}
 	/**
 	 * Does the dirty work
@@ -164,7 +206,6 @@ public class WorkerPool<T> implements Runnable{
 		 */
 		public void stop(){
 			stop= true;
-			this.pool.interruptThreads();
 		}
 		public boolean isStopped(){
 			return stop;
