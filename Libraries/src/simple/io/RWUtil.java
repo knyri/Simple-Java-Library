@@ -1,9 +1,13 @@
 package simple.io;
 
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public final class RWUtil {
@@ -25,6 +29,11 @@ public final class RWUtil {
 			offset+= read;
 		}while(offset < len);
 		return offset;
+	}
+	public static String readFully(File file, Charset charset) throws IOException{
+		try(Reader reader= new InputStreamReader(new FileInputStream(file), charset)){
+			return readFully(reader);
+		}
 	}
 	/**
 	 * Reads all available data from reader.
