@@ -1,5 +1,6 @@
 package simple.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,10 +18,11 @@ public final class do_str {
 	 * descriptive error when parameters are incorrect.
 	 */
 	public static boolean DEBUG = false;
-	public static final String UNIX_LINE_ENDING = "\n",
-	LINUX_LINE_ENDING = do_str.UNIX_LINE_ENDING,
-	MAC_LINE_ENDING = do_str.UNIX_LINE_ENDING,
-	WINDOWS_LINE_ENDING = "\r\n";
+	public static final String
+		UNIX_LINE_ENDING = "\n",
+		LINUX_LINE_ENDING = do_str.UNIX_LINE_ENDING,
+		MAC_LINE_ENDING = do_str.UNIX_LINE_ENDING,
+		WINDOWS_LINE_ENDING = "\r\n";
 	private do_str() {}
 	/**Returns the indexOf if it does not equal -1 or the default value if it does.
 	 * This is for those situations where a -1 result is not optimal.
@@ -29,7 +31,9 @@ public final class do_str {
 	 * @return The indexOf result if not -1 or the default value.
 	 */
 	public static final int defaultValue(final int indexOf, final int value) {
-		if (indexOf == -1) return value;
+		if(indexOf == -1){
+			return value;
+		}
 		return indexOf;
 	}
 	public static final CharSequence substring(final CharSequence str, final DoubleParsePosition pos) {
@@ -53,13 +57,18 @@ public final class do_str {
 	 * @return The index f is found or -1
 	 */
 	public static final int indexOf(final CharSequence haystack, final CharSequence needle, int offset) {
-		if (needle.length()>haystack.length())return-1;
-		final int max = haystack.length()-needle.length();
-		for (;offset<=max; offset++)
-			if (do_str.startsWith(haystack,needle,offset)) {
+		if(needle.length() > haystack.length()){
+			return -1;
+		}
+		final int max= haystack.length() - needle.length();
+		for (; offset <= max; offset++){
+			if(do_str.startsWith(haystack, needle, offset)){
 				break;
 			}
-		if (offset>max) return -1;
+		}
+		if(offset > max){
+			return -1;
+		}
 		return offset;
 	}
 	/** Returns the index of the first occurrence such that startsWith(s,f,offset) is true.
@@ -76,13 +85,18 @@ public final class do_str {
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+haystack.length()+"]"); else return -1;
 		if (offset<0)
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative."); else return -1;
-		final int max = limit-needle.length()-1;
-		if (max < 0) return -1;
-		for (;offset<=max; offset++)
-			if (do_str.startsWith(haystack,needle,offset)) {
+
+		final int max= limit - needle.length();
+		if (max == 0){
+			return -1;
+		}
+		for(; offset < max; offset++)
+			if(do_str.startsWith(haystack, needle, offset)){
 				break;
 			}
-		if (offset>max) return -1;
+		if(offset == max){
+			return -1;
+		}
 		return offset;
 	}
 	/**Exists only to add indexOf(char,int) to classes like StringBuilder.
@@ -102,9 +116,13 @@ public final class do_str {
 	 * @return The index of <code>f</code> or -1.
 	 */
 	public static final int indexOf(final CharSequence haystack, final char needle, int offset, final int limit) {
-		if (offset>limit || offset<0) return -1;
-		for (;offset<=limit;offset++) {
-			if (haystack.charAt(offset)==needle) return offset;
+		if(offset > limit || offset < 0){
+			return -1;
+		}
+		for (; offset <= limit; offset++) {
+			if(haystack.charAt(offset) == needle){
+				return offset;
+			}
 		}
 		return -1;
 	}
@@ -115,7 +133,7 @@ public final class do_str {
 	 * @return The index of <code>f</code> or -1.
 	 */
 	public static final int indexOf(final CharSequence haystack, final char needle, char quote, final int offset) {
-		return do_str.indexOf(haystack,needle, quote, offset, haystack.length()-1);
+		return do_str.indexOf(haystack, needle, quote, offset, haystack.length() - 1);
 	}
 	/**indexOf(..) with a twist. Will only search to the limit specified.
 	 * @param haystack The string to search
@@ -125,13 +143,14 @@ public final class do_str {
 	 * @return The index of <code>f</code> or -1.
 	 */
 	public static final int indexOf(final CharSequence haystack, final char needle, char quote, int offset, final int limit) {
-		if (offset>limit || offset<0) return -1;
+		if(offset > limit || offset < 0){
+			return -1;
+		}
 		boolean quoted= false;
-		for (;offset<=limit;offset++) {
-			if(haystack.charAt(offset)==quote){
-				quoted = !quoted;
-			} else
-			if (haystack.charAt(offset)==needle && !quoted){
+		for (; offset <= limit; offset++) {
+			if(haystack.charAt(offset) == quote){
+				quoted= !quoted;
+			} else if(haystack.charAt(offset) == needle && !quoted){
 				return offset;
 			}
 		}
@@ -144,7 +163,7 @@ public final class do_str {
 	 * @return The index of <code>f</code> or -1.
 	 */
 	public static final int indexOfQuoted(final CharSequence haystack, final char needle, final int offset) {
-		return do_str.indexOfQuoted(haystack,needle, offset, haystack.length()-1);
+		return do_str.indexOfQuoted(haystack,needle, offset, haystack.length() - 1);
 	}
 	/**indexOf(..) with a twist. Will only search to the limit specified.
 	 * @param haystack The string to search
@@ -154,18 +173,19 @@ public final class do_str {
 	 * @return The index of <code>f</code> or -1.
 	 */
 	public static final int indexOfQuoted(final CharSequence haystack, final char needle, int offset, final int limit) {
-		if (offset>limit || offset<0) return -1;
+		if(offset > limit || offset < 0){
+			return -1;
+		}
 		boolean
 			squoted= false,
 			dquoted= false;
-		for (;offset<=limit;offset++) {
-			if(haystack.charAt(offset)== '"' && !squoted){
+		// Why <=?
+		for (; offset <= limit; offset++) {
+			if(haystack.charAt(offset) == '"' && !squoted){
 				dquoted = !dquoted;
-			} else
-			if(haystack.charAt(offset)== '\'' && !dquoted){
+			} else if(haystack.charAt(offset) == '\'' && !dquoted){
 				squoted = !squoted;
-			} else
-			if (haystack.charAt(offset)==needle && !dquoted && !squoted){
+			} else if (haystack.charAt(offset) == needle && !dquoted && !squoted){
 				return offset;
 			}
 		}
@@ -200,14 +220,20 @@ public final class do_str {
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+haystack.length()+"]"); else return -1;
 		if (offset<0)
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative."); else return -1;
-		final int max = limit-needle.length()-1;
-		if (max < 0) return -1;
-		for (;offset<=max; offset++)
-			if (do_str.startsWith(haystack,needle,offset)) {
+
+		final int max = limit - needle.length();
+		if(max == 0){
+			return -1;
+		}
+		for(; offset < max; offset++){
+			if(do_str.startsWith(haystack, needle, offset)){
 				break;
 			}
-		if (offset>max) return -1;
-		return offset+needle.length();
+		}
+		if(offset == max){
+			return -1;
+		}
+		return offset + needle.length();
 	}
 	/** Returns the index of the first occurrence of any character in <code>list</code>.
 	 * @param haystack String to search
@@ -223,10 +249,15 @@ public final class do_str {
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+haystack.length()+"]"); else return -1;
 		if (offset<0)
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative."); else return -1;
-		int j;
-		for (;offset<=limit;offset++) {
-			for (j= 0; j < needles.length(); j++)
-				if (haystack.charAt(offset)==needles.charAt(j)) return offset;
+
+		int j, needleCount= needles.length();
+
+		for (;offset <= limit; offset++) {
+			for (j= 0; j < needleCount; j++){
+				if(haystack.charAt(offset) == needles.charAt(j)){
+					return offset;
+				}
+			}
 		}
 		return -1;
 	}
@@ -305,25 +336,38 @@ public final class do_str {
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+s.length()+"]"); else return -1;
 		if (offset<0)
 			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative."); else return -1;
-		for (;offset>=limit;offset--) {
-			if (s.charAt(offset)==f) return offset;
+		for (;offset >= limit; offset--) {
+			if (s.charAt(offset) == f){
+				return offset;
+			}
 		}
 		return -1;
 	}
-	public static final int lastIndexOf(final CharSequence s, final String f, int offset, final int limit) {
-		if (limit > offset)
-			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Limit["+limit+"] must be less than or equal to the Offset["+offset+"]"); else return -1;
-		if (offset>s.length())
-			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+s.length()+"]"); else return -1;
-		if (offset<0)
-			if (do_str.DEBUG) throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative."); else return -1;
-		for (;offset>=limit;offset--) {
-			if (do_str.startsWith(s,f,offset)) return offset;
+	public static final int lastIndexOf(final CharSequence s, final CharSequence f, int offset, final int limit) {
+		if(do_str.DEBUG){
+			if (limit > offset){
+				throw new StringIndexOutOfBoundsException("Limit["+limit+"] must be less than or equal to the Offset["+offset+"]");
+			}
+			if (offset > s.length()){
+				throw new StringIndexOutOfBoundsException("Offset["+offset+"] must be less than or equal to the length["+s.length()+"]");
+			}
+			if (offset < 0){
+				throw new StringIndexOutOfBoundsException("The offset["+offset+"] is negative.");
+			}
+		}else{
+			if(offset < 0 || limit > offset || offset > s.length()){
+				return -1;
+			}
+		}
+		for (;offset >= limit; offset--) {
+			if (do_str.startsWith(s, f, offset)){
+				return offset;
+			}
 		}
 		return -1;
 	}
 	public static final int lastIndexOf(final CharSequence s, final String f) {
-		return do_str.lastIndexOf(s,f,s.length(),0);
+		return do_str.lastIndexOf(s, f, s.length(), 0);
 	}
 	/**Exists only to add lastIndexOf(char,int) to classes like StringBuilder.
 	 * @param s The haystack
@@ -332,7 +376,7 @@ public final class do_str {
 	 * @return The index of <code>f</code> or -1.
 	 */
 	public static final int lastIndexOf(final CharSequence s, final char f, final int offset) {
-		return do_str.lastIndexOf(s,f,offset,0);
+		return do_str.lastIndexOf(s, f, offset, 0);
 	}
 	/** All methods are case insensitive.
 	 * <br>Created: Oct 19, 2010
@@ -350,10 +394,10 @@ public final class do_str {
 			return do_str.lastIndexOf(s.toString().toLowerCase(),f,offset,limit);
 		}
 		public static final int lastIndexOf(final CharSequence s, final String f, final int offset, final int limit) {
-			return do_str.lastIndexOf(s.toString().toLowerCase(),f.toLowerCase(),offset,limit);
+			return do_str.lastIndexOf(s.toString().toLowerCase(), f.toLowerCase(), offset, limit);
 		}
 		public static final int lastIndexOf(final CharSequence s, final String f) {
-			return do_str.CI.lastIndexOf(s,f,s.length(),0);
+			return do_str.CI.lastIndexOf(s, f, s.length(), 0);
 		}
 		/**Exists only to add lastIndexOf(char,int) to classes like StringBuilder.
 		 * @param s The haystack
@@ -362,7 +406,7 @@ public final class do_str {
 		 * @return The index of <code>f</code> or -1.
 		 */
 		public static final int lastIndexOf(final CharSequence s, final char f, final int offset) {
-			return do_str.lastIndexOf(s.toString().toLowerCase(),f,offset,0);
+			return do_str.lastIndexOf(s.toString().toLowerCase(), f, offset, 0);
 		}
 		/** Returns the index of the first occurrence such that startsWith(s,f,offset) is true.
 		 * @param s The string to search
@@ -371,13 +415,20 @@ public final class do_str {
 		 * @return The index f is found or -1
 		 */
 		public static final int indexOf(final CharSequence s, final CharSequence f, int offset) {
-			final int max = s.length()-f.length();
-			for (;offset<=max; offset++)
-				if (CI.startsWith(s,f,offset)) {
+			final int max= s.length() - f.length();
+			char startChar= Character.toLowerCase(f.charAt(0));
+			for (;offset <= max; offset++){
+				if(startChar == Character.toLowerCase(s.charAt(offset)) && CI.startsWith(s, f, offset)){
 					break;
 				}
-			if (offset>max) return -1;
+			}
+			if (offset > max){
+				return -1;
+			}
 			return offset;
+		}
+		public static final boolean startsWith(final CharSequence s, final CharSequence f) {
+			return startsWith(s, f, 0);
 		}
 		/**Adds startsWith() to StringBuilder.
 		 * @param s String to search
@@ -386,10 +437,17 @@ public final class do_str {
 		 * @return <code>true</code> if the character sequence represented by the argument is a prefix of the character sequence represented by this string; <code>false</code> otherwise.
 		 */
 		public static final boolean startsWith(final CharSequence s, final CharSequence f, final int offset) {
-			if (offset < 0) throw new IllegalArgumentException("Offset cannot be negative.");
-			if (offset+f.length() > s.length()) return false;
-			for (int i=0; i<f.length(); i++)
-				if (Character.toLowerCase(s.charAt(i+offset)) != Character.toLowerCase(f.charAt(i))) return false;
+			if(offset < 0){
+				throw new IllegalArgumentException("Offset cannot be negative.");
+			}
+			if(offset + f.length() > s.length()){
+				return false;
+			}
+			for(int i= 0; i < f.length(); i++){
+				if(Character.toLowerCase(s.charAt(i + offset)) != Character.toLowerCase(f.charAt(i))){
+					return false;
+				}
+			}
 			return true;
 		}
 		/**Adds endsWith() to StringBuilder
@@ -411,9 +469,13 @@ public final class do_str {
 		return do_str.startsWith(haystack, needle, 0);
 	}
 	public static final boolean startsWith(final CharSequence haystack, final CharSequence needle, final int offset) {
-		if ((needle.length()+offset)>haystack.length()) return false;
-		for (int i = 0; i < needle.length(); i++) {
-			if (haystack.charAt(offset+i) != needle.charAt(i)) return false;
+		if((needle.length() + offset) > haystack.length()){
+			return false;
+		}
+		for(int i= 0; i < needle.length(); i++) {
+			if(haystack.charAt(offset+i) != needle.charAt(i)){
+				return false;
+			}
 		}
 		return true;
 	}
@@ -423,7 +485,7 @@ public final class do_str {
 	 * @return <code>true</code> if the string ends with <code>f</code>
 	 */
 	public static final boolean endsWith(final CharSequence haystack, final CharSequence needle) {
-		return do_str.startsWith(haystack,needle,haystack.length()-needle.length());
+		return do_str.startsWith(haystack, needle, haystack.length() - needle.length());
 	}
 	/**Adds a special endsWith(). Tests to see if the characters before the offset match.
 	 * @param haystack String to search
@@ -432,7 +494,7 @@ public final class do_str {
 	 * @return <code>true</code> if the string ends with <code>f</code>.
 	 */
 	public static final boolean endsWith(final CharSequence haystack, final CharSequence needle, final int offset) {
-		return do_str.startsWith(haystack,needle,offset-needle.length());
+		return do_str.startsWith(haystack, needle, offset - needle.length());
 	}
 	/**
 	 * Skips anything that makes Character.isWhitespace return true.
@@ -441,8 +503,10 @@ public final class do_str {
 	 * @return Index where the whitespace ends.
 	 */
 	public static final int skipWhitespace(final CharSequence s, int offset) {
-		while (offset < s.length() && Character.isWhitespace(s.charAt(offset)))
-		{ offset++; }
+		int end= s.length();
+		while(offset < end && Character.isWhitespace(s.charAt(offset))){
+			offset++;
+		}
 		return offset;
 	}
 	/** Ignores <code>length</code> characters or until <code>until</code> is found.
@@ -453,13 +517,15 @@ public final class do_str {
 	 * @return Index where either condition is met.
 	 */
 	public static final int ingore(final CharSequence s, int offset, int length, final char until) {
-		if (offset+length > s.length()) {
-			length = s.length();
-		} else {
-			length += offset;
+		if(offset + length > s.length()){
+			length= s.length();
+		}else{
+			length+= offset;
 		}
-		for (;offset < length; offset++) {
-			if (s.charAt(offset)==until) {	break;	}
+		for(; offset < length; offset++){
+			if(s.charAt(offset) == until){
+				break;
+			}
 		}
 		return offset;
 	}
@@ -475,7 +541,10 @@ public final class do_str {
 	 *          different lengths.<br>Ex. part_comp("Tutu", "Tu") returns true
 	 *          <br>part_comp("tutu", "Tu") returns true
 	 *          <br>part_comp("tutu", "tulip") returns false
+	 * @deprecated I need to move this to specific program it was made for.
+	 * TODO: move this to a util in the JavaMud program
 	 */
+	@Deprecated
 	public static final boolean part_comp(String s1, String s2, final boolean ignorecase) {
 		if (ignorecase) {
 			s1 = s1.toLowerCase();
@@ -501,7 +570,10 @@ public final class do_str {
 	 * Ex. part_comp("tu", "Tutu") returns true
 	 * <br>part_comp("tut", "Tu") returns false
 	 * <br>part_comp("tuT", "tut") returns true
+	 * @deprecated I need to move this to specific program it was made for.
+	 * TODO: move this to a util in the JavaMud program
 	 */
+	@Deprecated
 	public static final boolean part_comp2(String comparator, String original, final boolean ignorecase) {
 		if (comparator.length() > original.length())
 			return false;
@@ -525,7 +597,9 @@ public final class do_str {
 	 * Ex. part_comp("Tutu", "Tu") returns 2
 	 * <br>part_comp("tutu", "Tut") returns 0
 	 * <br>part_comp("tutu", "tot") returns 1
+	 * @deprecated
 	 */
+	@Deprecated
 	public static final int count_same(final String s1, final String s2) {
 		final int len = ((s1.length() > s2.length()) ? s2.length() : s1.length());
 		int i = 0;
@@ -546,24 +620,19 @@ public final class do_str {
 	 * Ex. part_comp("Tutu", "Tu") returns 2
 	 * <br>part_comp("tutu", "Tut") returns 3
 	 * <br>part_comp("tutu", "tot") returns 1
+	 * @deprecated
 	 */
+	@Deprecated
 	public static final int count_sameIgnoreCase(String s1, String s2) {
-		s1 = s1.toLowerCase();
-		s2 = s2.toLowerCase();
-		final int len = ((s1.length() > s2.length()) ? s2.length() : s1.length());
-		int i = 0;
-		for (; i < len; i++) {
-			if (s1.charAt(i) != s2.charAt(i)) {
-				break;
-			}
-		}
-		return i;
+		return count_same(s1.toLowerCase(), s2.toLowerCase());
 	}
 	/**
 	 * Like count_same(String, String) but for a list.
 	 * @param list
 	 * @return The number of characters the list has in common.
+	 * @deprecated Why? Just why?
 	 */
+	@Deprecated
 	public static final int count_same(final String[] list) {
 		int len = Integer.MAX_VALUE;
 		int i = 0;
@@ -572,10 +641,11 @@ public final class do_str {
 		}
 		out:
 			for (i = 0; i < len; i++) {
-				for (int j = 0; j < list.length-1; j++)
+				for (int j = 0; j < list.length-1; j++){
 					if (list[j].charAt(i) != list[j+1].charAt(i)) {
 						break out;
 					}
+				}
 			}
 		return i;
 	}
@@ -583,7 +653,9 @@ public final class do_str {
 	 * Like count_sameIgnoreCase(String, String) but for a list.
 	 * @param list
 	 * @return The number of characters the list has in common.
+	 * @deprecated Again, why?
 	 */
+	@Deprecated
 	public static final int count_sameIgnoreCase(final String[] list) {
 		int len = Integer.MAX_VALUE;
 		int i = 0;
@@ -607,9 +679,12 @@ public final class do_str {
 	 * @param input
 	 * @param i
 	 * @return <var>i<sup>th</sup></var> argument.
+	 * @see simple.util.command.Command
+	 * @deprecated
 	 */
+	@Deprecated
 	public static final String argn(final String input, final int i) {
-		final String z[] = input.split(" ");
+		final String z[]= input.split(" ");
 		if (i > (z.length - 1))
 			return z[z.length - 1];
 		return z[i];
@@ -640,17 +715,15 @@ public final class do_str {
 	 * @return The padded string.
 	 */
 	public static final String padLeft(final int cols, final char pad, final String input) {
-		if (cols<=input.length())
+		if (cols <= input.length()){
 			return input;
-		final char[] buf = new char[cols];
-		final int diff = cols-input.length();
-		int i= 0;
-		for (; i<diff; i++) {
-			buf[i]= pad;
 		}
-		for (; i<cols; i++) {
-			buf[i]= input.charAt(i-diff);
-		}
+
+		final char[] buf= new char[cols];
+		final int diff= cols - input.length();
+		Arrays.fill(buf, 0, diff, pad);
+		System.arraycopy(input.toCharArray(), diff, buf, 0, input.length());
+
 		return new String(buf);
 	}
 	/**
@@ -665,16 +738,13 @@ public final class do_str {
 	 * @return The padded string.
 	 */
 	public static final String padRight(final int cols, final char pad, final String input) {
-		if (cols<=input.length())
+		if (cols <= input.length()){
 			return input;
+		}
+
 		char[] buf= new char[cols];
-		int i= 0;
-		for(; i < input.length(); i++){
-			buf[i]= input.charAt(i);
-		}
-		for(; i < buf.length; i++){
-			buf[i]= pad;
-		}
+		System.arraycopy(input.toCharArray(), 0, buf, 0, input.length());
+		Arrays.fill(buf, input.length(), buf.length, pad);
 
 		return new String(buf);
 	}
@@ -693,9 +763,10 @@ public final class do_str {
 	public static final String[] sort(final String[] list) {
 		String tmp = null;
 		boolean change;
+		int end= list.length - 1;
 		do{
-			change = false;
-			for (int i = 0;i<list.length-1;i++) {
+			change= false;
+			for(int i= 0;i < end; i++){
 				if (do_str.compare(list[i], list[i+1])<0) {
 					tmp = list[i];
 					list[i] = list[i+1];
@@ -721,14 +792,15 @@ public final class do_str {
 	public static final String[] sortReverse(final String[] list) {
 		String tmp = null;
 		boolean change;
-		do {
-			change = false;
-			for (int i = 0;i<list.length-1;i++) {
-				if (do_str.compare(list[i], list[i+1])>0) {
-					tmp = list[i];
-					list[i] = list[i+1];
-					list[i+1] = tmp;
-					change = true;
+		int end= list.length - 1;
+		do{
+			change= false;
+			for(int i= 0; i < end; i++){
+				if(do_str.compare(list[i], list[i+1]) > 0){
+					tmp= list[i];
+					list[i]= list[i+1];
+					list[i+1]= tmp;
+					change= true;
 				}
 			}
 		}while(change);
@@ -745,22 +817,22 @@ public final class do_str {
 	public static final int compare(final String orig, final String comp) {
 		final int stop = Math.min(orig.length(), comp.length());
 		int result = 0;
-		for (int i = 0; i<stop; i++) {
-			if (orig.charAt(i)!=comp.charAt(i)) {
-				if (orig.charAt(i)>comp.charAt(i)) {
-					result = -1;
-				} else {
-					result = 1;
+		for(int i = 0; i < stop; i++){
+			if(orig.charAt(i) != comp.charAt(i)){
+				if(orig.charAt(i) > comp.charAt(i)){
+					result= -1;
+				}else{
+					result= 1;
 				}
 				break;
 			}
 		}
-		if (result==0) {
-			if (orig.length()!=comp.length()) {
-				if (orig.length()>comp.length()) {
-					result = -1;
-				} else {
-					result = 1;
+		if(result == 0){
+			if(orig.length() != comp.length()){
+				if(orig.length() > comp.length()){
+					result= -1;
+				}else{
+					result= 1;
 				}
 			}
 		}
@@ -779,12 +851,12 @@ public final class do_str {
 	 * @return Returns something similar to the declaration code.
 	 */
 	public static final String toString(final String[] s) {
-		final StringBuffer buf = new StringBuffer();
+		final StringBuffer buf= new StringBuffer();
 		buf.append("{");
-		for (int i = 0;i<s.length;i++) {
-			buf.append(s[i]+", ");
+		for(String c : s) {
+			buf.append(c).append(", ");
 		}
-		buf.delete(buf.length()-2,buf.length());
+		buf.delete(buf.length() - 2,buf.length());
 		buf.append("}");
 		return buf.toString();
 	}
@@ -797,11 +869,14 @@ public final class do_str {
 		return buf.toString();
 	}
 	public static final String toString(final Iterator<String> iter, final String seperator) {
-		final StringBuffer buf = new StringBuffer(2048);
-		while (iter.hasNext()) {
-			buf.append(iter.next()+seperator);
+		final StringBuffer buf= new StringBuffer(2048);
+		if(iter.hasNext()){
+			buf.append(iter.next());
 		}
-		buf.delete(buf.length()-seperator.length(), buf.length());
+		while (iter.hasNext()){
+			buf.append(seperator)
+			   .append(iter.next());
+		}
 		return buf.toString();
 	}
 	public static final String toString(final List<String> iter, final String seperator) {
@@ -811,13 +886,15 @@ public final class do_str {
 	 * @param num Number to parse.
 	 * @param sep Character to insert every three digits.
 	 * @return A string value of <var>num</var> with <var>sep</var> inserted every three digits.
+	 * @deprecated Why did I make this?
 	 */
-	public static final String toString (final long num, final char sep) {
-		final char[] n = String.valueOf(num).toCharArray();
-		final StringBuffer buf = new StringBuffer(n.length*(1+(n.length/3)-n.length%3));
-		for (int i = 0;i < n.length; i++) {
+	@Deprecated
+	public static final String toString(final long num, final char sep) {
+		final char[] n= String.valueOf(num).toCharArray();
+		final StringBuffer buf= new StringBuffer(n.length*(1+(n.length/3)-n.length%3));
+		for (int i = 0; i < n.length; i++) {
 			buf.append(n[i]);
-			if (i%3==0) {
+			if (i%3 == 0){
 				buf.append(sep);
 			}
 		}
@@ -836,9 +913,9 @@ public final class do_str {
 	 * 		False otherwise.
 	 */
 	public static final boolean isNaN(final String x) {
-		if (x==null) return true;
-		if (x.length()==0)
+		if (x == null || x.isEmpty()){
 			return true;
+		}
 		return !do_str.nPattern.matcher(x).matches();
 	}
 	/**
@@ -848,7 +925,7 @@ public final class do_str {
 	 * is non-null, then it returns val.
 	 */
 	public static final String getNonNullValue(final String val) {
-		return val==null?"":val;
+		return val == null ? "" : val;
 	}
 	/**
 	 * Returns either def or val.
@@ -858,14 +935,16 @@ public final class do_str {
 	 * then it returns def.
 	 */
 	public static final String getNonNullValue(final String val, final String def) {
-		return val==null?def:val;
+		return val == null ? def : val;
 	}
 	public static final boolean equals(final char[] c0, final char[] c1) {
-		if (c0 == null || c1 == null) return false;
-		if (c0.length != c1.length) return false;
+		if (c0 == null || c1 == null || c0.length != c1.length){
+			return false;
+		}
 		for (int i = 0; i < c0.length; i++) {
-			if (c0[i] != c1[i])
+			if (c0[i] != c1[i]){
 				return false;
+			}
 		}
 		return true;
 	}
@@ -920,26 +999,30 @@ public final class do_str {
 	 * @return The formatted string.
 	 */
 	public static final String wrapString(final String val, final int cols, final boolean wrapWord, final String lineSep) {
-		final StringBuffer buf = new StringBuffer(val.length());
-		int breakIndex = 0;
-		int j = 0;
-		for (int i = 0; i<val.length()+cols; i+=cols) {
-			if (i >= val.length()) {
-				buf.append(val.substring(breakIndex));
+		final StringBuffer buf= new StringBuffer(val.length());
+		// index of the last line break
+		int prevBreakIdx= 0,
+			newBreakIdx= 0,
+			end= val.length() + cols,
+			valLen= val.length();
+		for (int curIdx= 0; curIdx < end; curIdx+= cols) {
+			if (curIdx >= valLen) {
+				buf.append(val.substring(prevBreakIdx));
 				break;
 			}
-			if (wrapWord) {
-				for (j = i; (val.charAt(j)!=' ')&&(j!=breakIndex) ; j--) {}
-			} else {
-				j = i;
+			if(wrapWord){
+				// back-up to a whitespace
+				for(newBreakIdx= curIdx; (val.charAt(newBreakIdx) != ' ') && (newBreakIdx != prevBreakIdx); newBreakIdx--);
+			}else{
+				newBreakIdx= curIdx;
 			}
-			if (j > breakIndex) {
-				buf.append(val.substring(breakIndex, j));
+			if (newBreakIdx > prevBreakIdx){
+				buf.append(val.substring(prevBreakIdx, newBreakIdx));
 			} else {
-				buf.append(val.substring(breakIndex, i));
-				j = i;
+				buf.append(val.substring(prevBreakIdx, curIdx));
+				newBreakIdx= curIdx;
 			}
-			breakIndex = j;
+			prevBreakIdx= newBreakIdx;
 			buf.append(lineSep);
 		}
 		return buf.toString();
@@ -955,5 +1038,75 @@ public final class do_str {
 		int i= str.length() - 1;
 		for(;i > -1 && Character.isWhitespace(str.charAt(i));i--);
 		return str.substring(0, i);
+	}
+
+	/**
+	 * Calculates the minimum number of inserts, deletes, or substitutions needed
+	 * to make s1 == s2.
+	 * @param s1
+	 * @param s2
+	 * @return The number of changes needed to make s1 == s2
+	 */
+	public static int levenshteinDistance(CharSequence s1, CharSequence s2){
+		// base cases
+		if(s1 == null || s1.length() == 0){
+			return s2 == null ? 0 : s2.length();
+		}
+		if(s2 == null || s2.length() == 0){
+			return s1.length();
+		}
+		if(s1 == s2){
+			return 0;
+		}
+
+		// simple case (all substitutions)
+		if( (s1.length() - s2.length()) == 0){
+			int distance= 0;
+			for(int i= 0, len= s1.length(); i < len; i++){
+				if(s1.charAt(i) != s2.charAt(i)){
+					distance++;
+				}
+			}
+			return distance;
+		}
+
+		final CharSequence longer, shorter;
+		if((s1.length() - s2.length()) > 0){
+			longer= s1;
+			shorter= s2;
+		}else{
+			shorter= s1;
+			longer= s2;
+		}
+
+		int
+			shortIdx,
+			longIdx,
+			shortLen= shorter.length(),
+			longLen= longer.length();
+		int[]
+			prev= new int[shortLen + 1],
+			swap,
+			cur= new int[shortLen + 1];
+		int cost;
+
+		// initialize previous values
+		for(shortIdx= 1; shortIdx < shortLen; shortIdx++){
+			prev[shortIdx]= shortIdx;
+		}
+
+		for(longIdx= 0; longIdx < longLen; longIdx++){
+			cur[0]= shortIdx + 1;
+			for(shortIdx= 0; shortIdx < shortLen; shortIdx++){
+				cost= (shorter.charAt(shortIdx) == longer.charAt(longIdx)) ? 0 : 1;
+				cur[shortIdx + 1]= Math.min(prev[shortIdx] + cost, Math.min(cur[shortIdx] + 1, prev[shortIdx + 1] + 1));
+			}
+			// Swap the arrays for the next iteration; Avoids a copy
+			swap= prev;
+			prev= cur;
+			cur= swap;
+		}
+
+		return cur[shortLen];
 	}
 }
