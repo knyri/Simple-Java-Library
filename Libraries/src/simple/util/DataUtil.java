@@ -21,23 +21,23 @@ public final class DataUtil{
 			return new byte[]{b};
 		}
 		public static byte[] toByteArray(short b){
-			byte[] ret= new byte[Short.SIZE/2];
-			for(int i= Short.SIZE/2 - 1, shift= 0; i >= 0; i--, shift+= 8){
-				ret[i]= (byte)((b >> shift) & 0xff);
-			}
-			return ret;
+			return toByteArray(b, Short.SIZE);
 		}
 		public static byte[] toByteArray(int b){
-			byte[] ret= new byte[Integer.SIZE/2];
-			for(int i= Integer.SIZE/2 - 1, shift= 0; i >= 0; i--, shift+= 8){
-				ret[i]= (byte)((b >> shift) & 0xff);
-			}
-			return ret;
+			return toByteArray(b, Integer.SIZE);
 		}
 		public static byte[] toByteArray(long b){
-			byte[] ret= new byte[Long.SIZE/2];
-			for(int i= Long.SIZE/2 - 1, shift= 0; i >= 0; i--, shift+= 8){
-				ret[i]= (byte)((b >> shift) & 0xff);
+			return toByteArray(b, Long.SIZE);
+		}
+		/**
+		 * @param val
+		 * @param valSize Size of val in bits. MUST be even.
+		 * @return
+		 */
+		public static byte[] toByteArray(long val, int valSize){
+			byte[] ret= new byte[valSize/2];
+			for(int i= ret.length - 1, shift= 0; i >= 0; i--, shift+= 8){
+				ret[i]= (byte)((val >> shift) & 0xff);
 			}
 			return ret;
 		}
@@ -138,23 +138,23 @@ public final class DataUtil{
 			return new byte[]{b};
 		}
 		public static byte[] toByteArray(short b){
-			byte[] ret= new byte[Short.SIZE/2];
-			for(int i= Short.SIZE/2 - 1, shift= Short.SIZE - 8; i >= 0; i--, shift-= 8){
-				ret[i]= (byte)((b >> shift) & 0xff);
-			}
-			return ret;
+			return toByteArray(b, Short.SIZE);
 		}
 		public static byte[] toByteArray(int b){
-			byte[] ret= new byte[Integer.SIZE/2];
-			for(int i= Integer.SIZE/2 - 1, shift= Integer.SIZE - 8; i >= 0; i--, shift-= 8){
-				ret[i]= (byte)((b >> shift) & 0xff);
-			}
-			return ret;
+			return toByteArray(b, Integer.SIZE);
 		}
 		public static byte[] toByteArray(long b){
-			byte[] ret= new byte[Long.SIZE/2];
-			for(int i= Long.SIZE/2 - 1, shift= Long.SIZE - 8; i >= 0; i--, shift-= 8){
-				ret[i]= (byte)((b >> shift) & 0xff);
+			return toByteArray(b, Long.SIZE);
+		}
+		/**
+		 * @param val
+		 * @param valSize Size of val in bits. MUST be even.
+		 * @return
+		 */
+		public static byte[] toByteArray(long val, int valSize){
+			byte[] ret= new byte[valSize/2];
+			for(int i= valSize/2 - 1, shift= valSize - 8; i >= 0; i--, shift-= 8){
+				ret[i]= (byte)((val >> shift) & 0xff);
 			}
 			return ret;
 		}
