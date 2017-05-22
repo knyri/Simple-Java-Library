@@ -46,19 +46,17 @@ public class ByteBuffer {
 		return size;
 	}
 	private void grow() {
-		synchronized(buf) {
-			byte[] tmp = new byte[(int)(size*(1+growthRate))];
-			if (start > end) {
-				// Might as well place them in order while we're here
-				System.arraycopy(buf, start, tmp, 0, buf.length - start);
-				System.arraycopy(buf, 0, tmp, buf.length - start, end);
-			} else {
-				System.arraycopy(buf, start, tmp, 0, end - start);
-			}
-			buf = tmp;
-			start = 0;
-			end = size - 1;
+		byte[] tmp = new byte[(int)(size*(1+growthRate))];
+		if (start > end) {
+			// Might as well place them in order while we're here
+			System.arraycopy(buf, start, tmp, 0, buf.length - start);
+			System.arraycopy(buf, 0, tmp, buf.length - start, end);
+		} else {
+			System.arraycopy(buf, start, tmp, 0, end - start);
 		}
+		buf = tmp;
+		start = 0;
+		end = size - 1;
 	}
 	/**
 	 * grows the internal array if needed.
@@ -74,14 +72,12 @@ public class ByteBuffer {
 	 * @param v the value
 	 */
 	public void put(byte v) {
-		synchronized(buf) {
-			ensureCapacity();
-			if (++end == buf.length)
-				end = 0;
-			if(size != 0 && end == start) throw new BufferOverflowException();
-			buf[end] = v;
-			size++;
-		}
+		ensureCapacity();
+		if (++end == buf.length)
+			end = 0;
+		if(size != 0 && end == start) throw new BufferOverflowException();
+		buf[end] = v;
+		size++;
 	}
 	/**
 	 * @param at Can be negative
@@ -119,30 +115,26 @@ public class ByteBuffer {
 	 * @return The next byte.
 	 */
 	public byte get() {
-		synchronized(buf) {
-			if (size == 0)
-				throw new BufferUnderflowException();
-			byte b = buf[start++];
-			if (start == buf.length)
-				start = 0;
-			size--;
-			return b;
-		}
+		if (size == 0)
+			throw new BufferUnderflowException();
+		byte b = buf[start++];
+		if (start == buf.length)
+			start = 0;
+		size--;
+		return b;
 	}
 	/**
 	 * Removes and returns the last byte
 	 * @return The last byte
 	 */
 	public byte getLast(){
-		synchronized(buf) {
-			if (size == 0)
-				throw new BufferUnderflowException();
-			byte ret= buf[end--];
-			if(end<0)
-				end= buf.length-1;
-			size--;
-			return ret;
-		}
+		if (size == 0)
+			throw new BufferUnderflowException();
+		byte ret= buf[end--];
+		if(end<0)
+			end= buf.length-1;
+		size--;
+		return ret;
 	}
 	public void clear(){
 		start= size= 0;
