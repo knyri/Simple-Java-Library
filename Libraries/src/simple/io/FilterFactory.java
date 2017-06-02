@@ -5,6 +5,7 @@ package simple.io;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,19 +50,40 @@ public final class FilterFactory {
 		};
 	}
 	/**
-	 * Case insensitive file filter. Creates the description from
+	 * Creates a FileFilter for File.listFiles()
+	 * @param exts
+	 * @return
+	 */
+	public static java.io.FileFilter createFileFilter(String...exts){
+		final String[] extList= Arrays.copyOf(exts, exts.length);
+		return new java.io.FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				String ext= file.getName();
+				ext= ext.substring(ext.lastIndexOf('.')+1).toLowerCase();
+				for(String s: extList){
+					if(s.equals(ext)){
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
+	/**
+	 * Case insensitive FileChooser file filter. Creates the description from
 	 * the list of extensions.
 	 * @param list List of wanted extensions.
 	 * @return
 	 */
-	public static FileFilter createFileFilter(String... list) {
+	public static FileFilter createFileChooserFilter(String... list) {
 		final List<String> exts= new LinkedList<>();
 		StringBuilder descb= new StringBuilder(list.length*5);
 		for(String ext: list){
 			exts.add(ext.toLowerCase());
 			descb.append(ext).append(',');
 		}
-		descb.deleteCharAt(descb.length()-1);
+		descb.setLength(descb.length()-1);
 		final String desc= descb.toString();
 		return new FileFilter() {
 			@Override
@@ -83,12 +105,12 @@ public final class FilterFactory {
 		};
 	}
 	/**
-	 * Case insensitive extension filter.
+	 * Case insensitive FileChooser extension filter.
 	 * @param ext
 	 * @param desc
 	 * @return
 	 */
-	public static FileFilter createFileFilter(final String ext, final String desc) {
+	public static FileFilter createFileChooserFilter(final String ext, final String desc) {
 		final String extl= ext.toLowerCase();
 		return new javax.swing.filechooser.FileFilter() {
 			@Override
