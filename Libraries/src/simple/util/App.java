@@ -238,10 +238,10 @@ public final class App {
 	public static final LineEnding getLineEndingType(String line) {
 		return LineEnding.getLineEndingType(line);
 	}
-	public static void print(String str){
+	public static void print(Object str){
 		System.out.print(str);
 	}
-	public static void println(String str){
+	public static void println(Object str){
 		System.out.println(str);
 	}
 	public static void println(){
