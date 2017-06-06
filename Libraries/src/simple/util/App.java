@@ -63,7 +63,7 @@ public final class App {
 	 * @throws URISyntaxException
 	 */
 	public static final File getResourceAsFile(final String location, final Class<?> loader) throws FileNotFoundException, URISyntaxException {
-		final URL tmp= loader.getClassLoader().getResource(location);
+		final URL tmp= loader.getResource(location);
 		if (tmp == null){
 			final File f= new File(location);
 			if (!f.exists()){
@@ -87,7 +87,7 @@ public final class App {
 	 * @throws FileNotFoundException Occurs if the loader returns a null
 	 */
 	public static final URL getResource(final String location, final Class<?> loader) throws FileNotFoundException {
-		URL file= loader.getClassLoader().getResource(location);
+		URL file= loader.getResource(location);
 		if (file == null){
 			final File f= new File(location);
 			if(!f.exists()){
@@ -116,7 +116,7 @@ public final class App {
 	 * @throws FileNotFoundException Occurs if the loader returns a null
 	 */
 	public static final InputStream getResourceAsStream(final String location, final Class<?> loader) throws FileNotFoundException {
-		final InputStream file= loader.getClassLoader().getResourceAsStream(location);
+		final InputStream file= loader.getResourceAsStream(location);
 		if (file == null){
 			throw new FileNotFoundException(location + " could not be found.");
 		}
