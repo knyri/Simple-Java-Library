@@ -722,7 +722,7 @@ public final class do_str {
 		final char[] buf= new char[cols];
 		final int diff= cols - input.length();
 		Arrays.fill(buf, 0, diff, pad);
-		System.arraycopy(input.toCharArray(), diff, buf, 0, input.length());
+		System.arraycopy(input.toCharArray(), 0, buf, diff, input.length());
 
 		return new String(buf);
 	}
