@@ -61,7 +61,7 @@ public final class Client{
 	public static final Header[] defaults=new Header[]{
 		new BasicHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
 		new BasicHeader("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.3"),
-		new BasicHeader("Accept-Encoding","gzip,deflate"),
+//		new BasicHeader("Accept-Encoding","gzip,deflate"),
 		new BasicHeader("Accept-Language","en-US,en;q=0.8")
 	};
 	public static enum PostDataType {
@@ -128,7 +128,6 @@ public final class Client{
 	 * @throws ClientProtocolException  in case of an http protocol error
 	 * @throws IOException in case of a problem or the connection was aborted
 	 */
-	@SuppressWarnings("resource")
 	public CloseableHttpResponse get(String uri, Header[] headers, HttpContext context) throws ClientProtocolException, IOException{
 		HttpGet req=new HttpGet(uri);
 
@@ -179,7 +178,6 @@ public final class Client{
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	@SuppressWarnings("resource")
 	public CloseableHttpResponse post(String uri,Header[] headers,String data, Charset charset,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri);
 
@@ -223,7 +221,6 @@ public final class Client{
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	@SuppressWarnings("resource")
 	public CloseableHttpResponse post(String uri,Header[] headers,ClientParam[] data,PostDataType format,HttpContext context) throws ClientProtocolException, IOException{
 		HttpPost req=new HttpPost(uri);
 
