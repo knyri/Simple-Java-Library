@@ -14,8 +14,6 @@ import simple.net.Uri;
 import simple.parser.ml.InlineLooseParser;
 import simple.parser.ml.Page;
 import simple.parser.ml.Tag;
-import simple.util.logging.Log;
-import simple.util.logging.LogFactory;
 
 /**
  * This class reads a simple XML file containing MIME Type information and
@@ -44,14 +42,15 @@ public final class MimeTypes {
 			extTomime = new HashMap<String, LinkedList<String>>();
 	private static final CIString mime = new CIString("mime"), ext = new CIString("ext");
 	private static boolean loaded = false;
-	private static final Log log = LogFactory.getLogFor(MimeTypes.class);
+//	private static final Log log = LogFactory.getLogFor(MimeTypes.class);
 	static {
-		System.out.println("Loading MimeTypes...");
+//		System.out.println("Loading MimeTypes...");
+//		log.setPrintDebug(true);
 		if (!loaded) {
 			loaded=true;
 			EMPTYVECTOR.add("");
 			loaded = loadTypes();
-			log.information("loaded mime types");
+//			log.information("loaded mime types");
 		}
 		System.out.println("MimeTypes Loaded");
 	}
@@ -65,7 +64,7 @@ public final class MimeTypes {
 	public static String getMimeType(final Uri e) throws IOException {
 		final List<String> list = getMime(e);
 		if (list.get(0).isEmpty()) {
-			log.debug("Server connection for MIME", e);
+//			log.debug("Server connection for MIME", e);
 			final HttpURLConnection con = (HttpURLConnection)e.openConnection();
 			String type;
 			con.setRequestMethod("HEAD");
@@ -79,7 +78,7 @@ public final class MimeTypes {
 	public static String getMimeType(final Uri e, final String referer) throws IOException {
 		final List<String> list = getMime(e);
 		if (list.get(0).isEmpty()) {
-			log.debug("Server connection for MIME", e);
+//			log.debug("Server connection for MIME", e);
 			final HttpURLConnection con = (HttpURLConnection)e.openConnection();
 			String type;
 			if(referer != null)
@@ -103,7 +102,7 @@ public final class MimeTypes {
 			final Page page = InlineLooseParser.parse(
 					RWUtil.readFully(new InputStreamReader(
 							MimeTypes.class.getClassLoader().getResource("mimeTypes.conf.xml").openStream())));
-			log.debug(page);
+//			log.debug(page);
 			add(page.getTag("mime.image;0"), image);
 			add(page.getTag("mime.video;0"), video);
 			add(page.getTag("mime.audio;0"), audio);
@@ -124,6 +123,9 @@ public final class MimeTypes {
 		String[] exttmp;
 		LinkedList<String> vectmp;
 		for (final Tag tag : tags) {
+			if(!tag.hasProperty(mime)){
+				continue;
+			}
 			mimetmp = tag.getProperty(mime).toLowerCase().intern();
 			exttmp = tag.getProperty(ext).toLowerCase().split(" ");
 			for (byte j = 0; j < exttmp.length; j++) {
@@ -142,68 +144,90 @@ public final class MimeTypes {
 		}
 	}
 	public static boolean isMimeVideo(String mime) {
-		if (mime==null) return false;
+		if (mime==null){
+			return false;
+		}
 		mime = mime.toLowerCase();
-		if (mime.startsWith("video"))
+		if (mime.startsWith("video")){
 			return true;
-		else
+		}else{
 			return video.containsKey(mime);
+		}
 	}
 	public static boolean isMimeAudio(String mime) {
-		if (mime==null) return false;
+		if (mime==null){
+			return false;
+		}
 		mime = mime.toLowerCase();
-		if (mime.startsWith("audio"))
+		if (mime.startsWith("audio")){
 			return true;
-		else
+		}else{
 			return audio.containsKey(mime);
+		}
 	}
 	public static boolean isMimeImage(String mime) {
-		if (mime==null) return false;
+		if (mime==null){
+			return false;
+		}
 		mime = mime.toLowerCase();
-		if (mime.startsWith("image"))
+		if (mime.startsWith("image")){
 			return true;
-		else
+		}else{
 			return image.containsKey(mime);
+		}
 	}
 	public static boolean isMimeOther(String mime) {
-		if (mime==null) return false;
+		if (mime==null){
+			return false;
+		}
 		mime = mime.toLowerCase();
 		if (mime.startsWith("application") || mime.startsWith("text") ||
-				mime.startsWith("drawing") || mime.startsWith("model"))
+				mime.startsWith("drawing") || mime.startsWith("model")){
 			return true;
-		else
+		}else{
 			return other.containsKey(mime);
+		}
 	}
 	public static boolean isMimeDocument(String mime) {
-		if (mime==null) return false;
+		if (mime==null){
+			return false;
+		}
 		mime = mime.toLowerCase();
 		return document.containsKey(mime);
 	}
 	public static boolean isMimeArchive(String mime) {
-		if (mime==null) return false;
+		if (mime==null){
+			return false;
+		}
 		mime = mime.toLowerCase();
 		return archive.containsKey(mime);
 	}
 	public static List<String> getExt(final String mime) {
 		List<String> ext = null;
 		ext = image.get(mime);
-		if (ext!=null)
+		if (ext!=null){
 			return ext;
+		}
 		ext = video.get(mime);
-		if (ext!=null)
+		if (ext!=null){
 			return ext;
+		}
 		ext = audio.get(mime);
-		if (ext!=null)
+		if (ext!=null){
 			return ext;
+		}
 		ext = other.get(mime);
-		if (ext!=null)
+		if (ext!=null){
 			return ext;
+		}
 		ext = document.get(mime);
-		if (ext!=null)
+		if (ext!=null){
 			return ext;
+		}
 		ext = archive.get(mime);
-		if (ext!=null)
+		if (ext!=null){
 			return ext;
+		}
 		return EMPTYVECTOR;
 	}
 	/**Get's the MIME type from the raw header value. Some strange servers
@@ -215,10 +239,13 @@ public final class MimeTypes {
 		final String[] tmp = rawContent.split(";");
 		for (int i = 0; i < tmp.length; i++) {
 			tmp[i] = tmp[i].trim().toLowerCase();
-			if (tmp[i].startsWith("text") || tmp[i].startsWith("image") || tmp[i].startsWith("audio") ||
-					tmp[i].startsWith("video") || tmp[i].startsWith("application") || tmp[i].startsWith("drawing") ||
-					tmp[i].startsWith("model")
-				) return tmp[i];
+			if (
+				tmp[i].startsWith("text") || tmp[i].startsWith("image") || tmp[i].startsWith("audio") ||
+				tmp[i].startsWith("video") || tmp[i].startsWith("application") || tmp[i].startsWith("drawing") ||
+				tmp[i].startsWith("model")
+			){
+				return tmp[i];
+			}
 		}
 		return null;
 	}
@@ -244,9 +271,7 @@ public final class MimeTypes {
 			ext = ext.substring(ind+1);
 		}
 		final List<String> tmp = extTomime.get(ext.toLowerCase());
-		if (tmp == null)
-			return EMPTYVECTOR;
-		return tmp;
+		return tmp == null ? EMPTYVECTOR : tmp;
 	}
 	public static void main(final String[] args) {
 		new MimeTypes();
