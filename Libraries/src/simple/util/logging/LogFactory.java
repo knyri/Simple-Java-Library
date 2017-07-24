@@ -8,9 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,22 +35,32 @@ import simple.io.FileUtil;
  * @see simple.util.logging.Log
  */
 public final class LogFactory {
-	private static HashMap<Class<?>, Log> logCache = new HashMap<Class<?>, Log>();
+	private static HashMap<Class<?>, Log> logCache= new HashMap<>();
 	//private static final Log _log = new Log(LogFactory.class);
-	private static PrintWriter globalStream = new PrintWriter(System.out);
-	private static byte logOptions = (byte)0xFF;
-	private static boolean printTime=false,printDate=false;
-	private static final Timer updater=new Timer();
-	private static String timestamp="",datestamp="";
+	private static PrintWriter globalStream= new PrintWriter(System.out);
+	private static byte logOptions= (byte)0xFF;
+	private static boolean
+		printTime= false,
+		printDate= false;
+	private static final Timer updater= new Timer();
+	private static String
+		timestamp= "",
+		datestamp= "";
+	private static final DateTimeFormatter
+		dateFormat= DateTimeFormatter.ofPattern("yyyyMMdd"),
+		timeFormat= DateTimeFormatter.ofPattern("HHmmss");
 	static {
+
+		LocalDateTime now= LocalDateTime.now();
+		timestamp= timeFormat.format(now);
+		datestamp= dateFormat.format(now);
 		final TimerTask tt=new TimerTask(){
 			// This task updates the time and date stamps
-			final Calendar cal=Calendar.getInstance(TimeZone.getDefault());
 			@Override
 			public void run(){
-				cal.setTimeInMillis(System.currentTimeMillis());
-				timestamp=String.format("%1$tH%1$tM%1$tS",cal);
-				datestamp=String.format("%1$tY%1$tm%1$td",cal);
+				LocalDateTime now= LocalDateTime.now();
+				timestamp= timeFormat.format(now);
+				datestamp= dateFormat.format(now);
 			}
 		};
 		//run every second
