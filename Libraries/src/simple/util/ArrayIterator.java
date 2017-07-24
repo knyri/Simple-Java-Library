@@ -7,9 +7,9 @@ import java.util.Iterator;
  * @param <E>
  */
 public class ArrayIterator<E> implements Iterable<E> {
-	private final Object[] array;
+	private final E[] array;
 
-	public ArrayIterator(Object[] array) {
+	public ArrayIterator(E[] array) {
 		this.array= array;
 	}
 
@@ -26,11 +26,10 @@ public class ArrayIterator<E> implements Iterable<E> {
 				return (pos != end);
 			}
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public E next() {
 				if (hasNext()){
-					E retVal= (E)array[pos];
+					E retVal= array[pos];
 					pos= (pos + 1) % array.length;
 					return retVal;
 				}else{
