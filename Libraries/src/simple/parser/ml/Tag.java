@@ -1,5 +1,6 @@
 package simple.parser.ml;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +26,9 @@ public final class Tag implements Iterable<Tag> {
 		META = new CIString("DOCTYPE"),
 		SGMLCDATA = new CIString("SGMLCDATA"),
 		HTMLCOMM = new CIString("HCOM");
-	protected final LinkedList<Tag> children = new LinkedList<Tag>();
-	protected HashMap<CIString,String> properties = new HashMap<CIString,String>();
+	protected final ArrayList<Tag> children = new ArrayList<>();
+	protected HashMap<CIString,String> properties = new HashMap<>();
+
 	private Tag parent = null;
 	private CIString nName = null;
 	private String content = null;
@@ -226,27 +228,26 @@ public final class Tag implements Iterable<Tag> {
 		}
 		return ret;
 	}
+	public final <T extends List<Tag>> void getChildren(CIString tagName, T list){
+		for (final Tag node: children) {
+			if (node.getName().equals(tagName)) {
+				list.add(node);
+			}
+		}
+	}
 	/**
 	 * Faster than the String counterpart
 	 * @param tagName
 	 * @return
 	 */
-	public final List<Tag> getChildren(CIString tagName){
+	public List<Tag> getChildren(CIString tagName){
 		List<Tag> tags= new LinkedList<>();
-		for (final Tag node: children) {
-			if (node.getName().equals(tagName)) {
-				tags.add(node);
-			}
-		}
+		getChildren(tagName, tags);
 		return tags;
 	}
 	public final List<Tag> getChildren(String tagName){
 		List<Tag> tags= new LinkedList<>();
-		for (final Tag node: children) {
-			if (node.getName().equals(tagName)) {
-				tags.add(node);
-			}
-		}
+		getChildren(new CIString(tagName), tags);
 		return tags;
 	}
 	/**
@@ -268,9 +269,7 @@ public final class Tag implements Iterable<Tag> {
 	 * @see #indexOfForName(Tag)
 	 */
 	private final int indexOfForName() {
-		if (!hasParent())
-			return 0;
-		return getParent().indexOfForName(this);
+		return hasParent() ? getParent().indexOfForName(this) : 0;
 	}
 	/**Finds the tag counting all the tags with the same name along the way. This
 	 * count is returned.
@@ -424,7 +423,7 @@ public final class Tag implements Iterable<Tag> {
 		return false;
 	}
 	public Tag getLastChild(){
-		return children.peekLast();
+		return children.get(children.size() - 1);
 	}
 
 	/* (non-Javadoc)
@@ -493,7 +492,10 @@ public final class Tag implements Iterable<Tag> {
 	 * @param object Object to set as the contents.
 	 * @return this
 	 */
-	public final Tag setContent(String object){content = object; return this;}
+	public final Tag setContent(String object){
+		content = object;
+		return this;
+	}
 	/**
 	 * Contents of the Node. May be null.
 	 * @return The contents of the node.
@@ -504,12 +506,19 @@ public final class Tag implements Iterable<Tag> {
 	 * @param name String to set as the Node's name.
 	 * @return this
 	 */
-	public final Tag setName(String name) {nName=new CIString(name);return this;}
-	public final Tag setName(CIString name) {nName=name;return this;}
+	public final Tag setName(String name) {
+		nName=new CIString(name);
+		return this;
+	}
+	public final Tag setName(CIString name) {
+		nName=name;
+		return this;
+	}
 	/**
 	 * @return The name of this node.
 	 */
 	public final CIString getName() {return nName;}
+	private boolean changingParents= false;
 	/**Sets the parent of this node. If it already has a parent then it calls
 	 * <code>removeChild(this)</code> on its parent before setting its parent
 	 * to the specified Node. Also adds itself to the new parent if
@@ -519,21 +528,30 @@ public final class Tag implements Iterable<Tag> {
 	 * @return The old parent or null if pnode is already the parent
 	 */
 	public final Tag setParent(Tag pnode) {
-		if (parent==pnode) return null;
+		if(changingParents){
+			return null;
+		}
+		if (parent == pnode){
+			return pnode;
+		}
+		changingParents= true;
 		Tag oldp= parent;
 		//log.debug("moving "+getName()+" from "+getParent()+" to "+(node==null?null:node.getName()));
-		if (hasParent())
+		if (hasParent()){
 			parent.removeChild(this);
+		}
 
 		if (pnode!=null) {
-			if (!pnode.hasChild(this))
+			if (!pnode.hasChild(this)){
 				pnode.addChild(this);
+			}
 
 			depth= pnode.getDepth()+1;
 		} else {
 			depth= 0;
 		}
-		parent=pnode;
+		parent= pnode;
+		changingParents= false;
 		fireNewParent(oldp, pnode);
 		return oldp;
 	}
@@ -656,8 +674,8 @@ public final class Tag implements Iterable<Tag> {
 	 */
 	public final Tag removeAllChildren(){
 		synchronized(sync){
-			for(int index=0;index<children.size();index++){
-				fireChildRemoved(children.pop().setParent(null));
+			for(int index= children.size() - 1; index >= 0; index--){
+				fireChildRemoved(children.remove(index).setParent(null));
 			}
 		}
 		return this;
