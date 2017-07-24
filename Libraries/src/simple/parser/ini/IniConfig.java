@@ -31,14 +31,82 @@ public class IniConfig extends IniSection implements Iterable<IniSection>{
 	private final HashMap<String, IniSection> sections= new HashMap<>();
 	public IniConfig() {super("default");}
 
+	/**
+	 * @param name
+	 * @return The new section
+	 */
 	public IniSection addSection(String name){
 		IniSection ret= new IniSection(name);
 		sections.put(name, ret);
 		return ret;
 	}
-	public IniSection getSection(String name){
-		return sections.get(name);
+	/**
+	 * @param section
+	 * @return The replaced section or null
+	 */
+	public IniSection addSection(IniSection section){
+		return sections.put(section.getName(), section);
 	}
+	/**
+	 * Adds the section or combines it with an existing section
+	 * @param section
+	 * @return The combined section
+	 */
+	public IniSection addOrCombine(IniSection section){
+		IniSection ret= sections.get(section.getName());
+		if(ret == null){
+			sections.put(section.getName(), section);
+			ret= section;
+		}
+		if(ret != section){
+			ret.putAll(section);
+		}
+		return ret;
+	}
+
+	/**
+	 * Adds or combines all sections and keys.
+	 * @param config
+	 */
+	public void putAll(IniConfig config){
+		putAll((IniSection)config);
+		for(IniSection section: config){
+			addOrCombine(section);
+		}
+	}
+
+	/**
+	 * Applies all key/value pairs to the default section and all sections in this config if they don't exist.
+	 *
+	 * Sections that don't exist are created and the keys/values copied.
+	 *
+	 * @param config
+	 */
+	public void putIfAbsent(IniConfig config){
+		putIfAbsent((IniSection)config);
+		for(IniSection section: config){
+			getSection(section.getName()).putIfAbsent(section);
+		}
+	}
+
+
+	/**
+	 * Returns the section. The section is created if it doesn't exist.
+	 * @param name
+	 * @return The section
+	 */
+	public IniSection getSection(String name){
+		IniSection ret= sections.get(name);
+		if(ret == null){
+			ret= new IniSection(name);
+			sections.put(name, ret);
+		}
+		return ret;
+	}
+	/**
+	 * @param name
+	 * @return The removed section or null if the section didn't exist
+	 */
 	public IniSection removeSection(String name){
 		return sections.remove(name);
 	}
@@ -52,9 +120,13 @@ public class IniConfig extends IniSection implements Iterable<IniSection>{
 		sections.clear();
 	}
 
+	/**
+	 * Parses the INI file and adds the values to this. Effectively combining them
+	 * @param ini
+	 * @throws IOException If a read error occurs
+	 * @throws ParseException If the INI is improperly formatted
+	 */
 	public void load(Reader ini) throws IOException, ParseException{
-		sections.clear();
-		clear();
 		LineNumberReader iniLR= new LineNumberReader(ini);
 		String line, trimmed;
 		int splitIdx;
@@ -69,7 +141,7 @@ public class IniConfig extends IniSection implements Iterable<IniSection>{
 				if(line.charAt(line.length() - 1) != ']'){
 					throw new ParseException("Missing matching ']' on line " + iniLR.getLineNumber());
 				}
-				section= this.addSection(line.substring(1, line.length() - 1));
+				section= this.getSection(line.substring(1, line.length() - 1));
 			}else{
 				splitIdx= line.indexOf('=');
 				if(-1 == splitIdx || (line.length() - 1) == splitIdx){
