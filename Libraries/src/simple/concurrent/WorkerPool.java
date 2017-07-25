@@ -50,7 +50,7 @@ public class WorkerPool<T> implements Runnable{
 	 * @param threads Thread count
 	 */
 	public WorkerPool(Worker<T> worker, List<T> pool, int threads) {
-		this(worker, new ListQueue<>(pool), threads);
+		this(worker, new ListQueue<T>(pool), threads);
 	}
 	/**
 	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.

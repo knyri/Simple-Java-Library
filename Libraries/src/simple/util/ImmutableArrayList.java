@@ -13,7 +13,7 @@ public class ImmutableArrayList<E> implements List<E> {
 	}
 	@Override
 	public boolean add(E el) {
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public void add(int idx, E el) {
@@ -21,11 +21,11 @@ public class ImmutableArrayList<E> implements List<E> {
 	}
 	@Override
 	public boolean addAll(Collection<? extends E> col) {
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public boolean addAll(int idx, Collection<? extends E> col) {
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public void clear() {
@@ -51,11 +51,11 @@ public class ImmutableArrayList<E> implements List<E> {
 	@Override
 	public boolean containsAll(Collection<?> col) {
 		for(Object cur : col){
-			if(this.contains(cur)){
-				return true;
+			if(!this.contains(cur)){
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	@Override
 	public E get(int idx) {
@@ -86,7 +86,7 @@ public class ImmutableArrayList<E> implements List<E> {
 	@Override
 	public Iterator<E> iterator() {
 		if(iterator == null){
-			iterator=  new ArrayIterator<>(list);
+			iterator=  new ArrayIterator<E>(list);
 		}
 		return iterator.iterator();
 	}
@@ -110,58 +110,101 @@ public class ImmutableArrayList<E> implements List<E> {
 	}
 	@Override
 	public ListIterator<E> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return listIterator(0);
 	}
 	@Override
-	public ListIterator<E> listIterator(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public ListIterator<E> listIterator(final int start) {
+		return new ListIterator<E>(){
+			private int next= start;
+			@Override
+			public void add(E obj) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean hasNext() {
+				return next < list.length;
+			}
+
+			@Override
+			public boolean hasPrevious() {
+				return next > start;
+			}
+
+			@Override
+			public E next() {
+				return list[next++];
+			}
+
+			@Override
+			public int nextIndex() {
+				return next;
+			}
+
+			@Override
+			public E previous() {
+				return list[(--next) - 1];
+			}
+
+			@Override
+			public int previousIndex() {
+				return next - 2;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void set(E newObj) {
+				throw new UnsupportedOperationException();
+			}
+
+		};
 	}
 	@Override
 	public boolean remove(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public E remove(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public boolean removeAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public boolean retainAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	@Override
-	public E set(int arg0, E arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public E set(int idx, E obj) {
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.list.length;
 	}
 	@Override
-	public List<E> subList(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<E> subList(int start, int end) {
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+		Object[] ret= new Object[list.length];
+		System.arraycopy(list, 0, ret, 0, list.length);
+		return ret;
 	}
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T[] toArray(T[] arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public <T> T[] toArray(T[] ary) {
+		if(ary.length >= list.length){
+			System.arraycopy(list, 0, ary, 0, list.length);
+			return ary;
+		}
+		return (T[])toArray();
 	}
 
 }

@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public final class CIString implements CharSequence {
 	public static final CIString EMPTY = new CIString("");
-	private static final HashMap<CIString, CIString> intern= new HashMap<>();
+	private static final HashMap<CIString, CIString> intern= new HashMap<CIString, CIString>();
 	private final String string;
 	private final int hashcode;
 	public CIString(String str) {

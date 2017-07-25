@@ -90,7 +90,7 @@ public class InlineLooseParser {
 	public static Page parse(final Reader in, final ParserConstants pconst) throws IOException, ParseException {
 		return parse(in, pconst, true);
 	}
-	private static HashMap<String, CIString> cisCache= new HashMap<>();
+	private static HashMap<String, CIString> cisCache= new HashMap<String, CIString>();
 	private static CIString getCiStr(String str){
 		if(!cisCache.containsKey(str)){
 			CIString ret= new CIString(str);

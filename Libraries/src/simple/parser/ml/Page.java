@@ -33,7 +33,7 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	private static final Log log = LogFactory.getLogFor(Page.class);
 	private static final List<Tag> EMPTY= new FixedSizeArrayList<Tag>(new Tag[0]);
 	private final LinkedList<Tag> roots = new LinkedList<Tag>();
-	private final ImmutableList<Tag> publicRoots= new ImmutableList<>(roots);
+	private final ImmutableList<Tag> publicRoots= new ImmutableList<Tag>(roots);
 	/** Cache of all tags by their entity name(not the full canonical name) */
 	private final HashMap<CIString, List<Tag>> cache = new HashMap<CIString, List<Tag>>();
 	public Page() {}
@@ -236,7 +236,8 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	public Iterator<Tag> iterator() {
 		return new Iterator<Tag>() {
 			private Iterator<Tag> iter = roots.iterator();
-			private final LinkedList<Iterator<Tag>> iterators= new LinkedList<>();
+			// Storage for the depth first tree
+			private final LinkedList<Iterator<Tag>> iterators= new LinkedList<Iterator<Tag>>();
 			Tag current;
 			@Override
 			public boolean hasNext() {
@@ -261,9 +262,10 @@ public class Page implements Iterable<Tag>, TagParentListener {
 	}
 	@Override
 	public void newParentTag(Tag child, Tag oldP, Tag newP){
-		if(oldP == null)
+		if(oldP == null){
 			addTagToCache(child);
-		else if(newP == null)
+		}else if(newP == null){
 			removeTagFromCache(child);
+		}
 	}
 }

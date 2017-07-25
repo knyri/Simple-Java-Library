@@ -13,7 +13,7 @@ import java.util.LinkedList;
  */
 @Deprecated
 public class Queue<E> implements java.util.Queue<E> {
-	private LinkedList<E> list = new LinkedList<>();
+	private LinkedList<E> list = new LinkedList<E>();
 	@Override
 	public E peek() {
 		return list.peek();

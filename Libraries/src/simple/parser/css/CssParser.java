@@ -52,7 +52,7 @@ public class CssParser{
 			char c;
 			int retc;
 			List<String> rules;
-			HashMap<CIString, String> props= new HashMap<>();
+			HashMap<CIString, String> props= new HashMap<CIString, String>();
 			CIString tmp;
 			while (true) {
 				pos.reset();
@@ -91,7 +91,7 @@ public class CssParser{
 		}
 	}
 	private static final List<String> getRules(StringBuilder raw) throws IOException{
-		List<String> ret= new LinkedList<>();
+		List<String> ret= new LinkedList<String>();
 		DoubleParsePosition pos= new DoubleParsePosition();
 		pos.end= do_str.indexOfQuoted(raw,',',0);
 		while(pos.validEnd()){

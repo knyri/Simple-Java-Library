@@ -21,7 +21,7 @@ public class ArrayIterator<E> implements Iterable<E> {
 		return iterator(0, array.length);
 	}
 
-	public Iterator<E> iterator(int start, int end){
+	public Iterator<E> iterator(final int start, final int end){
 		if(start == end || (start + 1) == end){
 			return new Iterator<E>(){
 				boolean notCalled= true;

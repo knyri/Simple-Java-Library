@@ -26,8 +26,8 @@ public final class Tag implements Iterable<Tag> {
 		META = new CIString("DOCTYPE"),
 		SGMLCDATA = new CIString("SGMLCDATA"),
 		HTMLCOMM = new CIString("HCOM");
-	protected final ArrayList<Tag> children = new ArrayList<>();
-	protected HashMap<CIString,String> properties = new HashMap<>();
+	protected final ArrayList<Tag> children = new ArrayList<Tag>();
+	protected HashMap<CIString,String> properties = new HashMap<CIString, String>();
 
 	private Tag parent = null;
 	private CIString nName = null;
@@ -110,13 +110,13 @@ public final class Tag implements Iterable<Tag> {
 
 	public void addParentListener(TagParentListener l){
 		if(parentListeners == null){
-			parentListeners= new LinkedList<>();
+			parentListeners= new LinkedList<TagParentListener>();
 		}
 		parentListeners.add(l);
 	}
 	public void addChildListener(TagChildListener l){
 		if(childListeners == null){
-			childListeners= new LinkedList<>();
+			childListeners= new LinkedList<TagChildListener>();
 		}
 		childListeners.add(l);
 	}
@@ -241,12 +241,12 @@ public final class Tag implements Iterable<Tag> {
 	 * @return
 	 */
 	public List<Tag> getChildren(CIString tagName){
-		List<Tag> tags= new LinkedList<>();
+		List<Tag> tags= new LinkedList<Tag>();
 		getChildren(tagName, tags);
 		return tags;
 	}
 	public final List<Tag> getChildren(String tagName){
-		List<Tag> tags= new LinkedList<>();
+		List<Tag> tags= new LinkedList<Tag>();
 		getChildren(new CIString(tagName), tags);
 		return tags;
 	}

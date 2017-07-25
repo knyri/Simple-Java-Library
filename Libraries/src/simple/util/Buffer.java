@@ -32,7 +32,7 @@ public class Buffer<E> implements Queue<E>, List<E> {
 		buf = new Object[initialSize];
 		fillLimit =growAt;
 		growthRate= 1+growBy;
-		iterator= new ArrayIterator<>(buf);
+		iterator= new ArrayIterator<E>((E[])buf);
 	}
 	public Buffer(int initialSize) {
 		this(initialSize, 0.75f, 0.33f);
@@ -316,7 +316,7 @@ public class Buffer<E> implements Queue<E>, List<E> {
 				System.arraycopy(buf, start, tmp, 0, end - start);
 			}
 			buf= tmp;
-			iterator= new ArrayIterator<>(buf);
+			iterator= new ArrayIterator<E>((E[])buf);
 			start= 0;
 			end= size - 1;
 		}

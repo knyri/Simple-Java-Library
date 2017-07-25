@@ -32,7 +32,7 @@ public final class FilterFactory {
 	 * @return
 	 */
 	public static FilenameFilter createFilenameFilter(String... list) {
-		final List<String> exts= new LinkedList<>();
+		final List<String> exts= new LinkedList<String>();
 		for(String ext: list){
 			exts.add(ext.toLowerCase());
 		}
@@ -77,7 +77,7 @@ public final class FilterFactory {
 	 * @return
 	 */
 	public static FileFilter createFileChooserFilter(String... list) {
-		final List<String> exts= new LinkedList<>();
+		final List<String> exts= new LinkedList<String>();
 		StringBuilder descb= new StringBuilder(list.length*5);
 		for(String ext: list){
 			exts.add(ext.toLowerCase());

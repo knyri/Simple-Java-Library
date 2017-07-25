@@ -7,7 +7,7 @@ import java.util.Set;
 public class IniSection{
 
 	private final String name;
-	private final HashMap<String, String> props= new HashMap<>();
+	private final HashMap<String, String> props= new HashMap<String, String>();
 
 	public IniSection(String name) {
 		this.name= name;

@@ -12,7 +12,7 @@ import java.util.List;
  * @version 0
  */
 public class FullCommand extends Command {
-	List<List<Parameter>> params = new ArrayList<>();
+	List<List<Parameter>> params = new ArrayList<List<Parameter>>();
 	public FullCommand(final String CMD) {
 		super(CMD);
 		ParseCommand();
@@ -21,7 +21,7 @@ public class FullCommand extends Command {
 		final String cmd = getCmd();
 		int nest = 0;
 		StringBuilder buf = new StringBuilder();
-		final List<Parameter> paramSet = new ArrayList<>();
+		final List<Parameter> paramSet = new ArrayList<Parameter>();
 /*
 [ ] Optional
  |  One of

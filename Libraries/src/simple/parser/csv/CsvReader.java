@@ -53,7 +53,7 @@ public class CsvReader implements Closeable, Iterable<List<String>>{
 	 */
 	public List<String> readRow() throws IOException, ParseException{
 		row++;
-		ArrayList<String> ret= new ArrayList<>();
+		ArrayList<String> ret= new ArrayList<String>();
 		boolean hasescape= false,
 				inquote= false,
 				quoted= false;

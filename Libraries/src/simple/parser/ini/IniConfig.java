@@ -28,7 +28,7 @@ import simple.io.ParseException;
  */
 public class IniConfig extends IniSection implements Iterable<IniSection>{
 
-	private final HashMap<String, IniSection> sections= new HashMap<>();
+	private final HashMap<String, IniSection> sections= new HashMap<String, IniSection>();
 	public IniConfig() {super("default");}
 
 	/**

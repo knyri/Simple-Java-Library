@@ -28,8 +28,8 @@ import java.util.HashSet;
  *
  */
 public class CLIParameters {
-	private final HashMap<String, String> params= new HashMap<>();
-	private final HashSet<Character> flags= new HashSet<>();
+	private final HashMap<String, String> params= new HashMap<String, String>();
+	private final HashSet<Character> flags= new HashSet<Character>();
 	private final boolean caseSensitive;
 	private int argsParsed;
 	public CLIParameters(String[] args, boolean caseSensitiveFlags){
