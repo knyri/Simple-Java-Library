@@ -3,7 +3,10 @@ package simple.util;
 import java.util.Iterator;
 
 /**
- * For things that are backed by an array
+ * For things that are backed by an array.
+ * It will allow start > end. If start > end it will go
+ * from the start position to the end of the array and then from the
+ * start of the array to the end position.
  * @param <E>
  */
 public class ArrayIterator<E> implements Iterable<E> {
@@ -19,6 +22,21 @@ public class ArrayIterator<E> implements Iterable<E> {
 	}
 
 	public Iterator<E> iterator(int start, int end){
+		if(start == end || (start + 1) == end){
+			return new Iterator<E>(){
+				boolean notCalled= true;
+				@Override
+				public boolean hasNext() {
+					return notCalled;
+				}
+
+				@Override
+				public E next() {
+					notCalled= false;
+					return array[start];
+				}
+			};
+		}
 		return new Iterator<E>(){
 			private int pos= start;
 			@Override
