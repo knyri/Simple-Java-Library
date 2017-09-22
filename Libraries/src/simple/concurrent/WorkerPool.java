@@ -168,6 +168,7 @@ public class WorkerPool<T> implements Runnable{
 		}
 		protected final void putBack(T item){
 			synchronized(pool.pool){
+				pool.done= false;
 				pool.pool.add(item);
 			}
 		}
