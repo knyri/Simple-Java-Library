@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ import simple.io.FileUtil;
 public final class LogFactory {
 	private static HashMap<Class<?>, Log> logCache= new HashMap<Class<?>, Log>();
 	//private static final Log _log = new Log(LogFactory.class);
-	private static PrintWriter globalStream= new PrintWriter(System.out);
+	private static Writer globalStream= new PrintWriter(System.out);
 	private static byte logOptions= (byte)0xFF;
 	private static boolean
 		printTime= false,
@@ -117,7 +118,7 @@ public final class LogFactory {
 	 * Also updates existing logs.
 	 * @param stream
 	 */
-	public static void setGlobalLogStream(final PrintWriter stream) {
+	public static void setGlobalLogStream(final Writer stream) {
 		synchronized(logCache){
 			globalStream = stream;
 			//_log.setStream(stream);
@@ -131,7 +132,7 @@ public final class LogFactory {
 	 * @param clazz
 	 * @param stream
 	 */
-	public static void setLogStreamFor(final Class<?> clazz, final PrintWriter stream) {
+	public static void setLogStreamFor(final Class<?> clazz, final Writer stream) {
 		getLogFor(clazz).setStream(stream);
 	}
 	/**Sets the global output file for all log streams created by this factory.
@@ -158,7 +159,7 @@ public final class LogFactory {
 			throw new IOException("The file could not be created. No reason given.");
 		setLogStreamFor(clazz, new PrintWriter(new FileWriter(file, append)));
 	}
-	public static PrintWriter getGlobalLogStream() {
+	public static Writer getGlobalLogStream() {
 		return globalStream;
 	}
 	/**This should be called before instantiating any classes that use this
