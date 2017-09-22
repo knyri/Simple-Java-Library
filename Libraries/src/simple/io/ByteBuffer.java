@@ -45,6 +45,9 @@ public class ByteBuffer {
 	public int getSize() {
 		return size;
 	}
+	public boolean isFull(){
+		return growthRate < 1 && size >= buf.length;
+	}
 	private void grow() {
 		byte[] tmp = new byte[(int)(size*(1+growthRate))];
 		if (start > end) {
@@ -62,7 +65,7 @@ public class ByteBuffer {
 	 * grows the internal array if needed.
 	 */
 	private void ensureCapacity() {
-		if (growthRate != 0 && size/(float)buf.length >= fillLimit) {
+		if (growthRate > 1 && size/(float)buf.length >= fillLimit) {
 			grow();
 		}
 	}
