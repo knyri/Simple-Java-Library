@@ -31,6 +31,7 @@ public class CLIParameters {
 	private final HashMap<String, String> params= new HashMap<String, String>();
 	private final HashSet<Character> flags= new HashSet<Character>();
 	private final boolean caseSensitive;
+	private final String[] args;
 	private int argsParsed;
 	public CLIParameters(String[] args, boolean caseSensitiveFlags){
 		caseSensitive= caseSensitiveFlags;
@@ -68,7 +69,7 @@ public class CLIParameters {
 				if(args[i].charAt(1) == '-'){
 					// --key=value
 					if(args[i].length() == 2){
-						argsParsed= i;
+						argsParsed= i + 1;
 						break out;
 					}
 					String[] kv= args[i].split("=", 2);
@@ -87,6 +88,19 @@ public class CLIParameters {
 				break out;
 			}
 		}
+		if(argsParsed == args.length){
+			this.args= new String[0];
+		}else{
+			this.args= new String[args.length - argsParsed];
+			System.arraycopy(args, argsParsed, this.args, 0, this.args.length);
+		}
+	}
+
+	public String getArg(int i){
+		return args[i];
+	}
+	public int getArgCount(){
+		return args.length;
 	}
 
 	/**
@@ -114,4 +128,8 @@ public class CLIParameters {
 	public String getValue(String key){
 		return params.get(key);
 	}
+	/*public static void main(String[] a){
+		CLIParameters p= new CLIParameters(new String[]{"/f","/l","--","arg"}, true);
+		System.out.println(p.getArg(0));
+	}*/
 }
