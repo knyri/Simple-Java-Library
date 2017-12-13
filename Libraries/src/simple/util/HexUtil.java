@@ -8,7 +8,11 @@ public final class HexUtil {
 	//#############-----------####################
 	//############# HEX STUFF ####################
 	//#############-----------####################
-	private static final char[] hex = new char[] {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+	private static final char[][] hex=
+		new char[][] {
+			new char[]{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'},
+			new char[]{'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'}
+		};
 	/**
 	 * @param c Some character.
 	 * @return Returns a hex representation of <var>c</var>
@@ -18,7 +22,7 @@ public final class HexUtil {
 	}
 	/**
 	 * Converts a CharSequence into a String of hex.
-	 * @param cs 
+	 * @param cs
 	 * @return A hex String of the characters in the provided CharSequence.
 	 */
 	public static String getHex(CharSequence cs) {
@@ -86,7 +90,7 @@ public final class HexUtil {
 	}
 	public static String getHex(byte[] b) {
 		StringBuffer buf = new StringBuffer(b.length);
-		for(int i=0;i<b.length;i++) {
+		for(int i= 0; i < b.length; i++) {
 			buf.append(getHexTop(b[i]));
 			buf.append(getHexBottom(b[i]));
 		}
@@ -94,10 +98,28 @@ public final class HexUtil {
 	}
 	public static String getHex(byte[] b, char sep) {
 		StringBuffer buf = new StringBuffer(b.length);
-		for(int i=0;i<b.length;i++) {
+		for(int i= 0; i < b.length; i++) {
 			buf.append(sep);
 			buf.append(getHexTop(b[i]));
 			buf.append(getHexBottom(b[i]));
+		}
+//		buf.deleteCharAt(buf.length()-1);
+		return buf.toString();
+	}
+	public static String getHexLC(byte[] b) {
+		StringBuffer buf = new StringBuffer(b.length);
+		for(int i= 0; i < b.length; i++) {
+			buf.append(getHexTopLC(b[i]));
+			buf.append(getHexBottomLC(b[i]));
+		}
+		return buf.toString();
+	}
+	public static String getHexLC(byte[] b, char sep) {
+		StringBuffer buf = new StringBuffer(b.length);
+		for(int i= 0; i < b.length; i++) {
+			buf.append(sep);
+			buf.append(getHexTopLC(b[i]));
+			buf.append(getHexBottomLC(b[i]));
 		}
 //		buf.deleteCharAt(buf.length()-1);
 		return buf.toString();
@@ -135,15 +157,29 @@ public final class HexUtil {
 		return buf.toString();
 	}
 	/**
+	 * Upper Case
 	 * @param b
 	 * @return Hex character for the bottom 4 bits of <var>b</var>.
 	 */
-	public static char getHexBottom(int b) {return hex[b&15];}
+	public static char getHexBottom(int b) {return hex[0][b&15];}
 	/**
+	 * Upper Case
 	 * @param b
 	 * @return The top 4 bits of <var>b</var>.
 	 */
 	public static char getHexTop(int b) {return getHexBottom(b>>>4);}
+	/**
+	 * Lower case
+	 * @param b
+	 * @return Hex character for the bottom 4 bits of <var>b</var>.
+	 */
+	public static char getHexBottomLC(int b) {return hex[1][b&15];}
+	/**
+	 * Lower case
+	 * @param b
+	 * @return The top 4 bits of <var>b</var>.
+	 */
+	public static char getHexTopLC(int b) {return getHexBottomLC(b>>>4);}
 	public static byte[] fromHex(CharSequence hex){
 		if(hex.length()%2!=0)hex=hex.toString()+"0";
 		byte[] ret=new byte[hex.length()/2];
