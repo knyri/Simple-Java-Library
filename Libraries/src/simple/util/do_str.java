@@ -703,6 +703,14 @@ public final class do_str {
 		}
 		return buf.toString();
 	}
+	public static final String repeat(final String str, int repeat) {
+		if (repeat <= 0) return "";
+		final StringBuilder buf = new StringBuilder(repeat * str.length());
+		while(--repeat >= 0) {
+			buf.append(str);
+		}
+		return buf.toString();
+	}
 	/**
 	 * Pads <var>input</var> by inserting <var>pad</var> on the left<br>
 	 * until its length equals <var>cols</var>. If the length of <var>input</var> is<br>
