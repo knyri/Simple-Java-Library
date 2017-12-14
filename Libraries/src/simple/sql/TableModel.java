@@ -13,6 +13,7 @@ import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -24,12 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import simple.util.do_str;
+import simple.util.ImmutableSet;
 
-public class TableModel {
+public class TableModel implements AutoCloseable{
 	protected final String table;
-	protected final String[] pkey;
+	protected final Set<String> pkey;
 	protected final Map<String, Integer> columns;
+	protected final Map<String, String> distinctTypeMap= new HashMap<String, String>();
 	protected Connection db= null;
 	protected final Map<String, Object> values= new HashMap<String, Object>();
 	protected ResultSet result= null;
@@ -37,11 +39,19 @@ public class TableModel {
 	public TableModel(String tableName, Map<String, Integer> columns, String[] primaryKey){
 		table= tableName;
 		this.columns= columns;
-		pkey= primaryKey;
+		pkey= new ImmutableSet<String>(primaryKey);
 	}
 	public TableModel(String tableName, Map<String, Integer> columns, String[] primaryKey, Connection con){
 		this(tableName, columns, primaryKey);
 		setConnection(con);
+	}
+	/**
+	 * Adds an explicit cast
+	 * @param col
+	 * @param typeName
+	 */
+	protected void addDistinctType(String col, String typeName){
+		distinctTypeMap.put(col, typeName);
 	}
 	public void setConnection(Connection con){
 		db= con;
@@ -51,21 +61,26 @@ public class TableModel {
 		return this;
 	}
 	public Object get(String col) throws SQLException{
-		if(result != null){
-			return result.getObject(col);
-		}
 		return values.get(col);
-	}
-	public boolean loadNext() throws SQLException{
-		return result.next();
 	}
 	public Object get(String col, Object def){
 		return values.getOrDefault(col, def);
+	}
+	public boolean loadNext() throws Exception{
+		if(result.next()){
+			for(String col: columns.keySet()){
+				set(col, result.getObject(col));
+			}
+			afterLoadNext();
+			return true;
+		}
+		return false;
 	}
 	public void reset() throws SQLException{
 		close();
 		values.clear();
 	}
+	@Override
 	public void close() throws SQLException{
 		if(result != null){
 			result.close();
@@ -76,6 +91,18 @@ public class TableModel {
 			stm= null;
 		}
 	}
+	public void setValues(ResultSet src) throws SQLException{
+		values.clear();
+		ResultSetMetaData md= src.getMetaData();
+		String colName;
+		for(int i= 1, end= md.getColumnCount() + 1; i < end; i++){
+			// prevent extra columns from being added
+			colName= md.getColumnName(i);
+			if(columns.containsKey(colName)){
+				values.put(colName, src.getObject(i));
+			}
+		}
+	}
 	protected void beforeInsert() throws Exception{}
 	protected void afterInsert() throws Exception{}
 	protected void beforeUpdate() throws Exception{}
@@ -84,18 +111,28 @@ public class TableModel {
 	protected void afterDelete() throws Exception{}
 	protected void beforeLoad() throws Exception{}
 	protected void afterLoad() throws Exception{}
+	protected void afterLoadNext() throws Exception{}
 	public void insert() throws Exception{
 		close();
 		beforeInsert();
 		StringBuilder insert= new StringBuilder();
-		insert.append("INSERT INTO ").append(table).append(" (");
+		StringBuilder valuesStm= new StringBuilder();
 		Set<String> columns= values.keySet();
+		String type;
+		insert.append("INSERT INTO ").append(table).append(" (");
 		for(String col: columns){
 			insert.append(col).append(',');
+			type= distinctTypeMap.get(col);
+			if(type != null){
+				valuesStm.append("CAST(? AS ").append(type).append("),");
+			}else{
+				valuesStm.append("?,");
+			}
 		}
 		insert.setCharAt(insert.length() - 1, ')');
 		insert.append(" VALUES (");
-		insert.append(do_str.repeat("?,", columns.size()));
+//		insert.append(do_str.repeat("?,", columns.size()));
+		insert.append(valuesStm);
 		insert.setCharAt(insert.length() - 1, ')');
 
 		stm= db.prepareStatement(insert.toString());
@@ -130,8 +167,15 @@ public class TableModel {
 		StringBuilder update= new StringBuilder();
 		update.append("UPDATE ").append(table).append(" SET ");
 		Set<String> columns= values.keySet();
+		String type;
 		for(String col: columns){
-			update.append(col).append("=?,");
+			type= distinctTypeMap.get(col);
+			update.append(col);
+			if(type != null){
+				update.append("=CAST(? AS ").append(type).append("),");
+			}else{
+				update.append("=?,");
+			}
 		}
 		update.setLength(update.length() - 1);
 
@@ -139,8 +183,15 @@ public class TableModel {
 
 		if(addPKey){
 			update.append(" WHERE ");
-			for(String key: pkey){
-				update.append(key).append("=? AND ");
+			for(String col: pkey){
+				type= distinctTypeMap.get(col);
+				update.append(col);
+				if(type != null){
+					update.append("=CAST(? AS ").append(type).append(')');
+				}else{
+					update.append("=?");
+				}
+				update.append(" AND ");
 			}
 			update.setLength(update.length() - 5);
 		}
@@ -167,9 +218,17 @@ public class TableModel {
 		StringBuilder delete= new StringBuilder();
 		delete.append("DELETE FROM ").append(table).append(" WHERE ");
 
-		Set<String> columns= values.keySet();
-		for(String col: columns){
-			delete.append(col).append("=? AND ");
+		Set<String> columns= isPrimaryKeySet() ? pkey : values.keySet();
+		String type;
+		for(String col: pkey){
+			type= distinctTypeMap.get(col);
+			delete.append(col);
+			if(type != null){
+				delete.append("=CAST(? AS ").append(type).append(')');
+			}else{
+				delete.append("=?");
+			}
+			delete.append(" AND ");
 		}
 		delete.setLength(delete.length() - 5);
 
@@ -183,16 +242,21 @@ public class TableModel {
 
 		afterDelete();
 	}
-	public ResultSet find() throws Exception{
+	public void find(String... getColumns) throws Exception {
 		close();
 		beforeLoad();
 		StringBuffer load= new StringBuffer();
 		load.append("SELECT ");
 
-		Set<String> columns= values.keySet();
-
-		for(String col: this.columns.keySet()){
-			load.append(col).append(',');
+		Set<String> columns= isPrimaryKeySet() ? pkey : values.keySet();
+		if(getColumns == null || getColumns.length == 0){
+			for(String col: this.columns.keySet()){
+				load.append(col).append(',');
+			}
+		}else{
+			for(String col: getColumns){
+				load.append(col).append(',');
+			}
 		}
 		load.setLength(load.length() - 1);
 
@@ -200,8 +264,16 @@ public class TableModel {
 
 		if(!columns.isEmpty()){
 			load.append(" WHERE ");
-			for(String col: columns){
-				load.append(col).append("=? AND ");
+			String type;
+			for(String col: pkey){
+				type= distinctTypeMap.get(col);
+				load.append(col);
+				if(type != null){
+					load.append("=CAST(? AS ").append(type).append(')');
+				}else{
+					load.append("=?");
+				}
+				load.append(" AND ");
 			}
 			load.setLength(load.length() - 5);
 		}
@@ -215,8 +287,36 @@ public class TableModel {
 		result= stm.executeQuery();
 
 		afterLoad();
+	}
+	public final void find() throws Exception{
+		find((String[])null);
+	}
 
-		return result;
+	public boolean exists() throws SQLException{
+		StringBuilder query= new StringBuilder("SELECT DISTINCT 1 FROM ");
+		query.append(table).append(" WHERE ");
+		Set<String> columns= isPrimaryKeySet() ? pkey : values.keySet();
+		String type;
+		for(String col: pkey){
+			type= distinctTypeMap.get(col);
+			query.append(col);
+			if(type != null){
+				query.append("=CAST(? AS ").append(type).append(')');
+			}else{
+				query.append("=?");
+			}
+			query.append(" AND ");
+		}
+		query.setLength(query.length() - 5);
+		try(PreparedStatement stm= db.prepareStatement(query.toString())){
+			int index= 1;
+			for(String col: columns){
+				set(col, index++, values.get(col));
+			}
+			try(ResultSet rs= stm.executeQuery()){
+				return rs.next();
+			}
+		}
 	}
 
 	private void set(String col, int param, Object value) throws SQLException{
@@ -450,5 +550,8 @@ public class TableModel {
 				}
 			}
 		}
+	}
+	public PreparedStatement getLastStatement(){
+		return stm;
 	}
 }
