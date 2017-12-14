@@ -148,7 +148,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkProtocolException
 	 */
 	private String doCommand(String cmd, byte[] data) throws BeanstalkDisconnectedException, IOException, BeanstalkServerException, BeanstalkProtocolException{
-		byte[] cmdBytes= (' ' + Integer.toString(data.length, 10) + "\r\n").getBytes();
+		byte[] cmdBytes= (cmd + ' ' + Integer.toString(data.length, 10) + "\r\n").getBytes();
 		byte[] fullCmd= new byte[cmdBytes.length + data.length + 2];
 		System.arraycopy(cmdBytes, 0, fullCmd, 0, cmdBytes.length);
 		System.arraycopy(data, 0, fullCmd, cmdBytes.length, data.length);
