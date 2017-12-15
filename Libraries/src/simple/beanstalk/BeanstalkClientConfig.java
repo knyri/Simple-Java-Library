@@ -23,6 +23,12 @@ public class BeanstalkClientConfig {
 	public BeanstalkClientConfig(String host, int port) {
 		address= new InetSocketAddress(host, port);
 	}
+	public BeanstalkClientConfig(BeanstalkClientConfig copyFrom){
+		this.address= copyFrom.address;
+		this.ignoreDefault= copyFrom.ignoreDefault;
+		this.using= copyFrom.using;
+		this.watching.addAll(copyFrom.watching);
+	}
 	/**
 	 * Connections will ignore the default tube
 	 */
