@@ -31,18 +31,25 @@ public class CsvReader implements Closeable, Iterable<List<String>>{
 	 * @throws FileNotFoundException
 	 */
 	public CsvReader(File file, char colSep, char quote, char escape, String newline) throws FileNotFoundException {
+		this(new BufferedReader(new FileReader(file)), colSep, quote, escape, newline);
+	}
+	public CsvReader(BufferedReader reader, char colSep, char quote, char escape, String newline) {
 		this.colSep= colSep;
 		this.escape= escape;
 		this.quote= quote;
 		this.newLine= newline;
-		in= new BufferedReader(new FileReader(file));
+		in= reader;
 	}
 	/**
+	 * Uses a comma as the separator, a double quote as the quote and escape, and the CRLF as the line separator
 	 * @param file the file to open
 	 * @throws FileNotFoundException
 	 */
 	public CsvReader(File file) throws FileNotFoundException{
 		this(file, ',', '"', '"', "\r\n");
+	}
+	public CsvReader(BufferedReader reader){
+		this(reader, ',', '"', '"', "\r\n");
 	}
 	public int getRow(){
 		return row;
