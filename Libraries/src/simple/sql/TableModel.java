@@ -220,7 +220,7 @@ public class TableModel implements AutoCloseable{
 
 		Set<String> columns= isPrimaryKeySet() ? pkey : values.keySet();
 		String type;
-		for(String col: pkey){
+		for(String col: columns){
 			type= distinctTypeMap.get(col);
 			delete.append(col);
 			if(type != null){
@@ -265,7 +265,7 @@ public class TableModel implements AutoCloseable{
 		if(!columns.isEmpty()){
 			load.append(" WHERE ");
 			String type;
-			for(String col: pkey){
+			for(String col: columns){
 				type= distinctTypeMap.get(col);
 				load.append(col);
 				if(type != null){
@@ -297,7 +297,7 @@ public class TableModel implements AutoCloseable{
 		query.append(table).append(" WHERE ");
 		Set<String> columns= isPrimaryKeySet() ? pkey : values.keySet();
 		String type;
-		for(String col: pkey){
+		for(String col: columns){
 			type= distinctTypeMap.get(col);
 			query.append(col);
 			if(type != null){
