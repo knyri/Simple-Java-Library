@@ -86,15 +86,18 @@ public class BeanstalkConsumerPool implements Runnable{
 	 * Does the dirty work
 	 */
 	public static abstract class BeanstalkConsumer implements Runnable {
-		volatile boolean stop= false;
+		private volatile boolean isStopped= false;
 		public void stop(){
-			stop= true;
+			isStopped= true;
 		}
 		private BeanstalkConsumerPool pool;
 		private void setPool(BeanstalkConsumerPool pool){
 			this.pool= pool;
 		}
 
+		protected final boolean isStopped(){
+			return isStopped;
+		}
 		/**
 		 * @return A beanstalk client
 		 * @throws BeanstalkException

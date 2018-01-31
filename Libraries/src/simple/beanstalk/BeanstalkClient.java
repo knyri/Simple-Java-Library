@@ -22,6 +22,7 @@ import simple.io.ByteBuffer;
  * https://github.com/kr/beanstalkd/blob/master/doc/protocol.txt
  */
 public class BeanstalkClient implements AutoCloseable{
+//	private static final Logger log= LogManager.getLogManager().getLogger(BeanstalkClient.class.getCanonicalName());
 	private final InetSocketAddress address;
 	private Socket con= null;
 	private InputStream input;
@@ -45,10 +46,12 @@ public class BeanstalkClient implements AutoCloseable{
 		for(String tube: config.watching()){
 			this.watch(tube);
 		}
-		if(!config.ignoresDefault()){
+
+		this.use(config.using());
+
+		if(config.ignoresDefault()){
 			this.ignore("deault");
 		}
-		this.use(config.using());
 	}
 	@Override
 	public void finalize(){
@@ -135,6 +138,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkProtocolException
 	 */
 	private String doCommand(String cmd) throws IOException, BeanstalkDisconnectedException, BeanstalkServerException, BeanstalkProtocolException{
+//		log.log(Level.FINER, "doCommand: " + cmd);
 		return doCommand((cmd+"\r\n").getBytes());
 	}
 	/**
@@ -148,6 +152,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkProtocolException
 	 */
 	private String doCommand(String cmd, byte[] data) throws BeanstalkDisconnectedException, IOException, BeanstalkServerException, BeanstalkProtocolException{
+//		log.log(Level.FINER, "doCommand: " + cmd);
 		byte[] cmdBytes= (cmd + ' ' + Integer.toString(data.length, 10) + "\r\n").getBytes();
 		byte[] fullCmd= new byte[cmdBytes.length + data.length + 2];
 		System.arraycopy(cmdBytes, 0, fullCmd, 0, cmdBytes.length);
@@ -190,6 +195,7 @@ public class BeanstalkClient implements AutoCloseable{
 	protected final String getToken() throws IOException, BeanstalkDisconnectedException {
 		response.setLength(0);
 		byte curByte;
+		toReturn:
 		while(true){
 			fillBuffer();
 
@@ -199,15 +205,17 @@ public class BeanstalkClient implements AutoCloseable{
 				case '\n':
 					if(response.charAt(response.length() - 1) == '\r'){
 						response.setLength(response.length() - 1);
-						return response.toString();
+						break toReturn;
 					}
 				break;
 				case ' ':
-					return response.toString();
+					break toReturn;
 				}
 				response.append((char)curByte);
 			}
 		}
+//		log.log(Level.FINER, "Read token: " + response.toString());
+		return response.toString();
 	}
 	protected final byte[] readData() throws BeanstalkDisconnectedException, IOException{
 		int length= Integer.parseInt(getToken(), 10);
@@ -233,14 +241,21 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @return
 	 * @throws BeanstalkDisconnectedException
 	 * @throws IOException
+	 * @throws BeanstalkProtocolException
 	 */
-	protected List<String> readList() throws BeanstalkDisconnectedException, IOException{
+	protected List<String> readList() throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException{
 		List<String> list= new ArrayList<String>();
 		String line;
 		try(LineNumberReader lines= new LineNumberReader(new InputStreamReader(new ByteArrayInputStream(readData())))){
 			line= lines.readLine();
-			if(line != null && line.length() > 0){
+			if(!"---".equals(line)){
+				throw new BeanstalkProtocolException("Expected '---' got '" + line + "'");
+			}
+			line= lines.readLine();
+			while(line != null && !line.isEmpty() && !"...".equals(line)){
+//				log.log(Level.FINER, "Read list item: " + line);
 				list.add(line.substring(2));
+				line= lines.readLine();
 			}
 		}
 		return list;
@@ -251,16 +266,23 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @return
 	 * @throws BeanstalkDisconnectedException
 	 * @throws IOException
+	 * @throws BeanstalkProtocolException
 	 */
-	protected Map<String, String> readMap() throws BeanstalkDisconnectedException, IOException{
+	protected Map<String, String> readMap() throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException{
 		Map<String, String> map= new HashMap<String, String>();
 		String line;
 		String[] keyValue;
 		try(LineNumberReader lines= new LineNumberReader(new InputStreamReader(new ByteArrayInputStream(readData())))){
 			line= lines.readLine();
-			if(line != null && line.length() > 0){
+			if(!"---".equals(line)){
+				throw new BeanstalkProtocolException("Expected '---' got '" + line + "'");
+			}
+			line= lines.readLine();
+			while(line != null && !line.isEmpty() && !"...".equals(line)){
+//				log.log(Level.FINER, "Read mapping: " + line);
 				keyValue= colonSplit.split(line);
 				map.put(keyValue[0].trim(), keyValue[1].trim());
+				line= lines.readLine();
 			}
 		}
 		return map;
