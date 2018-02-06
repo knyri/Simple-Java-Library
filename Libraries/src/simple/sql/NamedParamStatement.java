@@ -38,14 +38,19 @@ public class NamedParamStatement implements PreparedStatement{
 	private static final Pattern fieldFinder= Pattern.compile(":[a-zA-Z0-9]+");
 	private final Map<String, Integer> fields= new HashMap<String, Integer>();
 	private final PreparedStatement stm;
-	public NamedParamStatement(Connection con, String stm) throws SQLException{
+	private String processStm(String stm){
 		Matcher finder= fieldFinder.matcher(stm);
 		int fieldIdx= 1;
 		while(finder.find()){
 			fields.put(finder.group(), fieldIdx++);
 		}
-		stm= finder.replaceAll("?");
-		this.stm= con.prepareStatement(stm);
+		return finder.replaceAll("?");
+	}
+	public NamedParamStatement(Connection con, String stm) throws SQLException{
+		this.stm= con.prepareStatement(processStm(stm));
+	}
+	public NamedParamStatement(Connection con, String stm, int resultSetType, int resultSetConcurrency) throws SQLException{
+		this.stm= con.prepareStatement(processStm(stm), resultSetType, resultSetConcurrency);
 	}
 
 	/**

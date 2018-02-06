@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class WhereBuilder {
 	private static volatile AtomicLong instanceCnt= new AtomicLong();
 	private final String prefix;
-	private int paramIdx= 0;
 	private final Map<String, Object> values= new HashMap<String, Object>();
 	private final StringBuilder where= new StringBuilder();
 	public WhereBuilder(){
@@ -45,7 +44,7 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public final WhereBuilder and(){
-		if(paramIdx > 0){
+		if(!values.isEmpty()){
 			where.append(" AND ");
 		}
 		return this;
@@ -55,7 +54,7 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public final WhereBuilder or(){
-		if(paramIdx > 0){
+		if(!values.isEmpty()){
 			where.append(" OR ");
 		}
 		return this;
@@ -281,7 +280,7 @@ public class WhereBuilder {
 	public WhereBuilder in(String expr, Object... values){
 		where
 			.append(expr)
-			.append(" IN {");
+			.append(" IN (");
 		for(Object value: values){
 			where.append(addValue(value)).append(',');
 		}

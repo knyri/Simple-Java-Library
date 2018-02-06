@@ -179,6 +179,11 @@ public class QueryBuilder {
 		stm.setAll(runArgs);
 		return stm;
 	}
+	public NamedParamStatement prepare(Connection con, int resultSetType, int resultSetConcurrency) throws SQLException{
+		NamedParamStatement stm= new NamedParamStatement(con, query, resultSetType, resultSetConcurrency);
+		stm.setAll(runArgs);
+		return stm;
+	}
 	private final static class TableJoin{
 		private final String
 			type,
