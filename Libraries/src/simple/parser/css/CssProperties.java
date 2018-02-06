@@ -1,7 +1,7 @@
 package simple.parser.css;
 
 import simple.CIString;
-import simple.util.CIHashtable;
+import simple.collections.CIHashtable;
 
 public class CssProperties{
 	private final CIHashtable<Object> props= new CIHashtable<Object>();

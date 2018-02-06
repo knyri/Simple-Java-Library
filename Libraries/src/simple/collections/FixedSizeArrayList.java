@@ -1,9 +1,11 @@
-package simple.util;
+package simple.collections;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+
+import simple.util.do_array;
 
 public class FixedSizeArrayList<E> implements List<E>{
 	private final E[] list;

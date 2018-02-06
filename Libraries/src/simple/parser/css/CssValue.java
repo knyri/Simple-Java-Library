@@ -1,7 +1,7 @@
 package simple.parser.css;
 
 import simple.CIString;
-import simple.util.CIHashtable;
+import simple.collections.CIHashtable;
 
 public abstract class CssValue{
 	private final String value;

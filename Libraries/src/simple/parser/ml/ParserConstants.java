@@ -13,7 +13,7 @@ import java.text.ParseException;
 import java.util.HashSet;
 
 import simple.CIString;
-import simple.util.MVHashtable;
+import simple.collections.MVHashtable;
 
 /**
  * <br>Created: Oct 23, 2010

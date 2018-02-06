@@ -6,7 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import simple.util.ListQueue;
+import simple.collections.ListQueue;
 
 /**
  * Creates threads equal to the number of available processors to do work

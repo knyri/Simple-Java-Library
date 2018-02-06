@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import simple.util.ImmutableSet;
+import simple.collections.ImmutableSet;
 
 public class TableModel implements AutoCloseable{
 	protected final String table;
@@ -39,6 +39,7 @@ public class TableModel implements AutoCloseable{
 	public TableModel(String tableName, Map<String, Integer> columns, String[] primaryKey){
 		table= tableName;
 		this.columns= columns;
+
 		pkey= new ImmutableSet<String>(primaryKey);
 	}
 	public TableModel(String tableName, Map<String, Integer> columns, String[] primaryKey, Connection con){
@@ -319,6 +320,13 @@ public class TableModel implements AutoCloseable{
 		}
 	}
 
+	/**
+	 * Grunt work of determining the param type and calling the appropriate set functions
+	 * @param col
+	 * @param param
+	 * @param value
+	 * @throws SQLException
+	 */
 	private void set(String col, int param, Object value) throws SQLException{
 		Integer type= columns.get(col);
 		if(type != null){

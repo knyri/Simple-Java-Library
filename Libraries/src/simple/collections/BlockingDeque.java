@@ -1,7 +1,7 @@
 /**
  *
  */
-package simple.util;
+package simple.collections;
 
 import java.util.Collection;
 import java.util.Iterator;

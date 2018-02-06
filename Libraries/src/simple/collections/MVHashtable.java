@@ -1,7 +1,7 @@
 /**
  *
  */
-package simple.util;
+package simple.collections;
 
 import java.util.HashMap;
 import java.util.HashSet;

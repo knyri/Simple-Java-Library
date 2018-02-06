@@ -7,6 +7,8 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
+import simple.collections.ArrayIterator;
+
 public class Buffer<E> implements Queue<E>, List<E> {
 	/** the buffer */
 	protected Object[] buf;

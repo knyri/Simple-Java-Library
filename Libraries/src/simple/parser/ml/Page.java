@@ -10,8 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import simple.CIString;
-import simple.util.FixedSizeArrayList;
-import simple.util.ImmutableList;
+import simple.collections.FixedSizeArrayList;
+import simple.collections.ImmutableList;
 import simple.util.logging.Log;
 import simple.util.logging.LogFactory;
 
