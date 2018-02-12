@@ -50,7 +50,7 @@ public class BeanstalkClient implements AutoCloseable{
 		this.use(config.using());
 
 		if(config.ignoresDefault()){
-			this.ignore("deault");
+			this.ignore("default");
 		}
 	}
 	@Override
