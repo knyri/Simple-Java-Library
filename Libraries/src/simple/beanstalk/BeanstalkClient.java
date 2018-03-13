@@ -584,13 +584,13 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkProtocolException
 	 * @throws BeanstalkServerException
 	 */
-	public void use(String tube) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+	public boolean use(String tube) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
 		String response= doCommand("use "+ tube);
 		if(!"USING".equals(response)){
 			throw new BeanstalkProtocolException("Unexpected response: '" + response + "'");
 		}
 		// discard tube name
-		getToken();
+		return tube.equalsIgnoreCase(getToken());
 	}
 	/**
 	 * Gets the tube that this client is using
