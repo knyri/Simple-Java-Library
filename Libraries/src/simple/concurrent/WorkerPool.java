@@ -37,6 +37,12 @@ public class WorkerPool<T> implements Runnable{
 		threadPool= new ThreadPoolExecutor(threads, threads, 5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(threads, true));
 	}
 	/**
+	 * @return The worker
+	 */
+	public Worker<T> getWorker(){
+		return worker;
+	}
+	/**
 	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.
 	 * @param worker The worker that will do the work
 	 * @param pool The pool of items to work on
