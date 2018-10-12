@@ -1,5 +1,6 @@
 package simple.sql;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -288,12 +289,44 @@ public class WhereBuilder {
 		return this;
 	}
 	/**
+	 * expr IN (values[0], values[1], ...)
+	 * @param expr
+	 * @param values
+	 * @return
+	 */
+	public WhereBuilder in(String expr, Collection<?> values){
+		where
+			.append(expr)
+			.append(" IN (");
+		for(Object value: values){
+			where.append(addValue(value)).append(',');
+		}
+		where.setCharAt(where.length() - 1, ')');
+		return this;
+	}
+	/**
 	 * expr NOT IN (...)
 	 * @param expr
 	 * @param values
 	 * @return
 	 */
 	public WhereBuilder notIn(String expr, Object... values){
+		where
+			.append(expr)
+			.append(" NOT IN (");
+		for(Object value: values){
+			where.append(addValue(value)).append(',');
+		}
+		where.setCharAt(where.length() - 1, ')');
+		return this;
+	}
+	/**
+	 * expr NOT IN (...)
+	 * @param expr
+	 * @param values
+	 * @return
+	 */
+	public WhereBuilder notIn(String expr, Collection<?> values){
 		where
 			.append(expr)
 			.append(" NOT IN (");

@@ -289,7 +289,7 @@ public class TableModel implements AutoCloseable{
 
 		afterLoad();
 	}
-	public final void find() throws Exception{
+	public void find() throws Exception{
 		find((String[])null);
 	}
 
