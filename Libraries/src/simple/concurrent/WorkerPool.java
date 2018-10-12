@@ -163,6 +163,9 @@ public class WorkerPool<T> implements Runnable{
 		private void setPool(WorkerPool<T> pool){
 			this.pool= pool;
 		}
+		protected final WorkerPool<T> getPool(){
+			return pool;
+		}
 		protected final int getRemaining(){
 			return pool.itemsRemaining();
 		}
