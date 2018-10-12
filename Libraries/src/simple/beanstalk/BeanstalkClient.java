@@ -610,15 +610,15 @@ public class BeanstalkClient implements AutoCloseable{
 	}
 	/**
 	 * Puts the job in to the used tube
-	 * @param priority
-	 * @param delay
-	 * @param ttr
+	 * @param priority Lower the number the higher the priority
+	 * @param delay In seconds
+	 * @param ttr Time to run in seconds
 	 * @param data
 	 * @return
-	 * @throws BeanstalkDisconnectedException
+	 * @throws BeanstalkDisconnectedException If client disconnected
 	 * @throws IOException
-	 * @throws BeanstalkProtocolException
-	 * @throws BeanstalkServerException
+	 * @throws BeanstalkProtocolException When job data is too big or the server is in drain mode
+	 * @throws BeanstalkServerException See {@link #doCommand(byte[])}
 	 */
 	public PutResponse put(int priority, int delay, int ttr, byte[] data) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
 		String response= doCommand("put "+ Integer.toString(priority, 10) + ' ' + Integer.toString(delay, 10) + ' ' + Integer.toString(ttr, 10), data);
