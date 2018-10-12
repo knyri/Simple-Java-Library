@@ -31,6 +31,9 @@ public class IniConfig extends IniSection implements Iterable<IniSection>{
 	private final HashMap<String, IniSection> sections= new HashMap<String, IniSection>();
 	public IniConfig() {super("default");}
 
+	public boolean sectionExists(String name){
+		return sections.containsKey(name);
+	}
 	/**
 	 * @param name
 	 * @return The new section
