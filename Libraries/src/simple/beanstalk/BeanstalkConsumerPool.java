@@ -72,14 +72,18 @@ public class BeanstalkConsumerPool implements Runnable{
 	public boolean isDone(){
 		return done;
 	}
+	@Deprecated
 	public void stop(){
-		worker.stop();
+		stop(false);
+	}
+	public void stop(boolean now){
+		worker.stop(now);
 	}
 	/**
 	 * Calls interrupt() on all the workers.
 	 */
 	public void interruptThreads(){
-		worker.stop();
+		worker.stop(true);
 		threadPool.shutdownNow();
 	}
 	/**
@@ -87,8 +91,12 @@ public class BeanstalkConsumerPool implements Runnable{
 	 */
 	public static abstract class BeanstalkConsumer implements Runnable {
 		private volatile boolean isStopped= false;
-		public void stop(){
+		protected abstract void stopNow();
+		public void stop(boolean now){
 			isStopped= true;
+			if(now){
+				stopNow();
+			}
 		}
 		private BeanstalkConsumerPool pool;
 		private void setPool(BeanstalkConsumerPool pool){
