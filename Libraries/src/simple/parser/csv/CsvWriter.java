@@ -171,4 +171,8 @@ public class CsvWriter implements Closeable {
 		write(strings);
 		return writeln();
 	}
+
+	public void flush() throws IOException{
+		out.flush();
+	}
 }
