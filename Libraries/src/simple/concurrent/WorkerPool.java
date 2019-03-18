@@ -18,7 +18,7 @@ import simple.collections.ListQueue;
 public class WorkerPool<T> implements Runnable{
 	private final Worker<T> worker;
 	private final Queue<T> pool;
-	private boolean done= false;
+	private volatile boolean done= false;
 	private final ThreadPoolExecutor threadPool;
 	private final int threadCount;
 	private final int poolSize;
@@ -35,6 +35,9 @@ public class WorkerPool<T> implements Runnable{
 		threadCount= threads;
 		poolSize= pool.size();
 		threadPool= new ThreadPoolExecutor(threads, threads, 5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(threads, true));
+	}
+	protected ThreadPoolExecutor getThreadPool(){
+		return threadPool;
 	}
 	/**
 	 * @return The worker
