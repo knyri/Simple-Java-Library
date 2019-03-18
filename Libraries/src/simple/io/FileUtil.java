@@ -423,4 +423,18 @@ public final class FileUtil{
 		}
 		return tmp;
 	}
+	public static boolean deleteDir(File dir){
+		for(File file : dir.listFiles()){
+			if(file.isDirectory()){
+				if(!deleteDir(file)){
+					return false;
+				}
+			}else{
+				if(!file.delete()){
+					return false;
+				}
+			}
+		}
+		return dir.delete();
+	}
 }
