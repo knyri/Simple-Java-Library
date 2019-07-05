@@ -1,5 +1,6 @@
 package simple.concurrent;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,8 @@ public abstract class WorkerPool<T> implements Runnable{
 	protected WorkerPool(WorkerPoolWorker<T> worker, int threadCount){
 		this.worker= worker;
 		this.threadCount= threadCount;
+		threadPool= new ThreadPoolExecutor(threadCount, threadCount, 5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(threadCount, true));
+		worker.setWorkerPool(this);
 	}
 	public WorkerPoolWorker<T> getWorker(){
 		return worker;

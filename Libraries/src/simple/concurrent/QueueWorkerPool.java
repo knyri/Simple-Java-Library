@@ -2,9 +2,6 @@ package simple.concurrent;
 
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import simple.collections.ListQueue;
 
@@ -29,7 +26,6 @@ public class QueueWorkerPool<T> extends WorkerPool<T>{
 		this.pool= pool;
 		worker.setPool(new QueueWorkerDataPool<>(pool));
 		poolSize= pool.size();
-		threadPool= new ThreadPoolExecutor(threads, threads, 5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(threads, true));
 	}
 	/**
 	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.
@@ -70,9 +66,6 @@ public class QueueWorkerPool<T> extends WorkerPool<T>{
 		}
 		@Override
 		public T getNext(){
-			if(data.isEmpty()){
-				return null;
-			}
 			return data.poll();
 		}
 
