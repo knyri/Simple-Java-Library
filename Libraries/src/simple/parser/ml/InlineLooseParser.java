@@ -4,7 +4,6 @@
 package simple.parser.ml;
 
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -12,6 +11,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 
 import simple.CIString;
+import simple.io.CharBuffer;
 import simple.io.DoubleParsePosition;
 import simple.io.RWUtil;
 import simple.io.ReadWriterFactory;
@@ -104,305 +104,223 @@ public class InlineLooseParser {
 		final ParserConstants pconst;
 		final boolean buildCache;
 
-
 		final DoubleParsePosition pos = new DoubleParsePosition();
 		Tag cur = null;//tag currently adding to. defaults to page if cur==null
 		Tag tag = null;//tag currently creating
-		final StringBuilder buf = new StringBuilder(500);
+		final CharBuffer buf;
 
 		Parser(Reader in, ParserConstants pconst, boolean buildCache){
 			bin= ReadWriterFactory.getBufferedReader(in);
+			buf= new CharBuffer(bin);
 			this.pconst= pconst;
 			this.buildCache= buildCache;
 		}
-		boolean fillBuffer() throws IOException{
-			if (buf.length()==0) {
-				char c;
-				int retc;
-				if(cur == null){
-					retc = RWUtil.skipWhitespace(bin);
-					if (retc==-1){
-						return false;
-					}
-					c= (char)retc;
-					buf.append(c);
-				}else{
-					while(true){
-						c= (char)(retc= bin.read());
-						if(retc == -1){
-							return false;
-						}
-						if(!do_str.isWhiteSpace(c)){
-							cur.addChild(new Tag(Tag.CDATA,buf.toString(),true));
-							buf.setLength(0);
-							buf.append(c);
-							break;
-						}
-						buf.append(c);
-					}
-				}
-			}
-			return true;
-		}
-		/**
-		 * @return Last character in the buffer
-		 */
-		char lastChar(){
-			return buf.charAt(buf.length() - 1);
-		}
-		char charAt(int idx){
-			return buf.charAt(idx);
-		}
-		boolean endsWith(String str){
-			return buf.indexOf(str, buf.length() - str.length()) != -1;
-		}
-		boolean startsWith(String str){
-			return buf.lastIndexOf(str, 0) == 0;
-		}
-		void addCharData(String data){
-//			log.debug("CDATA",data);
-			if(cur != null){
-				if(cur.getChild(cur.childCount()-1).getName().equals(Tag.CDATA)){
-					// Current's last child is CDATA. Append this text to it
-					cur.getChild(cur.childCount()-1).setContent(cur.getChild(cur.childCount()-1).getContent() + data);
-				}else{
-					cur.addChild(new Tag(Tag.CDATA, data, true));
-				}
-			}else{
-				page.addTag(new Tag(Tag.CDATA, data, true), null);
-			}
-		}
-		/**
-		 * Meta and comments. Anything that not CDATA or a normal tag
-		 * @param tag
-		 */
-		void addSpecialTag(Tag tag){
-			if (cur == null) {
-				// no current tag, add to page
-				page.addTag(tag, null);
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
-			} else {
-				cur.addChild(tag);
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
-			}
-		}
+
 		void addTag(Tag tag){
-			if (cur == null) {
-				// no current tag, add to page
-				page.addTag(tag, null);
+			log.debug("Add Tag", tag.toString());
+			if (cur != null) {
 				if(buildCache){
 					page.addTagToCache(tag);
 					tag.addParentListener(page);
 				}
+				cur.addChild(tag);
 			} else {
-				if (pconst.isOptionalEnder(cur.getName()) && pconst.isOptionalEnderEnd(cur.getName(),tag.getName())) {
-					// Current tag has an optional end and the new tag ends it
-//log.debug("optional ender","ended: "+cur.getName()+" current: "+(cur.getParent()!=null?cur.getParent().getName():"[NONE]"));
-					cur = cur.getParent();
-				}
-				if(cur == null){
-					page.addTag(tag, null);
-				}else{
-					cur.addChild(tag);
-//log.debug(cur.toString());
-				}
-				if(buildCache){
-					page.addTagToCache(tag);
-					tag.addParentListener(page);
-				}
+				page.addTag(tag, null);
 			}
 		}
-		final Page page = new Page();
+		Page page;
 		Page parse() throws IOException, ParseException {
-			char c;
+			page= new Page();
 			String tmp;
-			while(true){
+			if(!buf.fillUntil('<')){
+				return page;
+			}
+			while (true) {
 				pos.reset();
-//				log.debug("---- LOOP ----");
-				if(!fillBuffer()){
+				log.debug("---- LOOP ----", buf.toString());
+				buf.markStart(buf.find('<'));
+				if(buf.getMarkStart() == -1){
+					log.debug("EOF at start of loop");
+					addTag(new Tag(Tag.CDATA, buf.toString(), true));
 					break;
 				}
-				c= charAt(0);
-				if(c != '<'){
-					// No tag, CDATA
-					// Read until a tag
-					buf.append(RWUtil.readUntil(bin, '<'));
-					boolean append= false;
-					if (lastChar()=='<') {
-						append= true;
-						buf.deleteCharAt(buf.length()-1);
-					}
-					addCharData(buf.toString());
-					buf.setLength(0);
-					if(append){
-						buf.append('<');
-					}
+				if(buf.getMarkStart() > 0){
+					log.debug("CDATA at start of loop");
+					do{
+						buf.moveTo(buf.getMarkStart());
+						buf.markStart(buf.findAny("><", 1));
+						if(buf.getMarkStart() == -1){
+							log.debug("EOF at start of loop; looks like an unfinished tag");
+							addTag(new Tag(Tag.CDATA, buf.toString(), true));
+							buf.clear();
+							break;
+						}
+					}while(buf.lastChar() == '<');
+					addTag(new Tag(Tag.CDATA, buf.readToString(), true));
+					buf.clearRead();
 					continue;
+				}else{
+					buf.skip();
+					if(buf.findAny("><") == -1){
+						log.debug("EOF at start of loop; looks like an unfinished tag");
+						addTag(new Tag(Tag.CDATA, buf.toString(), true));
+						buf.clear();
+						break;
+					}
 				}
-				buf.append(RWUtil.readUntilAny(bin, "><"));
-//				log.debug(buf);
 				/*
-				 *  charAt(1) == '!' - Don't do it if it's a special tag!
+				 *  buf.charAt(1) != '!' - Don't do it if it's a special tag!
 				 */
-				if(lastChar() == '<' && charAt(1) != '!'){
-//log.debug("ending <",buf);
-					// Unescaped <, treat as CDATA
-					// <3 cause this bug to be found
-					buf.deleteCharAt(buf.length() - 1);
-					addCharData(buf.toString());
-					buf.setLength(0);
-					buf.append('<');
-					continue;
-				}
+//				if(buf.lastChar() == '<' && buf.current() != '!'){
+//					// Unescaped <, treat as CDATA
+//					// <3 cause this bug to be found
+//					buf.fillUntil('<');
+//					buf.moveTo(buf.length());
+//					if (buf.lastChar() == '<') {
+//						buf.rewind();
+//					}
+//					// log.debug("CDATA", buf);
+//					addTag(new Tag(Tag.CDATA, buf.readToString(), true));
+//					buf.clearRead();
+//					continue;
+//				}
 				// Check for << or < followed by whitespace
-				if(charAt(1) == '<'){
-					int index= 2, end= buf.length();
-					while(index < end && charAt(index) == '<'){index++;}
-					index--;
-					addCharData(buf.substring(0, index));
-					buf.delete(0, index);
-					continue;
-				}
-				if(do_str.isWhiteSpace(charAt(1))){
-//log.debug("<<",buf);
+				if(buf.current() == '<' || do_str.isWhiteSpace(buf.current())){
+					log.debug("<<",buf);
 					//un-escaped <
-					int index= 2, end= buf.length();
-					while(index < end && charAt(index) != '<'){index++;}
-					index--;
-					addCharData(buf.substring(0,index));
-					buf.delete(0, index);
+					while(buf.current() == '<' || do_str.isWhiteSpace(buf.current())){
+						if(!buf.skip()){
+							if(!buf.fillUntil('<')){
+								log.debug("EOF");
+								addTag(new Tag(Tag.CDATA, buf.toString(), true));
+								break;
+							}
+						}
+					}
+					addTag(new Tag(Tag.CDATA, buf.readToString(), true));
+					buf.clearRead();
 					continue;
-//					log.debug("After",buf);
 				}
 				/*
 				 * Comment
 				 */
-				if (buf.length()>3 && startsWith("<!--")) {
-					if (!endsWith("-->")){
-						buf.append(RWUtil.readUntil(bin, "-->"));
+				if (buf.length() > 3 && buf.startsWith("<!--")) {
+					int idx= buf.find("-->");
+					if(idx == -1){
+						// EOF while searching
+						addTag(new Tag(Tag.CDATA, buf.toString(), true));
+						buf.clear();
+						break;
 					}
 
-					// log.debug("HTML comment", buf);
-					addSpecialTag(new Tag(Tag.HTMLCOMM, buf.toString(), true));
-					buf.setLength(0);
+					log.debug("HTML comment", buf);
+					addTag(new Tag(Tag.HTMLCOMM, buf.toString(), true));
+					buf.clear();
 					continue;
 				}
 				// rare case where < is the last character?
 				if(buf.length() < 2){
-					log.debug("When does this happen?!?",buf);
+					// log.debug("When does this happen?!?",buf);
 					break;
 				}
 				/*
 				 * This thing
 				 * <? ?>
 				 */
-				if(charAt(1)=='?'){
-					if (!endsWith("?>")){
-						buf.append(RWUtil.readUntil(bin,"?>"));
+				if(buf.current() == '?'){
+					int idx= buf.find("?>");
+					if(idx == -1){
+						// EOF while searching
+						addTag(new Tag(Tag.CDATA, buf.toString(), true));
+						buf.clear();
+						break;
 					}
-					addSpecialTag(new Tag(Tag.META, buf.toString(), true));
-					buf.setLength(0);
+					buf.moveTo(idx + 2);
+
+					addTag(new Tag(Tag.META, buf.readToString(), true));
+					buf.clearRead();
 					continue;
 				}
 				/*
 				 * DOCTYPE or CDATA
 				 */
-				if (charAt(1)=='!'){
+				if (buf.next() == '!'){
+					log.debug("Meta Tag");
 					// <!DOCTYPE
-					if (buf.length()>9){
-						//TODO: Make this more generalized for <! tags
-						final String ttmp= buf.substring(0,9).toUpperCase();
-						if(ttmp.startsWith("<!CDATA")){//NOTE: SGML CDATA
-							if (!buf.substring(buf.length()-3).equals("]]>")) {
-								buf.append(RWUtil.readUntil(bin,"]]>"));
-							}
-							// log.debug("SGML CDATA");
-							addSpecialTag(new Tag(Tag.SGMLCDATA, buf.toString(), true));
-							buf.setLength(0);
-							continue;
-						}else if(ttmp.equals("<!DOCTYPE")){
-							// Checking for <!DOCTYPE dmodule [
-							int idx= 9;
-							//skip whitespace
-							while(idx < buf.length() && Character.isWhitespace(charAt(idx))) idx++;
-							if(idx < buf.length() && Character.isAlphabetic(charAt(idx))){
-								//skip name
-								while(idx < buf.length() && Character.isAlphabetic(charAt(idx))) idx++;
-								if(idx < buf.length() && ( Character.isWhitespace(charAt(idx)) || charAt(idx) == '[' )){
-									//skip whitespace
-									while(idx < buf.length() && Character.isWhitespace(charAt(idx))) idx++;
-									if(idx < buf.length() && charAt(idx) == '[' && !endsWith("]>")){
-										buf.append(RWUtil.readUntil(bin,"]>"));
-									}
-								}
-							}
-// log.debug("DOCTYPE", buf);
-							addSpecialTag(new Tag(Tag.META,buf.toString(),true));
-							buf.setLength(0);
+					if (buf.length() > 9){
+						int idx= buf.findAny("[>");
+						if(idx == -1){
+							// EOF while searching
+							addTag(new Tag(Tag.CDATA, buf.toString(), true));
+							buf.clear();
+							break;
+						}
+						if(buf.charAt(idx) == '>'){
+							buf.moveTo(idx);
+							addTag(new Tag(Tag.META, buf.readToString(),true));
+							buf.clearRead();
 							continue;
 						}
+						buf.fillUntil("]>");
+						addTag(new Tag(Tag.META,buf.toString(),true));
+						buf.clear();
+						continue;
 					}
 				}
 				/*
 				 * Found possible end tag </
 				 */
-				if (charAt(pos.start+1) == '/') {
-					pos.end = buf.indexOf(">",pos.start);
-					if (!pos.validEnd() || do_str.isWhiteSpace(charAt(pos.end)))
-						throw new ParseException("Missing matching '>' for '<' at index "+pos.start+" of "+buf, pos.start);
+				if (buf.current() == '/') {
+					buf.markStart(2);
+					buf.markEnd(buf.find('>'));
+					if (buf.getMarkEnd() == -1){
+						throw new ParseException("Missing matching '>' for '<' at index "+buf.getMarkStart()+" of "+buf, buf.getMarkStart());
+					}
+					// include '>' in the read section
+					buf.moveTo(buf.getMarkEnd() + 1);
 					/*
 					 * Name of the end tag
 					 */
-					final String name= buf.substring(pos.start+2, pos.end).trim();
-					if (cur != null) {
+					final String name = buf.getMarked().trim();
+					if (cur == null) {
+						log.warning("Missing opening tag for closing tag "+name+" found at "+pos+".(At document root)");
+					}else{
 						//end the tags whose end tags are optional
 						while (!cur.getName().equals(name) && pconst.isOptionalEnder(cur.getName())) {
 							// end tag does not match current and current's end tag is optional
-// log.debug("optional ender","ended: '"+cur.getName()+"'");
-							cur= cur.getParent();
+							log.debug("optional ender","ended: '"+cur.getName()+"'");
+							cur = cur.getParent();
 						}
-// log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
+						log.debug("current: '"+cur.getName()+"'; name: '"+name+"'");
 						if (cur.getName().equals(name)) {
-							cur= cur.getParent();
-// log.debug("ended: '"+name+"' current: '"+(cur!=null?cur.getName():"[NONE]")+"'");
+							cur = cur.getParent();
+							log.debug("ended: '"+name+"' current: '"+(cur != null ? cur.getName() : "[NONE]")+"'");
 						} else {
-							tag= cur;
+							tag = cur;
 							boolean found = false;
 							while (tag.hasParent()) {
 								/*
 								 * check the upper tags(cause: self-closing tag without special
 								 * closure or empty body followed by closing tag)
 								 */
-								tag= tag.getParent();
+								tag = tag.getParent();
 								if (tag.getName().equals(name)) {
-									found= true;
+									found = true;
 									do {
 										log.warning("lazy self-closing tag found: '"+cur.getName()+"'");
 										cur.setSelfClosing(true);//this will copy all children to parent
-										cur= cur.getParent();
+										cur = cur.getParent();
 									} while (cur != tag);
-									cur= cur.getParent();
+									cur = cur.getParent();
 									break;
 								}
 							}
 							if (!found){
-								log.warning("Missing opening tag for closing tag "
-										+buf.subSequence(pos.start, pos.end+1)
-										+" found at "+pos+". Current tag: "+cur.getName());
+								log.warning("Missing opening tag for closing tag "+name+" found at "+pos+". Current tag: "+cur.getName());
 							}
 						}
-					} else {
-						log.warning("Missing opening tag for closing tag "
-								+buf.subSequence(pos.start, pos.end+1)
-								+" found at "+pos+".(At document root)");
 					}
-					buf.setLength(0);
+					buf.clearRead();
 					continue;
 				}//end handle end tag
 				try{
@@ -415,19 +333,19 @@ public class InlineLooseParser {
 				 * <input name="name" value="ss"' ... >
 				 * <td colspan=11'>
 				 */
-				while (charAt(pos.end) != '>') {
-					switch(charAt(pos.end)){
+				while (buf.charAt(pos.end) != '>') {
+					switch(buf.charAt(pos.end)){
 					// NOTE: we are guaranteed not to be in a quotable section here
 					case '"':
 					case '\'':
 						pos.end++;
 						continue;
 					}
-					if(charAt(pos.end) == '='){
+					if(buf.charAt(pos.end) == '='){
 						// quotable section, read it as such.
 	//skip whitespace
 						pos.end++;
-						while(do_str.isWhiteSpace(charAt(pos.end))){
+						while(do_str.isWhiteSpace(buf.charAt(pos.end))){
 							pos.end++;
 							if (pos.end == buf.length()) {
 								tmp = RWUtil.readUntil(bin, '>');
@@ -438,10 +356,10 @@ public class InlineLooseParser {
 							}
 						}
 						//read value
-						switch(charAt(pos.end)){
+						switch(buf.charAt(pos.end)){
 						case '"':
 							pos.end++;
-							while(charAt(pos.end) != '"'){
+							while(buf.charAt(pos.end) != '"'){
 								// Find matching quote
 								pos.end++;
 								if (pos.end == buf.length()) {
@@ -456,7 +374,7 @@ public class InlineLooseParser {
 							break;
 						case '\'':
 							pos.end++;
-							while(charAt(pos.end)!='\''){
+							while(buf.charAt(pos.end) != '\''){
 								// Find matching quote
 								pos.end++;
 								if (pos.end == buf.length()) {
@@ -470,7 +388,7 @@ public class InlineLooseParser {
 							}
 							break;
 						default:
-							while(!do_str.isWhiteSpace(charAt(pos.end)) && charAt(pos.end) != '>'){
+							while(!do_str.isWhiteSpace(buf.charAt(pos.end)) && buf.charAt(pos.end) != '>'){
 								pos.end++;
 								if (pos.end == buf.length()) {
 									tmp = RWUtil.readUntil(bin, '>');
@@ -481,10 +399,10 @@ public class InlineLooseParser {
 								}
 							}
 						}//switch
-						if(charAt(pos.end)=='>'){
+						if(buf.charAt(pos.end)=='>'){
 							break;
 						}
-					}//if(charAt(pos.end)=='=')
+					}//if(buf.charAt(pos.end)=='=')
 					pos.end++;
 					if (pos.end == buf.length()) {
 						tmp = RWUtil.readUntil(bin, '>');
@@ -493,49 +411,72 @@ public class InlineLooseParser {
 						}
 						buf.append(tmp);
 					}
-				}// end while (charAt(pos.end)!='>')
+				}// end while (buf.charAt(pos.end)!='>')
 				}catch(final StringIndexOutOfBoundsException e){
 					// log.debug("BUFFER DUMP",buf);
-					int start=pos.end-100,end=pos.end+100;
-					if(start<0)start=0;
-					if(end>buf.length())end=buf.length();
-					StringIndexOutOfBoundsException e2=new StringIndexOutOfBoundsException(pos.toString()+":"+buf.substring(start,end));
+					int start= pos.end - 100,
+							end= pos.end + 100;
+					if(start < 0){
+						start=0;
+					}
+					if(end > buf.length()){
+						end=buf.length();
+					}
+					buf.markStart(start);
+					buf.markEnd(end);
+					StringIndexOutOfBoundsException e2=new StringIndexOutOfBoundsException(pos.toString()+":"+buf.getMarked());
 					e2.initCause(e);
 					throw e2;
 				}
 				// parse the tag
 				tag = createTag(buf, pos);
-// log.debug("Start tag","'"+tag.getName()+"' | "+pos);
+				buf.moveTo(pos.end + 1);
+				log.debug("Start tag","'"+tag.getName()+"' | "+pos);
 
 				// --- ADD CHILD TAG ---
-				addTag(tag);
+				if (cur == null) {
+
+					// no current tag, add to page
+					page.addTag(tag, null);
+					if(buildCache){
+						page.addTagToCache(tag);
+						tag.addParentListener(page);
+					}
+				} else {
+					if (pconst.isOptionalEnder(cur.getName()) && pconst.isOptionalEnderEnd(cur.getName(),tag.getName())) {
+						// Current tag has an optional end and the new tag ends it
+ log.debug("optional ender","ended: "+cur.getName()+" current: "+(cur.getParent()!=null?cur.getParent().getName():"[NONE]"));
+						cur = cur.getParent();
+					}
+					if(cur == null){
+						page.addTag(tag, null);
+					}else{
+						cur.addChild(tag);
+					}
+					if(buildCache){
+						page.addTagToCache(tag);
+						tag.addParentListener(page);
+					}
+				}
 				// --- CHILD TAG ADDED ---
 
 
 
 				if (pconst.isPcdataTag(tag.getName())) {
 					//check for tags filled with gibberish to us
-					try {
-						buf.setLength(0);
-						buf.append(RWUtil.readUntil(bin, "</"+tag.getName()+">", true));
-					} catch (final EOFException e) {
+					buf.clearRead();
+					buf.markStart();
+					buf.markEnd(buf.find("</"+tag.getName()+">"));
+					if(buf.getMarkEnd() == -1){
 						throw new ParseException("Missing end tag for PCDATA tag "+tag.getName()+" found at "+pos,pos.start);
 					}
-					try{
-						Tag tmptag= new Tag(Tag.CDATA, buf.substring(0, Math.max(do_str.CI.lastIndexOf(buf,"</"+tag.getName()),0)).trim(),true);
-						tag.addChild(tmptag);
-						if(buildCache){
-							page.addTagToCache(tmptag);
-							tmptag.addParentListener(page);
-						}
-					}catch(final StringIndexOutOfBoundsException e){
-						final StringIndexOutOfBoundsException e2= new StringIndexOutOfBoundsException(buf.toString());
-						e2.initCause(e);
-						throw e2;
+					Tag tmptag= new Tag(Tag.CDATA, buf.getMarked(),true);
+					tag.addChild(tmptag);
+					if(buildCache){
+						page.addTagToCache(tmptag);
+						tmptag.addParentListener(page);
 					}
-					// log.debug("PCDATA tag");
-					buf.setLength(0);
-					//add the data and continue(skips the adding of sub tags)
+					buf.clear();
 					continue;
 				}
 				// Should we add child tags to this one?
@@ -549,7 +490,7 @@ public class InlineLooseParser {
 					}
 				}
 
-				buf.setLength(0);
+				buf.clear();
 				// log.debug("current: "+cur.getName());
 			}
 			// END PARSE LOOP
@@ -574,11 +515,12 @@ public class InlineLooseParser {
 	 * @return The created tag.
 	 * @throws ParseException when certain elements are missing
 	 */
-	private static Tag createTag(final CharSequence src, final DoubleParsePosition limits) throws ParseException {
+	private static Tag createTag(final CharBuffer src, final DoubleParsePosition limits) throws ParseException {
 		final DoubleParsePosition pos = limits.clone();
-//		log.debug("Create Tag:"+src.subSequence(limits.start, limits.end+1));
-		if (src.charAt(pos.start+1)=='!' || src.charAt(pos.start+1)=='?')
+		 log.debug("Create Tag:"+src.subSequence(limits.start, limits.end+1));
+		if (src.charAt(pos.start+1)=='!' || src.charAt(pos.start+1)=='?'){
 			return new Tag(getCiStr("META"), src.subSequence(pos.start, pos.end+1).toString(), true);
+		}
 		final Tag tag = new Tag(src.charAt(limits.end-1)=='/');
 		pos.end = do_str.indexOf(src, ' ', pos.start, limits.end);
 		if (!pos.validEnd()) {//no space so no attributes.
@@ -590,7 +532,6 @@ public class InlineLooseParser {
 
 			return tag;
 		}
-//		log.debug(pos.toString() + "--" + limits.toString());
 		tag.setName(getCiStr(src.subSequence(limits.start+1, pos.end).toString().trim()));
 		String attrn = "";
 		while (true) {
@@ -604,18 +545,18 @@ public class InlineLooseParser {
 
 			attrn = src.subSequence(pos.start, pos.end).toString().trim();
 			try {
-				if (src.charAt(pos.end)=='=') {//distinguish between name=value and name
+				if (src.charAt(pos.end) == '=') {//distinguish between name=value and name
 					pos.start = pos.end = pos.end+1;
 					if(do_str.isWhiteSpace(src.charAt(pos.end))){
 						pos.start= pos.end= Math.min(do_str.skipWhitespace(src, pos.end + 1), limits.end);
 					}
-					if (src.charAt(pos.start)=='\'') {
-						do {
-							pos.end = do_str.indexOf(src, '\'', pos.start+1, limits.end);
-						} while (pos.validEnd() && src.charAt(pos.end-1)=='\\');
+					if (src.charAt(pos.start) == '\'') {
+						pos.end = do_str.indexOf(src, '\'', pos.start+1, limits.end);
+//						do {
+//						} while (pos.validEnd() && src.charAt(pos.end-1)=='\\');
 						if (!pos.validEnd()) throw new ParseException(pos+" Missing matching single quote in:'"+src.subSequence(limits.start, limits.end+1)+"' for "+attrn, pos.start);
 						pos.start++;
-					} else if (src.charAt(pos.start)=='"') {
+					} else if (src.charAt(pos.start) == '"') {
 						pos.end = do_str.indexOf(src, '"', pos.start+1, limits.end);
 						/*do {
 						} while (pos.validEnd() && src.charAt(pos.end-1)=='\\');*/
