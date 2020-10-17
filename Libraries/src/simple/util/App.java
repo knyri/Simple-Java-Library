@@ -25,6 +25,64 @@ import javax.swing.ImageIcon;
  */
 public final class App {
 	/**
+	 * Name separator in file paths
+	 * File.separator
+	 * @return File.separator
+	 */
+	public static String fileSeparator(){
+		return File.separator;
+	}
+	/**
+	 * Path separator in path lists
+	 * File.pathSeparator
+	 * @return File.pathSeparator
+	 */
+	public static String pathSeparator(){
+		return File.pathSeparator;
+	}
+	/**
+	 * Name of the default character encoding used when dealing with files
+	 * @return System.getProperty("file.encoding")
+	 */
+	public static String defaultCharacterEncoding(){
+		return System.getProperty("file.encoding");
+	}
+	/**
+	 * The default line ending
+	 * @return System.getProperty("line.separator")
+	 */
+	public static String defaultLineEnding(){
+		return System.getProperty("line.separator");
+	}
+	/**
+	 * The user's home directory; if they have one
+	 * @return System.getProperty("user.home")
+	 */
+	public static String homeDirectory(){
+		return System.getProperty("user.home");
+	}
+	/**
+	 * The default tmp directory use when making temporary files
+	 * @return System.getProperty("java.io.tmpdir")
+	 */
+	public static String tempDirectory(){
+		return System.getProperty("java.io.tmpdir");
+	}
+	/**
+	 * The directory that the application started in
+	 * @return System.getProperty("user.dir")
+	 */
+	public static String startingDirectory(){
+		return System.getProperty("user.dir");
+	}
+	/**
+	 * The username of the current user
+	 * @return System.getProperty("user.name")
+	 */
+	public static String username(){
+		return System.getProperty("user.name");
+	}
+	/**
 	 * Static true/false strings for use with storing true/false values in a
 	 * Properties or other object.
 	 */
