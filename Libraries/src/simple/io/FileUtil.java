@@ -8,16 +8,23 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Convenience methods
@@ -29,6 +36,26 @@ public final class FileUtil{
 	private FileUtil(){}
 	static final BlackHoleOutputStream voidos= new BlackHoleOutputStream();
 	static final BlackHoleWriter voidw= new BlackHoleWriter();
+	public static String readFully(File file) throws IOException{
+		try(FileReader in= new FileReader(file)){
+			return RWUtil.readFully(in);
+		}
+	}
+	public static String readFully(File file, Charset cs) throws IOException {
+		return RWUtil.readFully(file, cs);
+	}
+	public static void write(File file, String data) throws IOException {
+		try(Writer out= ReadWriterFactory.getBufferedWriter(file)){
+			out.write(data);
+			out.flush();
+		}
+	}
+	public static void write(File file, Charset cs, String data) throws IOException {
+		try(Writer out= ReadWriterFactory.getBufferedWriter(file, cs)){
+			out.write(data);
+			out.flush();
+		}
+	}
 	/**
 	 * discards everything read
 	 * @param in
@@ -436,5 +463,56 @@ public final class FileUtil{
 			}
 		}
 		return dir.delete();
+	}
+	/**
+	 * Copies files. Throws an error on any creation error
+	 * @param to Destination directory
+	 * @param from File(s) to copy
+	 * @throws IOException
+	 */
+	public static void copyFiles(File to, File... from) throws IOException{
+		copyFiles(to, new byte[2048*5], from);
+	}
+	/**
+	 * Copies files
+	 * @param to Destination directory
+	 * @param buf Copy buffer
+	 * @param from Files(s) to copy
+	 * @throws IOException
+	 */
+	public static void copyFiles(File to, byte[] buf, File... from) throws IOException{
+		File tmp;
+		for(File file: from){
+			tmp= new File(to, file.getName());
+			if(file.isDirectory()){
+				if(!tmp.mkdir()){
+					throw new IOException("Failed to create the directory " + tmp.getAbsolutePath());
+				}
+				copyFiles(tmp, file.listFiles());
+			}else{
+				if(!tmp.createNewFile()){
+					throw new IOException("Failed to create the file " + tmp.getAbsolutePath());
+				}
+				FileUtil.copyFile(file, tmp, buf);
+			}
+		}
+	}
+	public static void copyFile(File from, File to, byte[] buf) throws FileNotFoundException, IOException{
+		try(
+			InputStream is= new FileInputStream(from);
+			OutputStream os= new FileOutputStream(to);
+		){
+			FileUtil.copy(is, os, buf);
+		}
+	}
+	public static void copyFile(File from, File to) throws FileNotFoundException, IOException{
+		copyFile(from, to, new byte[2048*5]);
+	}
+	public static void consumeFiles(Path dir, Consumer<Path> consumer) throws IOException{
+		try(DirectoryStream<Path> files= Files.newDirectoryStream(dir)){
+			for(Path cur: files){
+				consumer.accept(cur);
+			}
+		}
 	}
 }
