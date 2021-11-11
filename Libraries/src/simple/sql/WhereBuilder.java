@@ -68,7 +68,7 @@ public class WhereBuilder {
 	 */
 	public final WhereBuilder and(WhereBuilder wb){
 		and();
-		where.append('(').append(wb).append(')');
+		where.append('(').append(wb.getWhere()).append(')');
 		values.putAll(wb.values);
 		return this;
 	}

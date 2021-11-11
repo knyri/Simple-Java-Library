@@ -52,6 +52,14 @@ public class NamedParamStatement implements PreparedStatement{
 	public NamedParamStatement(Connection con, String stm, int resultSetType, int resultSetConcurrency) throws SQLException{
 		this.stm= con.prepareStatement(processStm(stm), resultSetType, resultSetConcurrency);
 	}
+	public NamedParamStatement(Connection con, String stm, Map<String, Object> values) throws SQLException{
+		this(con, stm);
+		setAll(values);
+	}
+	public NamedParamStatement(Connection con, String stm, int resultSetType, int resultSetConcurrency, Map<String, Object> values) throws SQLException{
+		this(con, stm, resultSetType, resultSetConcurrency);
+		setAll(values);
+	}
 
 	/**
 	 * Attempts to set all the values.
