@@ -5,6 +5,7 @@ package simple.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -82,6 +83,7 @@ public final class App {
 	public static String username(){
 		return System.getProperty("user.name");
 	}
+
 	/**
 	 * Static true/false strings for use with storing true/false values in a
 	 * Properties or other object.
@@ -97,12 +99,19 @@ public final class App {
 		return tf ? TRUE : FALSE;
 	}
 	/**Turns the string into a boolean.
-	 * Does a <code>tf.equalsIgnoreCase({@link #TRUE})</code>
+	 * Ignoring case; "true", "t", and "1" evaluate to true.
 	 * @param tf Turns the string into a boolean
 	 * @return true or false
 	 */
-	public static final boolean TF(final String tf){
-		return tf.equalsIgnoreCase(TRUE);
+	public static final boolean TF(String tf){
+		tf= tf.toLowerCase();
+		switch(tf){
+			case "true":
+			case "t":
+			case "1":
+				return true;
+		}
+		return false;
 	}
 	public static boolean isEmpty(String str){
 		return str == null || str.isEmpty();
@@ -304,5 +313,18 @@ public final class App {
 	}
 	public static void println(){
 		System.out.println();
+	}
+	/**
+	 * Linux only
+	 * 
+	 * @param path
+	 * @return
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	public static boolean makeNamedPipe(File path) throws InterruptedException, IOException{
+		ProcessBuilder makeFile= new ProcessBuilder("mkfifo",path.getName());
+		makeFile.directory(path.getParentFile());
+		return 0 == makeFile.start().waitFor();
 	}
 }
