@@ -39,7 +39,7 @@ public final class LogFactory {
 	private static HashMap<Class<?>, Log> logCache= new HashMap<Class<?>, Log>();
 	//private static final Log _log = new Log(LogFactory.class);
 	private static Writer globalStream= new PrintWriter(System.out);
-	private static byte logOptions= (byte)0xFF;
+	private static byte logOptions= (byte)12;
 	private static boolean
 		printTime= false,
 		printDate= false;
