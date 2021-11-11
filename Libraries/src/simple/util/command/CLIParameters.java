@@ -3,15 +3,21 @@ package simple.util.command;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import simple.io.ParseException;
+
 /**
  * Parses passed args based on this format:
  * Automatically stops parameter and flag parsing when none of these forms are seen.
  *
  * Params:
  * -param value
+ *    Sets the value
  * --param=value
+ *    Sets the value
  * --param
- * 		unsets the parameter
+ *    Sets the value to 1 (boolean parameter)
+ * --param=
+ *    unsets the parameter
  *
  * Flags:
  * /f
@@ -33,11 +39,14 @@ public class CLIParameters {
 	private final boolean caseSensitive;
 	private final String[] args;
 	private int argsParsed;
-	public CLIParameters(String[] args, boolean caseSensitiveFlags){
+	public CLIParameters(String[] args, boolean caseSensitiveFlags) throws ParseException{
 		caseSensitive= caseSensitiveFlags;
 		argsParsed= args.length;
 		out:
 		for(int i= 0, len= args.length; i < len; i++){
+			if(args[i].length() == 0 || args[i].equals("-")){
+				continue;
+			}
 			switch(args[i].charAt(0)){
 			case '/':
 				// flags
@@ -80,7 +89,11 @@ public class CLIParameters {
 					}
 				}else{
 					// -key value
-					params.put(args[i].substring(1), args[++i]);
+					try{
+						params.put(args[i].substring(1), args[++i]);
+					}catch(IndexOutOfBoundsException e){
+						throw new ParseException("Expected a value after " + args[i - 1]);
+					}
 				}
 			break;
 			default:
