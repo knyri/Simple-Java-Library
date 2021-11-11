@@ -2,9 +2,13 @@ package simple.util.system;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import simple.io.FileUtil;
@@ -22,7 +26,7 @@ public final class ProcessUtil {
 		}else if(os.contains("linux") || os.contains("unix") || os.contains("mac")){
 			preader= new Unix();
 		}else{
-			preader= null;
+			preader= new Unknown();
 		}
 	}
 
@@ -42,12 +46,53 @@ public final class ProcessUtil {
 	public static boolean processExists(int pid) throws IOException{
 		return preader.processExists(pid);
 	}
+	public static boolean processExists(Class<?> clazz) throws IOException {
+		return preader.processExists(clazz);
+	}
+	public static void writeProcessId(Class<?> clazz) throws IOException {
+		preader.writeProcessId(clazz);
+	}
+	public static String readProcessId(Class<?> clazz) throws IOException {
+		return preader.readProcessId(clazz);
+	}
 
 	private ProcessUtil() {}
 
 	private static interface ProcessReader{
 		public boolean processExists(int pid) throws IOException;
 		public int getProcessId() throws IOException;
+		public default boolean processExists(Class<?> clazz) throws IOException {
+			String pidStr= readProcessId(clazz);
+			if(pidStr != null && !pidStr.trim().isEmpty()) {
+				if(processExists(Integer.parseInt(pidStr, 10))) {
+					return true;
+				}
+			}
+			return false;
+		}
+		public default void writeProcessId(Class<?> clazz) throws IOException {
+			File pidFile= new File(clazz.getCanonicalName() + ".pid");
+			try(FileWriter pidWriter= new FileWriter(pidFile, false)){
+				pidWriter.write(Integer.toString(ProcessUtil.getProcessId(), 10));
+			}
+		}
+		public default String readProcessId(Class<?> clazz) throws IOException {
+			Path pidFile= Paths.get(clazz.getCanonicalName() + ".pid");
+			if(Files.exists(pidFile)){
+				return Files.readAllLines(pidFile).get(0);
+			}
+			return null;
+		}
+	}
+	private static final class Unknown implements ProcessReader{
+		@Override
+		public boolean processExists(int pid) throws IOException{
+			throw new IOException("Unknown system");
+		}
+		@Override
+		public int getProcessId() throws IOException{
+			throw new IOException("Unknown system");
+		}
 	}
 	private static final class Unix implements ProcessReader{
 		private static final String[] getProcesses= new String[]{"ps", "-eo", "pid"};
