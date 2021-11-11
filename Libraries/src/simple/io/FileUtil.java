@@ -17,13 +17,17 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 /**
@@ -36,11 +40,26 @@ public final class FileUtil{
 	private FileUtil(){}
 	static final BlackHoleOutputStream voidos= new BlackHoleOutputStream();
 	static final BlackHoleWriter voidw= new BlackHoleWriter();
+	/**
+	 * Fully reads a file
+	 *
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
 	public static String readFully(File file) throws IOException{
 		try(FileReader in= new FileReader(file)){
 			return RWUtil.readFully(in);
 		}
 	}
+	/**
+	 * Fully reads a file with the specified character set
+	 *
+	 * @param file
+	 * @param cs
+	 * @return
+	 * @throws IOException
+	 */
 	public static String readFully(File file, Charset cs) throws IOException {
 		return RWUtil.readFully(file, cs);
 	}
@@ -50,10 +69,84 @@ public final class FileUtil{
 			out.flush();
 		}
 	}
+	/**
+	 * Appends the string data to the file
+	 *
+	 * @param file
+	 * @param cs
+	 * @param data
+	 * @throws IOException
+	 */
 	public static void write(File file, Charset cs, String data) throws IOException {
 		try(Writer out= ReadWriterFactory.getBufferedWriter(file, cs)){
 			out.write(data);
 			out.flush();
+		}
+	}
+	/**
+	 * Sums the size of all the files in the directory
+	 */
+	private static final class PathSummer implements FileVisitor<Path>{
+		private IOException error= null;
+		private AtomicLong size= new AtomicLong();
+		public long getSize() {
+			return size.get();
+		}
+		public IOException getError() {
+			return error;
+		}
+		public boolean hasError() {
+			return error != null;
+		}
+		@Override
+		public FileVisitResult postVisitDirectory(Path p, IOException e) throws IOException{
+			if(e != null) {
+				error= e;
+				return FileVisitResult.TERMINATE;
+			}
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path arg0, BasicFileAttributes arg1) throws IOException{
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFile(Path p, BasicFileAttributes arg1) throws IOException{
+			size.addAndGet(Files.size(p));
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFileFailed(Path p, IOException e) throws IOException{
+			if(e != null) {
+				error= e;
+				return FileVisitResult.TERMINATE;
+			}
+			return FileVisitResult.CONTINUE;
+		}
+
+	}
+	/**
+	 * Walks the path to get the fill size
+	 * @param p
+	 * @return
+	 * @throws IOException
+	 */
+	public static long size(Path p) throws IOException {
+		if(p == null || !Files.exists(p)) {
+			return 0;
+		}
+		if(Files.isDirectory(p)) {
+			PathSummer size= new PathSummer();
+			Files.walkFileTree(p, size);
+			if(size.hasError()) {
+				throw size.getError();
+			}
+			return size.getSize();
+		}else{
+			return Files.size(p);
 		}
 	}
 	/**
@@ -283,7 +376,7 @@ public final class FileUtil{
 	 * @param numBytes Number of bytes to copy
 	 * @throws IOException
 	 */
-	public static void copy(final InputStream input, final OutputStream output, final int bufferSize, long numBytes ) throws IOException {
+	public static void copy(final InputStream input, final OutputStream output, final int bufferSize, long numBytes) throws IOException {
 		final byte[] buffer= new byte[bufferSize];
 		int n= 0;
 		while (numBytes > 0) {
@@ -300,7 +393,7 @@ public final class FileUtil{
 	/**
 	 * @param b1 the first array
 	 * @param b2 the second array
-	 * @return True of the elements of both are identical.
+	 * @return True if the elements of both are identical.
 	 */
 	public static boolean compareBytes(byte[] b1, byte[] b2) {
 		if (b1.length == b2.length) {
@@ -450,7 +543,73 @@ public final class FileUtil{
 		}
 		return tmp;
 	}
+	/**
+	 * deleteDir walker
+	 */
+	private static final class DeleteTree implements FileVisitor<Path>{
+		private IOException error;
+		public IOException getError() {
+			return error;
+		}
+		public boolean hasError() {
+			return error != null;
+		}
+		@Override
+		public FileVisitResult postVisitDirectory(Path p, IOException e) throws IOException{
+			if(e != null) {
+				error= e;
+				return FileVisitResult.TERMINATE;
+			}
+			Files.delete(p);
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path p, BasicFileAttributes bfa) throws IOException{
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFile(Path p, BasicFileAttributes bfa) throws IOException{
+			Files.delete(p);
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFileFailed(Path p, IOException e) throws IOException{
+			if(e != null) {
+				error= e;
+				return FileVisitResult.TERMINATE;
+			}
+			return FileVisitResult.CONTINUE;
+		}
+	}
+	/**
+	 * Recursively deletes a directory
+	 *
+	 * @param dir
+	 * @throws IOException
+	 */
+	public static void deleteDir(Path dir) throws IOException{
+		if(dir == null || !Files.exists(dir)) {
+			return;
+		}
+		DeleteTree res= new DeleteTree();
+		Files.walkFileTree(dir, res);
+		if(res.hasError()) {
+			throw res.getError();
+		}
+	}
+	/**
+	 * Recursively deletes a directory
+	 *
+	 * @param dir
+	 * @return
+	 */
 	public static boolean deleteDir(File dir){
+		if(dir == null || !dir.exists()) {
+			return true;
+		}
 		for(File file : dir.listFiles()){
 			if(file.isDirectory()){
 				if(!deleteDir(file)){
@@ -497,6 +656,15 @@ public final class FileUtil{
 			}
 		}
 	}
+	/**
+	 * Copies a file
+	 *
+	 * @param from
+	 * @param to
+	 * @param buf Byte buffer to use when copying
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public static void copyFile(File from, File to, byte[] buf) throws FileNotFoundException, IOException{
 		try(
 			InputStream is= new FileInputStream(from);
@@ -505,9 +673,24 @@ public final class FileUtil{
 			FileUtil.copy(is, os, buf);
 		}
 	}
+	/**
+	 * Copies a file using a 10KB buffer
+	 *
+	 * @param from
+	 * @param to
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public static void copyFile(File from, File to) throws FileNotFoundException, IOException{
 		copyFile(from, to, new byte[2048*5]);
 	}
+	/**
+	 * Run the consumer on all files in the directory
+	 *
+	 * @param dir
+	 * @param consumer
+	 * @throws IOException
+	 */
 	public static void consumeFiles(Path dir, Consumer<Path> consumer) throws IOException{
 		try(DirectoryStream<Path> files= Files.newDirectoryStream(dir)){
 			for(Path cur: files){
