@@ -11,7 +11,9 @@ import simple.io.DoubleParsePosition;
  * <br>Created: 2004
  * @author Kenneth Pierce
  * @version 1.5
+ * @deprecated
  */
+@Deprecated
 public final class do_str {
 	/**
 	 * Sets whether functions should return a "not found" value or throw a
