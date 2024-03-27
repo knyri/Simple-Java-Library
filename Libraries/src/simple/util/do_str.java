@@ -1070,7 +1070,7 @@ public final class do_str {
 		}
 
 		// simple case (all substitutions)
-		if( (s1.length() - s2.length()) == 0){
+		if(s1.length() == s2.length()){
 			int distance= 0;
 			for(int i= 0, len= s1.length(); i < len; i++){
 				if(s1.charAt(i) != s2.charAt(i)){

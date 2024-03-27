@@ -22,10 +22,16 @@ public final class TimeUtil{
 	 * @return the formatted time
 	 */
 	public static final String getTime(final long milliseconds) {
-		final long second	= milliseconds/1000,
-				minute		= second/60,
-				hour		= minute/60;
-		return ((hour<10?"0":"")+hour+":"+(minute<10?"0":"")+minute+":"+(second<10?"0":"")+second);
+		final long
+			second = milliseconds/1000,
+			minute = second/60,
+			hour   = minute/60
+		;
+		return (
+			(hour < 10 ? "0" : "") + hour + ":" +
+			(minute < 10 ? "0" : "") + minute + ":" +
+			(second < 10 ? "0" : "") + second
+		);
 	}
 	public static final String getTime() {
 		if((System.currentTimeMillis()-TimeUtil.calLife)>1000) {
