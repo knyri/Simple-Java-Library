@@ -1,10 +1,14 @@
 package simple.parser.ini;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -27,6 +31,24 @@ import simple.io.ParseException;
  *
  */
 public class IniConfig extends IniSection implements Iterable<IniSection>{
+	public static IniConfig parse(Path f) throws IOException, ParseException {
+		IniConfig c= new IniConfig();
+		c.load(Files.newBufferedReader(f));
+		return c;
+	}
+	public static IniConfig parse(File f) throws IOException, ParseException {
+		return IniConfig.parse(f.toPath());
+	}
+	public static IniConfig parse(Reader f) throws IOException, ParseException {
+		IniConfig c= new IniConfig();
+		c.load(f);
+		return c;
+	}
+	public static IniConfig parse(CharSequence str) throws IOException, ParseException {
+		IniConfig c= new IniConfig();
+		c.load(new StringReader(str.toString()));
+		return c;
+	}
 
 	private final HashMap<String, IniSection> sections= new HashMap<String, IniSection>();
 	public IniConfig() {super("default");}
