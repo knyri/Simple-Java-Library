@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +18,12 @@ import simple.io.ParseException;
  *
  */
 public class CsvReader implements Closeable, Iterable<List<String>>{
-	private int row=0;
+	private int row= 0;
 	private final BufferedReader in;
 	private final char colSep, escape, quote;
 	private final String newLine;
+	private boolean hasHeaders= false;
+	private String[] headers;
 
 	/**
 	 * @param file The CSV file
@@ -33,12 +36,12 @@ public class CsvReader implements Closeable, Iterable<List<String>>{
 	public CsvReader(File file, char colSep, char quote, char escape, String newline) throws FileNotFoundException {
 		this(new BufferedReader(new FileReader(file)), colSep, quote, escape, newline);
 	}
-	public CsvReader(BufferedReader reader, char colSep, char quote, char escape, String newline) {
+	public CsvReader(Reader reader, char colSep, char quote, char escape, String newline) {
 		this.colSep= colSep;
 		this.escape= escape;
 		this.quote= quote;
 		this.newLine= newline;
-		in= reader;
+		in= (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
 	}
 	/**
 	 * Uses a comma as the separator, a double quote as the quote and escape, and the CRLF as the line separator
@@ -48,9 +51,67 @@ public class CsvReader implements Closeable, Iterable<List<String>>{
 	public CsvReader(File file) throws FileNotFoundException{
 		this(file, ',', '"', '"', "\r\n");
 	}
-	public CsvReader(BufferedReader reader){
+	public CsvReader(Reader reader){
 		this(reader, ',', '"', '"', "\r\n");
 	}
+	/**
+	 * Reads the next row and sets them as the headers.
+	 * Doesn't have to be called on the first row.
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public void readHeaders() throws IOException, ParseException {
+		if(this.hasHeaders) {
+			throw new IllegalStateException("Headers already read");
+		}
+		this.hasHeaders= true;
+		List<String> row= this.readRow();
+		if(row == null) {
+			this.headers= new String[0];
+			return;
+		}
+		this.headers= row.toArray(new String[row.size()]);
+		for(int idx= 0, end= this.headers.length; idx < end; idx++) {
+			this.headers[idx]= this.headers[idx].trim();
+		}
+	}
+	/**
+	 * Returns the header for that column. Not case sensitive
+	 * @param col
+	 * @return
+	 */
+	public String getColumnName(int col) {
+		if(!this.hasHeaders) {
+			throw new IllegalStateException("Headers not read");
+		}
+		return this.headers[col];
+	}
+	/**
+	 * Get the index of the column with the name
+	 * @param name
+	 * @return
+	 */
+	public int getColumnIndex(String name) {
+		if(!this.hasHeaders) {
+			throw new IllegalStateException("Headers not read");
+		}
+		if(this.headers.length == 0) {
+			return -1;
+		}
+		int idx= 0, end= this.headers.length;
+		for(; idx < end; idx++) {
+			if(this.headers[idx].equalsIgnoreCase(name)) {
+				break;
+			}
+		}
+		if(idx > end) {
+			return -1;
+		}
+		return idx;
+	}
+	/** Row number
+	 * @return
+	 */
 	public int getRow(){
 		return row;
 	}
