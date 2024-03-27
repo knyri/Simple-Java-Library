@@ -22,8 +22,10 @@ import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -36,13 +38,17 @@ import java.util.regex.Pattern;
  */
 public class NamedParamStatement implements PreparedStatement{
 	private static final Pattern fieldFinder= Pattern.compile(":[a-zA-Z0-9]+");
-	private final Map<String, Integer> fields= new HashMap<String, Integer>();
+	private final Map<String, List<Integer>> fields= new HashMap<String, List<Integer>>();
 	private final PreparedStatement stm;
 	private String processStm(String stm){
 		Matcher finder= fieldFinder.matcher(stm);
 		int fieldIdx= 1;
 		while(finder.find()){
-			fields.put(finder.group(), fieldIdx++);
+			if(!fields.containsKey(finder.group())) {
+				fields.put(finder.group(), new ArrayList<>());
+			}
+			fields.get(finder.group()).add(fieldIdx++);
+//			fields.put(finder.group(), fieldIdx++);
 		}
 		return finder.replaceAll("?");
 	}
@@ -347,7 +353,10 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setArray(parameterIndex, x);
 	}
 	public void set(String param, Array value) throws SQLException{
-		stm.setArray(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setArray(i, value);
+		}
+//		stm.setArray(fields.get(param), value);
 	}
 	@Override
 	public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
@@ -362,20 +371,32 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setAsciiStream(parameterIndex, x, length);
 	}
 	public void setAsciiStream(String param, InputStream value) throws SQLException{
-		stm.setAsciiStream(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setAsciiStream(i, value);
+		}
+//		stm.setAsciiStream(fields.get(param), value);
 	}
 	public void setAsciiStream(String param, InputStream value, int length) throws SQLException{
-		stm.setAsciiStream(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setAsciiStream(i, value,length);
+		}
+//		stm.setAsciiStream(fields.get(param), value, length);
 	}
 	public void setAsciiStream(String param, InputStream value, long length) throws SQLException{
-		stm.setAsciiStream(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setAsciiStream(i, value,length);
+		}
+//		stm.setAsciiStream(fields.get(param), value, length);
 	}
 	@Override
 	public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
 		stm.setBigDecimal(parameterIndex, x);
 	}
 	public void set(String param, BigDecimal value) throws SQLException{
-		stm.setBigDecimal(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setBigDecimal(i, value);
+		}
+//		stm.setBigDecimal(fields.get(param), value);
 	}
 	@Override
 	public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
@@ -390,13 +411,22 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setBinaryStream(parameterIndex, x, length);
 	}
 	public void setBinaryStream(String param, InputStream value) throws SQLException{
-		stm.setBinaryStream(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setBinaryStream(i, value);
+		}
+//		stm.setBinaryStream(fields.get(param), value);
 	}
 	public void setBinaryStream(String param, InputStream value, int length) throws SQLException{
-		stm.setBinaryStream(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setBinaryStream(i, value,length);
+		}
+//		stm.setBinaryStream(fields.get(param), value, length);
 	}
 	public void setBinaryStream(String param, InputStream value, long length) throws SQLException{
-		stm.setBinaryStream(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setBinaryStream(i, value,length);
+		}
+//		stm.setBinaryStream(fields.get(param), value, length);
 	}
 	@Override
 	public void setBlob(int parameterIndex, Blob x) throws SQLException {
@@ -411,34 +441,52 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setBlob(parameterIndex, inputStream, length);
 	}
 	public void set(String param, Blob value) throws SQLException{
-		stm.setBlob(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setBlob(i, value);
+		}
+//		stm.setBlob(fields.get(param), value);
 	}
 	public void setBlob(String param, InputStream value) throws SQLException{
-		stm.setBlob(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setBlob(i, value);
+		}
+//		stm.setBlob(fields.get(param), value);
 	}
 	public void setBlob(String param, InputStream value, long length) throws SQLException{
-		stm.setBlob(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setBlob(i, value);
+		}
+//		stm.setBlob(fields.get(param), value, length);
 	}
 	@Override
 	public void setBoolean(int parameterIndex, boolean x) throws SQLException {
 		stm.setBoolean(parameterIndex, x);
 	}
 	public void set(String param, boolean value) throws SQLException{
-		stm.setBoolean(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setBoolean(i, value);
+		}
+//		stm.setBoolean(fields.get(param), value);
 	}
 	@Override
 	public void setByte(int parameterIndex, byte x) throws SQLException {
 		stm.setByte(parameterIndex, x);
 	}
 	public void set(String param, byte value) throws SQLException{
-		stm.setByte(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setByte(i, value);
+		}
+//		stm.setByte(fields.get(param), value);
 	}
 	@Override
 	public void setBytes(int parameterIndex, byte[] x) throws SQLException {
 		stm.setBytes(parameterIndex, x);
 	}
 	public void set(String param, byte... value) throws SQLException{
-		stm.setBytes(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setBytes(i, value);
+		}
+//		stm.setBytes(fields.get(param), value);
 	}
 	@Override
 	public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
@@ -453,10 +501,16 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setCharacterStream(parameterIndex, reader, length);
 	}
 	public void setCharacterStream(String param, Reader value) throws SQLException{
-		stm.setCharacterStream(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setCharacterStream(i, value);
+		}
+//		stm.setCharacterStream(fields.get(param), value);
 	}
 	public void setCharacterStream(String param, Reader value, long length) throws SQLException{
-		stm.setCharacterStream(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setCharacterStream(i, value, length);
+		}
+//		stm.setCharacterStream(fields.get(param), value, length);
 	}
 	@Override
 	public void setClob(int parameterIndex, Clob x) throws SQLException {
@@ -471,13 +525,22 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setClob(parameterIndex, reader, length);
 	}
 	public void set(String param, Clob value) throws SQLException{
-		stm.setClob(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setClob(i, value);
+		}
+//		stm.setClob(fields.get(param), value);
 	}
 	public void setClob(String param, Reader value) throws SQLException{
-		stm.setClob(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setClob(i, value);
+		}
+//		stm.setClob(fields.get(param), value);
 	}
 	public void setClob(String param, Reader value, long length) throws SQLException{
-		stm.setClob(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setClob(i, value, length);
+		}
+//		stm.setClob(fields.get(param), value, length);
 	}
 	@Override
 	public void setDate(int parameterIndex, Date x) throws SQLException {
@@ -488,23 +551,38 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setDate(parameterIndex, x, cal);
 	}
 	public void set(String param, Date value) throws SQLException{
-		stm.setDate(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setDate(i, value);
+		}
+//		stm.setDate(fields.get(param), value);
 	}
 	public void set(String param, Date value, Calendar c) throws SQLException{
-		stm.setDate(fields.get(param), value, c);
+		for(Integer i: fields.get(param)) {
+			stm.setDate(i, value, c);
+		}
+//		stm.setDate(fields.get(param), value, c);
 	}
 	public void setDate(String param, Instant time) throws SQLException{
-		stm.setDate(fields.get(param), new Date(time.toEpochMilli()));
+		for(Integer i: fields.get(param)) {
+			stm.setDate(i, new Date(time.toEpochMilli()));
+		}
+//		stm.setDate(fields.get(param), new Date(time.toEpochMilli()));
 	}
 	public void setDate(String param, long time) throws SQLException{
-		stm.setDate(fields.get(param), new Date(time));
+		for(Integer i: fields.get(param)) {
+			stm.setDate(i, new Date(time));
+		}
+//		stm.setDate(fields.get(param), new Date(time));
 	}
 	@Override
 	public void setDouble(int parameterIndex, double x) throws SQLException {
 		stm.setDouble(parameterIndex, x);
 	}
 	public void set(String param, double value) throws SQLException{
-		stm.setDouble(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setDouble(i, value);
+		}
+//		stm.setDouble(fields.get(param), value);
 	}
 	@Override
 	public void setFloat(int parameterIndex, float x) throws SQLException {
@@ -515,14 +593,20 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setInt(parameterIndex, x);
 	}
 	public void set(String param, int value) throws SQLException{
-		stm.setInt(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setInt(i, value);
+		}
+//		stm.setInt(fields.get(param), value);
 	}
 	@Override
 	public void setLong(int parameterIndex, long x) throws SQLException {
 		stm.setLong(parameterIndex, x);
 	}
 	public void set(String param, long value) throws SQLException{
-		stm.setLong(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setLong(i, value);
+		}
+//		stm.setLong(fields.get(param), value);
 	}
 	@Override
 	public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
@@ -533,10 +617,16 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setNCharacterStream(parameterIndex, value);
 	}
 	public void setNCharacterStream(String param, Reader value) throws SQLException{
-		stm.setNCharacterStream(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setNCharacterStream(i, value);
+		}
+//		stm.setNCharacterStream(fields.get(param), value);
 	}
 	public void setNCharacterStream(String param, Reader value, long length) throws SQLException{
-		stm.setNCharacterStream(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setNCharacterStream(i, value, length);
+		}
+//		stm.setNCharacterStream(fields.get(param), value, length);
 	}
 	@Override
 	public void setNClob(int parameterIndex, NClob value) throws SQLException {
@@ -551,20 +641,32 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setNClob(parameterIndex, reader, length);
 	}
 	public void set(String param, NClob value) throws SQLException{
-		stm.setNClob(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setNClob(i, value);
+		}
+//		stm.setNClob(fields.get(param), value);
 	}
 	public void setNClob(String param, Reader value) throws SQLException{
-		stm.setNClob(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setNClob(i, value);
+		}
+//		stm.setNClob(fields.get(param), value);
 	}
 	public void setNClob(String param, Reader value, long length) throws SQLException{
-		stm.setNClob(fields.get(param), value, length);
+		for(Integer i: fields.get(param)) {
+			stm.setNClob(i, value, length);
+		}
+//		stm.setNClob(fields.get(param), value, length);
 	}
 	@Override
 	public void setNString(int parameterIndex, String value) throws SQLException {
 		stm.setNString(parameterIndex, value);
 	}
 	public void setNString(String param, String value) throws SQLException{
-		stm.setNString(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setNString(i, value);
+		}
+//		stm.setNString(fields.get(param), value);
 	}
 	@Override
 	public void setNull(int parameterIndex, int sqlType) throws SQLException {
@@ -575,10 +677,16 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setNull(parameterIndex, sqlType, typeName);
 	}
 	public void setNull(String param, int sqlType) throws SQLException{
-		stm.setNull(fields.get(param), sqlType);
+		for(Integer i: fields.get(param)) {
+			stm.setNull(i, sqlType);
+		}
+//		stm.setNull(fields.get(param), sqlType);
 	}
 	public void setNull(String param, int sqlType, String typeName) throws SQLException{
-		stm.setNull(fields.get(param), sqlType, typeName);
+		for(Integer i: fields.get(param)) {
+			stm.setNull(i, sqlType, typeName);
+		}
+//		stm.setNull(fields.get(param), sqlType, typeName);
 	}
 	@Override
 	public void setObject(int parameterIndex, Object x) throws SQLException {
@@ -593,48 +701,72 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setObject(parameterIndex, x, targetSqlType, scaleOrLength);
 	}
 	public void set(String param, Object value) throws SQLException{
-		stm.setObject(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setObject(i, value);
+		}
+//		stm.setObject(fields.get(param), value);
 	}
-	public void set(String param, Object x, int targetSqlType) throws SQLException {
-		stm.setObject(fields.get(param), x, targetSqlType);
+	public void set(String param, Object value, int targetSqlType) throws SQLException {
+		for(Integer i: fields.get(param)) {
+			stm.setObject(i, value, targetSqlType);
+		}
+//		stm.setObject(fields.get(param), value, targetSqlType);
 	}
 	public void set(String param, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
-		stm.setObject(fields.get(param), x, targetSqlType, scaleOrLength);
+		for(Integer i: fields.get(param)) {
+			stm.setObject(i, x, targetSqlType, scaleOrLength);
+		}
+//		stm.setObject(fields.get(param), x, targetSqlType, scaleOrLength);
 	}
 	@Override
 	public void setRef(int parameterIndex, Ref x) throws SQLException {
 		stm.setRef(parameterIndex, x);
 	}
 	public void set(String param, Ref value) throws SQLException{
-		stm.setRef(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setRef(i, value);
+		}
+//		stm.setRef(fields.get(param), value);
 	}
 	@Override
 	public void setRowId(int parameterIndex, RowId x) throws SQLException {
 		stm.setRowId(parameterIndex, x);
 	}
 	public void set(String param, RowId value) throws SQLException{
-		stm.setRowId(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setRowId(i, value);
+		}
+//		stm.setRowId(fields.get(param), value);
 	}
 	@Override
 	public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
 		stm.setSQLXML(parameterIndex, xmlObject);
 	}
 	public void set(String param, SQLXML value) throws SQLException{
-		stm.setSQLXML(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setSQLXML(i, value);
+		}
+//		stm.setSQLXML(fields.get(param), value);
 	}
 	@Override
 	public void setShort(int parameterIndex, short x) throws SQLException {
 		stm.setShort(parameterIndex, x);
 	}
 	public void set(String param, short value) throws SQLException{
-		stm.setShort(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setShort(i, value);
+		}
+//		stm.setShort(fields.get(param), value);
 	}
 	@Override
 	public void setString(int parameterIndex, String x) throws SQLException {
 		stm.setString(parameterIndex, x);
 	}
 	public void set(String param, String value) throws SQLException{
-		stm.setString(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setString(i, value);
+		}
+//		stm.setString(fields.get(param), value);
 	}
 	@Override
 	public void setTime(int parameterIndex, Time x) throws SQLException {
@@ -645,16 +777,28 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setTime(parameterIndex, x, cal);
 	}
 	public void set(String param, Time value) throws SQLException{
-		stm.setTime(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setTime(i, value);
+		}
+//		stm.setTime(fields.get(param), value);
 	}
 	public void set(String param, Time value, Calendar c) throws SQLException{
-		stm.setTime(fields.get(param), value, c);
+		for(Integer i: fields.get(param)) {
+			stm.setTime(i, value, c);
+		}
+//		stm.setTime(fields.get(param), value, c);
 	}
 	public void setTime(String param, Instant time) throws SQLException{
-		stm.setTime(fields.get(param), new Time(time.toEpochMilli()));
+		for(Integer i: fields.get(param)) {
+			stm.setTime(i, new Time(time.toEpochMilli()));
+		}
+//		stm.setTime(fields.get(param), new Time(time.toEpochMilli()));
 	}
 	public void setTime(String param, long time) throws SQLException{
-		stm.setTime(fields.get(param), new Time(time));
+		for(Integer i: fields.get(param)) {
+			stm.setTime(i, new Time(time));
+		}
+//		stm.setTime(fields.get(param), new Time(time));
 	}
 	@Override
 	public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
@@ -665,23 +809,38 @@ public class NamedParamStatement implements PreparedStatement{
 		stm.setTimestamp(parameterIndex, x, cal);
 	}
 	public void set(String param, Timestamp value) throws SQLException{
-		stm.setTimestamp(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setTimestamp(i, value);
+		}
+//		stm.setTimestamp(fields.get(param), value);
 	}
 	public void set(String param, Timestamp value, Calendar c) throws SQLException{
-		stm.setTimestamp(fields.get(param), value, c);
+		for(Integer i: fields.get(param)) {
+			stm.setTimestamp(i, value, c);
+		}
+//		stm.setTimestamp(fields.get(param), value, c);
 	}
 	public void setTimestamp(String param, Instant time) throws SQLException{
-		stm.setTimestamp(fields.get(param), new Timestamp(time.toEpochMilli()));
+		for(Integer i: fields.get(param)) {
+			stm.setTimestamp(i, new Timestamp(time.toEpochMilli()));
+		}
+//		stm.setTimestamp(fields.get(param), new Timestamp(time.toEpochMilli()));
 	}
 	public void setTimestamp(String param, long time) throws SQLException{
-		stm.setTimestamp(fields.get(param), new Timestamp(time));
+		for(Integer i: fields.get(param)) {
+			stm.setTimestamp(i, new Timestamp(time));
+		}
+//		stm.setTimestamp(fields.get(param), new Timestamp(time));
 	}
 	@Override
 	public void setURL(int parameterIndex, URL x) throws SQLException {
 		stm.setURL(parameterIndex, x);
 	}
 	public void set(String param, URL value) throws SQLException{
-		stm.setURL(fields.get(param), value);
+		for(Integer i: fields.get(param)) {
+			stm.setURL(i, value);
+		}
+//		stm.setURL(fields.get(param), value);
 	}
 	@Override
 	public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
