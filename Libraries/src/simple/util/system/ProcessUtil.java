@@ -40,25 +40,65 @@ public final class ProcessUtil {
 		new Thread(eater).start();
 		return eater;
 	}
+	/**
+	 * Gets the process ID for the VM
+	 * @return The current process ID
+	 * @throws IOException
+	 */
 	public static int getProcessId() throws IOException{
 		return preader.getProcessId();
 	}
+	/**
+	 * Checks to see if a process with this ID exists
+	 * @param pid
+	 * @return
+	 * @throws IOException
+	 */
 	public static boolean processExists(int pid) throws IOException{
 		return preader.processExists(pid);
 	}
+	/**
+	 * Checks for the process ID file then checks to see if the process ID exists
+	 * @param clazz
+	 * @return
+	 * @throws IOException
+	 */
 	public static boolean processExists(Class<?> clazz) throws IOException {
 		return preader.processExists(clazz);
 	}
+	/**
+	 * Writes the current process ID to a file based on the class name
+	 * @param clazz
+	 * @throws IOException
+	 */
 	public static void writeProcessId(Class<?> clazz) throws IOException {
 		preader.writeProcessId(clazz);
 	}
+	/**
+	 * Reads the process ID in the file based on the class name
+	 * @param clazz
+	 * @return
+	 * @throws IOException
+	 */
 	public static String readProcessId(Class<?> clazz) throws IOException {
 		return preader.readProcessId(clazz);
+	}
+
+	/**
+	 * Attempts to kill the process ID. It does so forceably
+	 * @param id
+	 * @return Error code from the underlying process kill program
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static int killProcess(int id) throws IOException, InterruptedException {
+		return preader.killProcess(id);
 	}
 
 	private ProcessUtil() {}
 
 	private static interface ProcessReader{
+		public int killProcess(int pid) throws IOException, InterruptedException;
 		public boolean processExists(int pid) throws IOException;
 		public int getProcessId() throws IOException;
 		public default boolean processExists(Class<?> clazz) throws IOException {
@@ -93,6 +133,10 @@ public final class ProcessUtil {
 		public int getProcessId() throws IOException{
 			throw new IOException("Unknown system");
 		}
+		@Override
+		public int killProcess(int pid) throws IOException{
+			throw new IOException("Unknown system");
+		}
 	}
 	private static final class Unix implements ProcessReader{
 		private static final String[] getProcesses= new String[]{"ps", "-eo", "pid"};
@@ -115,6 +159,14 @@ public final class ProcessUtil {
 		@Override
 		public int getProcessId() throws NumberFormatException, IOException {
 			return Integer.parseInt(new File("/proc/self").getCanonicalFile().getName());
+		}
+
+		@Override
+		public int killProcess(int pid) throws IOException, InterruptedException{
+			Process p= Runtime.getRuntime().exec(new String[] {"kill","-s","9",Integer.toString(pid, 10)});
+			new Thread(new StreamEater(p.getErrorStream())).start();
+			new Thread(new StreamEater(p.getInputStream())).start();
+			return p.waitFor();
 		}
 	}
 	private static final class Windows implements ProcessReader{
@@ -145,6 +197,14 @@ public final class ProcessUtil {
 		public int getProcessId() {
 			String name= ManagementFactory.getRuntimeMXBean().getName();
 			return Integer.parseInt(name.substring(0, name.indexOf('@')), 10);
+		}
+
+		@Override
+		public int killProcess(int pid) throws IOException, InterruptedException{
+			Process p= Runtime.getRuntime().exec(new String[] {"taskkill","/pid",Integer.toString(pid, 10),"/f"});
+			new Thread(new StreamEater(p.getErrorStream())).start();
+			new Thread(new StreamEater(p.getInputStream())).start();
+			return p.waitFor();
 		}
 
 	}
