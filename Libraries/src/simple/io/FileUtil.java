@@ -20,11 +20,14 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,6 +43,10 @@ public final class FileUtil{
 	private FileUtil(){}
 	static final BlackHoleOutputStream voidos= new BlackHoleOutputStream();
 	static final BlackHoleWriter voidw= new BlackHoleWriter();
+	public final static LinkOption[] emptyLinkOptions= new LinkOption[] {};
+	public static Path toRealPath(Path p) throws IOException {
+		return p.toRealPath(emptyLinkOptions);
+	}
 	/**
 	 * Fully reads a file
 	 *
@@ -310,7 +317,7 @@ public final class FileUtil{
 	 * @param bufferSize Size of byte chunks to be copied at once.
 	 * @throws IOException
 	 */
-	public static void copy(final Reader input, final Writer output, final int bufferSize ) throws IOException {
+	public static void copy(final Reader input, final Writer output, final int bufferSize) throws IOException {
 		final char[] buffer= new char[bufferSize];
 		int n= 0;
 		while( (n= input.read(buffer)) != -1) {
@@ -544,44 +551,19 @@ public final class FileUtil{
 		return tmp;
 	}
 	/**
-	 * deleteDir walker
+	 * Deletes the file or folder represented by the path
+	 *
+	 * @param path
+	 * @throws IOException
 	 */
-	private static final class DeleteTree implements FileVisitor<Path>{
-		private IOException error;
-		public IOException getError() {
-			return error;
+	public static void delete(Path path) throws IOException{
+		if(path == null || !Files.exists(path)) {
+			return;
 		}
-		public boolean hasError() {
-			return error != null;
-		}
-		@Override
-		public FileVisitResult postVisitDirectory(Path p, IOException e) throws IOException{
-			if(e != null) {
-				error= e;
-				return FileVisitResult.TERMINATE;
-			}
-			Files.delete(p);
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult preVisitDirectory(Path p, BasicFileAttributes bfa) throws IOException{
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult visitFile(Path p, BasicFileAttributes bfa) throws IOException{
-			Files.delete(p);
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult visitFileFailed(Path p, IOException e) throws IOException{
-			if(e != null) {
-				error= e;
-				return FileVisitResult.TERMINATE;
-			}
-			return FileVisitResult.CONTINUE;
+		if(Files.isDirectory(path)) {
+			FileUtil.deleteDir(path);
+		}else {
+			Files.delete(path);
 		}
 	}
 	/**
@@ -594,11 +576,15 @@ public final class FileUtil{
 		if(dir == null || !Files.exists(dir)) {
 			return;
 		}
-		DeleteTree res= new DeleteTree();
-		Files.walkFileTree(dir, res);
-		if(res.hasError()) {
-			throw res.getError();
+		for(Iterator<Path> ps= Files.list(dir).iterator(); ps.hasNext();) {
+			Path p= ps.next();
+			if(Files.isDirectory(p)) {
+				FileUtil.deleteDir(p);
+			}else{
+				Files.delete(p);
+			}
 		}
+		Files.delete(dir);
 	}
 	/**
 	 * Recursively deletes a directory
@@ -653,6 +639,30 @@ public final class FileUtil{
 					throw new IOException("Failed to create the file " + tmp.getAbsolutePath());
 				}
 				FileUtil.copyFile(file, tmp, buf);
+			}
+		}
+	}
+	public static void copyFolder(Path to, Path from) throws IOException {
+		Path tmp;
+		for(Path file: from) {
+			tmp= to.resolve(file.getFileName());
+			if(Files.isDirectory(file)){
+				Files.createDirectories(tmp);
+				copyFolder(tmp, file);
+			}else{
+				Files.copy(file, tmp, StandardCopyOption.REPLACE_EXISTING);
+			}
+		}
+	}
+	public static void copyFiles(Path to, Path... from) throws IOException{
+		Path tmp;
+		for(Path file: from){
+			tmp= to.resolve(file.getFileName());
+			if(Files.isDirectory(file)){
+				Files.createDirectories(tmp);
+				copyFolder(tmp, file);
+			}else{
+				Files.copy(file, tmp, StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
 	}
