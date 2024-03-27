@@ -9,19 +9,27 @@ import java.util.concurrent.atomic.AtomicLong;
  * For use with {@link NamedParamStatement}
  */
 public class WhereBuilder {
-	private static volatile AtomicLong instanceCnt= new AtomicLong();
+	private static final AtomicLong instanceCnt= new AtomicLong();
 	private final String prefix;
 	private final Map<String, Object> values= new HashMap<String, Object>();
 	private final StringBuilder where= new StringBuilder();
+	private WhereBuilder nested= null;
 	public WhereBuilder(){
-		prefix= ":WhereBuilder" + instanceCnt.getAndIncrement();
+		prefix= ":WhereBuilder" + instanceCnt.getAndIncrement() + "v";
 	}
 	/**
 	 * The where clause without the WHERE keyword
 	 * @return
 	 */
 	public final String getWhere(){
-		return where.toString();
+		String wh= where.toString();
+		if(wh.endsWith(" AND ")) {
+			wh= wh.substring(0, wh.length() - 5);
+		}
+		if(wh.endsWith(" OR ")) {
+			wh= wh.substring(0, wh.length() - 4);
+		}
+		return wh;
 	}
 	/**
 	 * All the values supplied
@@ -45,8 +53,12 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public final WhereBuilder and(){
-		if(!values.isEmpty()){
-			where.append(" AND ");
+		if(nested != null) {
+			nested.and();
+		}else {
+			if(!values.isEmpty()){
+				where.append(" AND ");
+			}
 		}
 		return this;
 	}
@@ -55,8 +67,12 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public final WhereBuilder or(){
-		if(!values.isEmpty()){
-			where.append(" OR ");
+		if(nested != null) {
+			nested.or();
+		}else {
+			if(!values.isEmpty()){
+				where.append(" OR ");
+			}
 		}
 		return this;
 	}
@@ -67,9 +83,13 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public final WhereBuilder and(WhereBuilder wb){
-		and();
-		where.append('(').append(wb.getWhere()).append(')');
-		values.putAll(wb.values);
+		if(nested != null) {
+			nested.and(wb);
+		}else if(!wb.getWhere().trim().isEmpty()) {
+			and();
+			where.append('(').append(wb.getWhere()).append(')');
+			values.putAll(wb.values);
+		}
 		return this;
 	}
 	/**
@@ -79,9 +99,13 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public final WhereBuilder or(WhereBuilder wb){
-		or();
-		where.append('(').append(wb.getWhere()).append(')');
-		values.putAll(wb.values);
+		if(nested != null) {
+			nested.or(wb);
+		}else if(!wb.getWhere().trim().isEmpty()) {
+			or();
+			where.append('(').append(wb.getWhere()).append(')');
+			values.putAll(wb.values);
+		}
 		return this;
 	}
 	/**
@@ -90,9 +114,13 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder isNull(String expr){
-		where
-			.append(expr)
-			.append(" IS NULL");
+		if(nested != null) {
+			nested.isNull(expr);
+		}else {
+			where
+				.append(expr)
+				.append(" IS NULL");
+		}
 		return this;
 	}
 	/**
@@ -101,9 +129,13 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder isNotNull(String expr){
-		where
-			.append(expr)
-			.append(" IS NOT NULL");
+		if(nested != null) {
+			nested.isNotNull(expr);
+		}else {
+			where
+				.append(expr)
+				.append(" IS NOT NULL");
+		}
 		return this;
 	}
 	/**
@@ -113,10 +145,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder like(String expr, String pattern){
-		where
-			.append(expr)
-			.append(" LIKE ")
-			.append(addValue(pattern));
+		if(nested != null) {
+			nested.like(expr, pattern);
+		}else {
+			where
+				.append(expr)
+				.append(" LIKE ")
+				.append(addValue(pattern));
+		}
 		return this;
 	}
 	/**
@@ -126,10 +162,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder notLike(String expr, String pattern){
-		where
-			.append(expr)
-			.append(" NOT LIKE ")
-			.append(addValue(pattern));
+		if(nested != null) {
+			nested.notLike(expr, pattern);
+		}else {
+			where
+				.append(expr)
+				.append(" NOT LIKE ")
+				.append(addValue(pattern));
+		}
 		return this;
 	}
 	/**
@@ -140,12 +180,16 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder between(String expr, Object start, Object end){
-		where
-			.append(expr)
-			.append(" BETWEEN ")
-			.append(addValue(start))
-			.append(" AND ")
-			.append(addValue(end));
+		if(nested != null) {
+			nested.between(expr, start, end);
+		}else {
+			where
+				.append(expr)
+				.append(" BETWEEN ")
+				.append(addValue(start))
+				.append(" AND ")
+				.append(addValue(end));
+		}
 		return this;
 	}
 	/**
@@ -156,12 +200,16 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder notBetween(String expr, Object start, Object end){
-		where
-			.append(expr)
-			.append(" NOT BETWEEN ")
-			.append(addValue(start))
-			.append(" AND ")
-			.append(addValue(end));
+		if(nested != null) {
+			nested.notBetween(expr, start, end);
+		}else {
+			where
+				.append(expr)
+				.append(" NOT BETWEEN ")
+				.append(addValue(start))
+				.append(" AND ")
+				.append(addValue(end));
+		}
 		return this;
 	}
 	/**
@@ -172,12 +220,16 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder where(String expr, String op, Object value){
-		where
-			.append(expr)
-			.append(' ')
-			.append(op)
-			.append(' ')
-			.append(addValue(value));
+		if(nested != null) {
+			nested.where(expr, op, value);
+		}else {
+			where
+				.append(expr)
+				.append(' ')
+				.append(op)
+				.append(' ')
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/**
@@ -187,10 +239,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder lessThan(String expr, Object value){
-		where
-			.append(expr)
-			.append(" < ")
-			.append(addValue(value));
+		if(nested != null) {
+			nested.lessThan(expr, value);
+		}else {
+			where
+				.append(expr)
+				.append(" < ")
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/**
@@ -200,10 +256,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder equal(String expr, Object value){
-		where
-			.append(expr)
-			.append(" = ")
-			.append(addValue(value));
+		if(nested != null) {
+			nested.equal(expr, value);
+		}else {
+			where
+				.append(expr)
+				.append(" = ")
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/**
@@ -213,10 +273,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder greaterThan(String expr, Object value){
-		where
-			.append(expr)
-			.append(" > ")
-			.append(addValue(value));
+		if(nested != null) {
+			nested.greaterThan(expr, value);
+		}else {
+			where
+				.append(expr)
+				.append(" > ")
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/**
@@ -226,10 +290,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder notEqual(String expr, Object value){
-		where
-			.append(expr)
-			.append(" != ")
-			.append(addValue(value));
+		if(nested != null) {
+			nested.notEqual(expr, value);
+		}else {
+			where
+				.append(expr)
+				.append(" != ")
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/**
@@ -239,10 +307,14 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder lessThanOrEqual(String expr, Object value){
-		where
-			.append(expr)
-			.append(" <= ")
-			.append(addValue(value));
+		if(nested != null) {
+			nested.lessThanOrEqual(expr, value);
+		}else {
+			where
+				.append(expr)
+				.append(" <= ")
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/**
@@ -252,24 +324,49 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder greaterThanOrEqual(String expr, Object value){
-		where
-			.append(expr)
-			.append(" >= ")
-			.append(addValue(value));
+		if(nested != null) {
+			nested.greaterThanOrEqual(expr, value);
+		}else {
+			where
+				.append(expr)
+				.append(" >= ")
+				.append(addValue(value));
+		}
 		return this;
 	}
 	/** Adds a '('
 	 * @return
 	 */
 	public WhereBuilder startGroup(){
-		where.append('(');
+		if(nested != null) {
+			nested.startGroup();
+		}else {
+			where.append('(');
+			if(nested == null) {
+				nested= new WhereBuilder();
+			}
+		}
 		return this;
 	}
 	/** Adds a ')'
 	 * @return
 	 */
 	public WhereBuilder endGroup(){
-		where.append(')');
+		if(nested != null) {
+			if(nested.nested == null) {
+				String wh= nested.getWhere();
+				if(wh.trim().isEmpty()) {
+					where.setLength(where.length() - 1);
+				}else {
+					where.append(nested.getWhere());
+					values.putAll(nested.values);
+					where.append(')');
+				}
+				nested= null;
+			}else {
+				nested.endGroup();
+			}
+		}
 		return this;
 	}
 	/**
@@ -279,13 +376,17 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder in(String expr, Object... values){
-		where
-			.append(expr)
-			.append(" IN (");
-		for(Object value: values){
-			where.append(addValue(value)).append(',');
+		if(nested != null) {
+			nested.in(expr, values);
+		}else {
+			where
+				.append(expr)
+				.append(" IN (");
+			for(Object value: values){
+				where.append(addValue(value)).append(',');
+			}
+			where.setCharAt(where.length() - 1, ')');
 		}
-		where.setCharAt(where.length() - 1, ')');
 		return this;
 	}
 	/**
@@ -295,13 +396,17 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder in(String expr, Collection<?> values){
-		where
-			.append(expr)
-			.append(" IN (");
-		for(Object value: values){
-			where.append(addValue(value)).append(',');
+		if(nested != null) {
+			nested.in(expr, values);
+		}else {
+			where
+				.append(expr)
+				.append(" IN (");
+			for(Object value: values){
+				where.append(addValue(value)).append(',');
+			}
+			where.setCharAt(where.length() - 1, ')');
 		}
-		where.setCharAt(where.length() - 1, ')');
 		return this;
 	}
 	/**
@@ -311,13 +416,17 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder notIn(String expr, Object... values){
-		where
-			.append(expr)
-			.append(" NOT IN (");
-		for(Object value: values){
-			where.append(addValue(value)).append(',');
+		if(nested != null) {
+			nested.notIn(expr, values);
+		}else {
+			where
+				.append(expr)
+				.append(" NOT IN (");
+			for(Object value: values){
+				where.append(addValue(value)).append(',');
+			}
+			where.setCharAt(where.length() - 1, ')');
 		}
-		where.setCharAt(where.length() - 1, ')');
 		return this;
 	}
 	/**
@@ -327,13 +436,17 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder notIn(String expr, Collection<?> values){
-		where
-			.append(expr)
-			.append(" NOT IN (");
-		for(Object value: values){
-			where.append(addValue(value)).append(',');
+		if(nested != null) {
+			nested.notIn(expr, values);
+		}else {
+			where
+				.append(expr)
+				.append(" NOT IN (");
+			for(Object value: values){
+				where.append(addValue(value)).append(',');
+			}
+			where.setCharAt(where.length() - 1, ')');
 		}
-		where.setCharAt(where.length() - 1, ')');
 		return this;
 	}
 	/**
@@ -342,7 +455,11 @@ public class WhereBuilder {
 	 * @return
 	 */
 	public WhereBuilder literal(String literal){
-		where.append(literal);
+		if(nested != null) {
+			nested.literal(literal);
+		}else {
+			where.append(literal);
+		}
 		return this;
 	}
 }
