@@ -19,8 +19,13 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Calendar;
 
+/**
+ * A java.sql.PreparedStatement wrapper that lets you chain set* calls. Calls setNull() if the value is NULL
+ *
+ */
 public class ChainablePreparedStatement extends ChainableStatement{
 	protected final PreparedStatement pobj;
 	public ChainablePreparedStatement(PreparedStatement wrap){
@@ -59,7 +64,11 @@ public class ChainablePreparedStatement extends ChainableStatement{
 	}
 
 	public ChainablePreparedStatement setArray(int idx, Array value) throws SQLException{
-		pobj.setArray(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.ARRAY);
+		}else{
+			pobj.setArray(idx, value);
+		}
 		return this;
 	}
 
@@ -79,7 +88,11 @@ public class ChainablePreparedStatement extends ChainableStatement{
 	}
 
 	public ChainablePreparedStatement setBigDecimal(int idx, BigDecimal value) throws SQLException{
-		pobj.setBigDecimal(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.DECIMAL);
+		}else{
+			pobj.setBigDecimal(idx, value);
+		}
 		return this;
 	}
 
@@ -99,122 +112,218 @@ public class ChainablePreparedStatement extends ChainableStatement{
 	}
 
 	public ChainablePreparedStatement setBlob(int idx, Blob value) throws SQLException{
-		pobj.setBlob(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.BLOB);
+		}else{
+			pobj.setBlob(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setBlob(int idx, InputStream value) throws SQLException{
-		pobj.setBlob(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.BLOB);
+		}else{
+			pobj.setBlob(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setBlob(int idx, InputStream value, long length) throws SQLException{
-		pobj.setBlob(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.BLOB);
+		}else{
+			pobj.setBlob(idx, value, length);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setBoolean(int idx, boolean value) throws SQLException{
-		pobj.setBoolean(idx, value);
+	public ChainablePreparedStatement setBoolean(int idx, Boolean value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.BOOLEAN);
+		}else{
+			pobj.setBoolean(idx, value);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setByte(int idx, byte value) throws SQLException{
-		pobj.setByte(idx, value);
+	public ChainablePreparedStatement setByte(int idx, Byte value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.TINYINT);
+		}else{
+			pobj.setByte(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setBytes(int idx, byte[] value) throws SQLException{
-		pobj.setBytes(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.VARBINARY);
+		}else{
+			pobj.setBytes(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setCharacterStream(int idx, Reader value) throws SQLException{
-		pobj.setCharacterStream(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.LONGVARCHAR);
+		}else{
+			pobj.setCharacterStream(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setCharacterStream(int idx, Reader value, int length) throws SQLException{
-		pobj.setCharacterStream(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.LONGVARCHAR);
+		}else{
+			pobj.setCharacterStream(idx, value, length);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setCharacterStream(int idx, Reader value, long length) throws SQLException{
-		pobj.setCharacterStream(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.LONGVARCHAR);
+		}else{
+			pobj.setCharacterStream(idx, value, length);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setClob(int idx, Clob value) throws SQLException{
-		pobj.setClob(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.CLOB);
+		}else{
+			pobj.setClob(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setClob(int idx, Reader value) throws SQLException{
-		pobj.setClob(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.CLOB);
+		}else{
+			pobj.setClob(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setClob(int idx, Reader value, long length) throws SQLException{
-		pobj.setClob(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.CLOB);
+		}else{
+			pobj.setClob(idx, value, length);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setDate(int idx, Date value) throws SQLException{
-		pobj.setDate(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.DATE);
+		}else{
+			pobj.setDate(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setDate(int idx, Date value, Calendar cal) throws SQLException{
-		pobj.setDate(idx, value, cal);
+		if(value == null) {
+			pobj.setNull(idx, Types.DATE);
+		}else{
+			pobj.setDate(idx, value, cal);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setDouble(int idx, double value) throws SQLException{
-		pobj.setDouble(idx, value);
+	public ChainablePreparedStatement setDouble(int idx, Double value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.DOUBLE);
+		}else{
+			pobj.setDouble(idx, value);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setFloat(int idx, float value) throws SQLException{
-		pobj.setFloat(idx, value);
+	public ChainablePreparedStatement setFloat(int idx, Float value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.REAL);
+		}else{
+			pobj.setFloat(idx, value);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setInt(int idx, int value) throws SQLException{
-		pobj.setInt(idx, value);
+	public ChainablePreparedStatement setInt(int idx, Integer value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.INTEGER);
+		}else{
+			pobj.setInt(idx, value);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setLong(int idx, long value) throws SQLException{
-		pobj.setLong(idx, value);
+	public ChainablePreparedStatement setLong(int idx, Long value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.BIGINT);
+		}else{
+			pobj.setLong(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setNCharacterStream(int idx, Reader value) throws SQLException{
-		pobj.setNCharacterStream(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.NCLOB);
+		}else{
+			pobj.setNCharacterStream(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setNCharacterStream(int idx, Reader value, long length) throws SQLException{
-		pobj.setNCharacterStream(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.NCLOB);
+		}else{
+			pobj.setNCharacterStream(idx, value, length);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setNClob(int idx, NClob value) throws SQLException{
-		pobj.setNClob(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.NCLOB);
+		}else{
+			pobj.setNClob(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setNClob(int idx, Reader value) throws SQLException{
-		pobj.setNClob(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.NCLOB);
+		}else{
+			pobj.setNClob(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setNClob(int idx, Reader value, long length) throws SQLException{
-		pobj.setNClob(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.NCLOB);
+		}else{
+			pobj.setNClob(idx, value, length);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setNString(int idx, String value) throws SQLException{
-		pobj.setNString(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.NVARCHAR);
+		}else{
+			pobj.setNString(idx, value);
+		}
 		return this;
 	}
 
@@ -229,72 +338,129 @@ public class ChainablePreparedStatement extends ChainableStatement{
 	}
 
 	public ChainablePreparedStatement setObject(int idx, Object value) throws SQLException{
-		pobj.setObject(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.JAVA_OBJECT);
+		}else{
+			pobj.setObject(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setObject(int idx, Object value, int length) throws SQLException{
-		pobj.setObject(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.JAVA_OBJECT);
+		}else{
+			pobj.setObject(idx, value, length);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setObject(int idx, Object value, int targetSqlType, int scaleOrLength) throws SQLException{
-		pobj.setObject(idx, value, targetSqlType, scaleOrLength);
+		if(value == null) {
+			pobj.setNull(idx, targetSqlType);
+		}else{
+			pobj.setObject(idx, value, targetSqlType, scaleOrLength);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setRef(int idx, Ref value) throws SQLException{
-		pobj.setRef(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.REF);
+		}else{
+			pobj.setRef(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setRowId(int idx, RowId value) throws SQLException{
-		pobj.setRowId(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.ROWID);
+		}else{
+			pobj.setRowId(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setSQLXML(int idx, SQLXML value) throws SQLException{
-		pobj.setSQLXML(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.SQLXML);
+		}else{
+			pobj.setSQLXML(idx, value);
+		}
 		return this;
 	}
 
-	public ChainablePreparedStatement setShort(int idx, short value) throws SQLException{
-		pobj.setShort(idx, value);
+	public ChainablePreparedStatement setShort(int idx, Short value) throws SQLException{
+		if(value == null) {
+			pobj.setNull(idx, Types.SMALLINT);
+		}else{
+			pobj.setShort(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setString(int idx, String value) throws SQLException{
-		pobj.setString(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.VARCHAR);
+		}else{
+			pobj.setString(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setTime(int idx, Time value) throws SQLException{
-		pobj.setTime(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.TIME);
+		}else{
+			pobj.setTime(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setTime(int idx, Time value, Calendar cal) throws SQLException{
-		pobj.setTime(idx, value, cal);
+		if(value == null) {
+			pobj.setNull(idx, Types.TIME);
+		}else{
+			pobj.setTime(idx, value, cal);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setTimestamp(int idx, Timestamp value) throws SQLException{
-		pobj.setTimestamp(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.TIMESTAMP);
+		}else{
+			pobj.setTimestamp(idx, value);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setTimestamp(int idx, Timestamp value, Calendar arg2) throws SQLException{
-		pobj.setTimestamp(idx, value, arg2);
+		if(value == null) {
+			pobj.setNull(idx, Types.TIMESTAMP);
+		}else{
+			pobj.setTimestamp(idx, value, arg2);
+		}
 		return this;
 	}
 
 	public ChainablePreparedStatement setURL(int idx, URL value) throws SQLException{
-		pobj.setURL(idx, value);
+		if(value == null) {
+			pobj.setNull(idx, Types.DATALINK);
+		}else{
+			pobj.setURL(idx, value);
+		}
 		return this;
 	}
 
+	@Deprecated
 	public ChainablePreparedStatement setUnicodeStream(int idx, InputStream value, int length) throws SQLException{
-		pobj.setUnicodeStream(idx, value, length);
+		if(value == null) {
+			pobj.setNull(idx, Types.LONGVARCHAR);
+		}else{
+			pobj.setUnicodeStream(idx, value, length);
+		}
 		return this;
 	}
 
