@@ -34,7 +34,16 @@ public final class ReadWriterFactory {
 		return new BufferedReader(new FileReader(file));
 	}
 	/**
-	 * Convenience method for <code>new BufferedReader(new InputStreamReader(new FileInputStream(file), cs)</code>
+	 * @param file
+	 * @param bufferSize
+	 * @return a FileReader wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedReader getBufferedReader(final File file, int bufferSize) throws FileNotFoundException {
+		return new BufferedReader(new FileReader(file), bufferSize);
+	}
+	/**
+	 * Convenience method for <code>new BufferedReader(new InputStreamReader(new FileInputStream(file), cs))</code>
 	 * @param file
 	 * @param cs
 	 * @return a BufferedInputStream
@@ -42,6 +51,17 @@ public final class ReadWriterFactory {
 	 */
 	public static BufferedReader getBufferedReader(final File file, Charset cs) throws FileNotFoundException {
 		return new BufferedReader(new InputStreamReader(new FileInputStream(file), cs));
+	}
+	/**
+	 * Convenience method for <code>new BufferedReader(new InputStreamReader(new FileInputStream(file), cs), bufferSize)</code>
+	 * @param file
+	 * @param cs
+	 * @param bufferSize
+	 * @return a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedReader getBufferedReader(final File file, Charset cs, int bufferSize) throws FileNotFoundException {
+		return new BufferedReader(new InputStreamReader(new FileInputStream(file), cs), bufferSize);
 	}
 	/**
 	 * Wraps a Reader in a BufferedReader.
@@ -142,6 +162,7 @@ public final class ReadWriterFactory {
 		return RWUtil.skipWhitespace(rd);
 	}
 	/**
+	 * Gets a BufferedWriter
 	 * @param file
 	 * @return a FileWriter wrapped in a BufferedInputStream
 	 * @throws FileNotFoundException
@@ -150,6 +171,27 @@ public final class ReadWriterFactory {
 		return new BufferedWriter(new FileWriter(file));
 	}
 	/**
+	 * Gets a BufferedWriter
+	 * @param file
+	 * @param append
+	 * @return a FileWriter wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedWriter getBufferedWriter(final File file, boolean append) throws IOException {
+		return new BufferedWriter(new FileWriter(file, append));
+	}
+	/**
+	 * Gets a BufferedWriter
+	 * @param file
+	 * @param bufferSize
+	 * @return a FileWriter wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedWriter getBufferedWriter(final File file, int bufferSize) throws IOException {
+		return new BufferedWriter(new FileWriter(file), bufferSize);
+	}
+	/**
+	 * Gets a BufferedWriter
 	 * @param file
 	 * @param cs
 	 * @return a FileWriter wrapped in a BufferedInputStream
@@ -157,6 +199,40 @@ public final class ReadWriterFactory {
 	 */
 	public static BufferedWriter getBufferedWriter(final File file, Charset cs) throws IOException {
 		return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),cs));
+	}
+	/**
+	 * Gets a BufferedWriter
+	 * @param file
+	 * @param cs
+	 * @param append
+	 * @return a FileWriter wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedWriter getBufferedWriter(final File file, Charset cs, boolean append) throws IOException {
+		return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),cs));
+	}
+	/**
+	 * Gets a BufferedWriter
+	 * @param file
+	 * @param cs
+	 * @param bufferSize
+	 * @return a FileWriter wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedWriter getBufferedWriter(final File file, Charset cs, int bufferSize) throws IOException {
+		return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),cs), bufferSize);
+	}
+	/**
+	 * Gets a BufferedWriter
+	 * @param file
+	 * @param cs
+	 * @param bufferSize
+	 * @param append
+	 * @return a FileWriter wrapped in a BufferedInputStream
+	 * @throws FileNotFoundException
+	 */
+	public static BufferedWriter getBufferedWriter(final File file, Charset cs, int bufferSize, boolean append) throws IOException {
+		return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append),cs), bufferSize);
 	}
 	/**
 	 * Wraps a Writer in a BufferedWriter.
@@ -168,5 +244,17 @@ public final class ReadWriterFactory {
 		if(wr instanceof java.io.BufferedWriter)
 			return (BufferedWriter)wr;
 		return new BufferedWriter(wr);
+	}
+	/**
+	 * Wraps a Writer in a BufferedWriter.
+	 * @param wr
+	 * @param bufferSize
+	 * @return Writer wrapped in a BufferedWriter. If <var>wr</var> is already
+	 * 			a BufferedWriter then it is casted and returned.
+	 */
+	public static BufferedWriter getBufferedWriter(final Writer wr, int bufferSize) {
+		if(wr instanceof java.io.BufferedWriter)
+			return (BufferedWriter)wr;
+		return new BufferedWriter(wr, bufferSize);
 	}
 }
