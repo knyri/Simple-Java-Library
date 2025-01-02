@@ -13,6 +13,14 @@ public class BeanstalkClientConfig {
 	private boolean ignoreDefault= false;
 	private final InetSocketAddress address;
 	private String using= "default";
+	@Override
+	public String toString() {
+		return (new StringBuilder(2048))
+			.append("Address: ").append(address).append('\n')
+			.append("Using:" ).append(using).append('\n')
+			.append("Watching ").append(ignoreDefault ? "" : "default, ").append(watching)
+			.toString();
+	}
 
 	/**
 	 * @param host Host to connect to

@@ -9,14 +9,13 @@ import java.util.concurrent.TimeUnit;
  * Easy way to have multiple consumers that do the same thing
  */
 public class BeanstalkConsumerPool implements Runnable{
-//	private final Logger log= LoggerFactory.getLogger(BeanstalkConsumerPool.class);
+//	private final Logger log= LogManager.getLogger(BeanstalkConsumerPool.class);
 
 	private final BeanstalkConsumer worker;
 	private final BeanstalkClientConfig config;
 	private boolean done= false;
 	private final ThreadPoolExecutor threadPool;
 	private final int threadCount;
-//	private final Thread[] threads;
 
 	/**
 	 * @param worker The worker that will do the work
