@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -30,10 +32,11 @@ import simple.io.ParseException;
  * @author Ken
  *
  */
-public class IniConfig extends IniSection implements Iterable<IniSection>{
+public class IniConfig extends IniSection implements Iterable<IniSection>, Serializable{
+	private static final long serialVersionUID= 1L;
 	public static IniConfig parse(Path f) throws IOException, ParseException {
 		IniConfig c= new IniConfig();
-		c.load(Files.newBufferedReader(f));
+		c.load(Files.newBufferedReader(f), f.getParent());
 		return c;
 	}
 	public static IniConfig parse(File f) throws IOException, ParseException {
@@ -144,20 +147,21 @@ public class IniConfig extends IniSection implements Iterable<IniSection>{
 	public void clearSections(){
 		sections.clear();
 	}
-
-	/**
-	 * Parses the INI file and adds the values to this. Effectively combining them
-	 * @param ini
-	 * @throws IOException If a read error occurs
-	 * @throws ParseException If the INI is improperly formatted
-	 */
-	public void load(Reader ini) throws IOException, ParseException{
+	private void load(Reader ini, Path relativeTo)  throws IOException, ParseException{
 		LineNumberReader iniLR= new LineNumberReader(ini);
 		String line, trimmed;
 		int splitIdx;
 		IniSection section= this;
 		while(null != (line= iniLR.readLine()) ){
 			trimmed= line.trim();
+			if(trimmed.startsWith(";!include ")) {
+				Path include= relativeTo.resolve(trimmed.substring(trimmed.indexOf(' ') + 1));
+				try {
+				load(Files.newBufferedReader(include), include.getParent());
+				}catch(IOException | ParseException e) {
+					throw new ParseException("Error loading included file '" + include + "'", e);
+				}
+			}
 			if(trimmed.isEmpty() || line.charAt(0) == ';'){
 				continue;
 			}
@@ -176,6 +180,18 @@ public class IniConfig extends IniSection implements Iterable<IniSection>{
 				}
 			}
 		}
+	}
+	/**
+	 * Parses the INI file and adds the values to this. Effectively combining them
+	 * @param ini
+	 * @throws IOException If a read error occurs
+	 * @throws ParseException If the INI is improperly formatted
+	 */
+	public void load(Reader ini) throws IOException, ParseException{
+		load(ini, Paths.get("."));
+	}
+	public void load(Path ini) throws IOException, ParseException{
+		load(Files.newBufferedReader(ini), ini.getParent());
 	}
 
 	public void save(Writer ini) throws IOException{

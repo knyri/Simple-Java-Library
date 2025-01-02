@@ -1,12 +1,14 @@
 package simple.parser.ini;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class IniSection implements Map<String, String>{
+public class IniSection implements Map<String, String>, Serializable{
 
+	private static final long serialVersionUID= 1L;
 	private final String name;
 	private final HashMap<String, String> props= new HashMap<String, String>();
 
