@@ -18,7 +18,8 @@ public final class Time {
 		SECONDS_DAY = 86400,
 		SECONDS_HOUR = 3600,
 		SECONDS_MINUTE = 60,
-		HOURS_DAY = 24;
+		HOURS_DAY = 24
+	;
 	public static final long millisecondsFromDays(int days) {
 		return days*MILLISECONDS_DAY;
 	}
