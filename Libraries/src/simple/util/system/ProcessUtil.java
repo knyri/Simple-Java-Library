@@ -67,12 +67,31 @@ public final class ProcessUtil {
 		return preader.processExists(clazz);
 	}
 	/**
+	 * Checks for the process ID file then checks to see if the process ID exists
+	 * @param clazz
+	 * @param uid
+	 * @return
+	 * @throws IOException
+	 */
+	public static boolean processExists(Class<?> clazz, String uid) throws IOException {
+		return preader.processExists(clazz, uid);
+	}
+	/**
 	 * Writes the current process ID to a file based on the class name
 	 * @param clazz
 	 * @throws IOException
 	 */
 	public static void writeProcessId(Class<?> clazz) throws IOException {
 		preader.writeProcessId(clazz);
+	}
+	/**
+	 * Writes the current process ID to a file based on the class name
+	 * @param clazz
+	 * @param uid A unique name appended to the file
+	 * @throws IOException
+	 */
+	public static void writeProcessId(Class<?> clazz, String uid) throws IOException {
+		preader.writeProcessId(clazz, uid);
 	}
 	/**
 	 * Reads the process ID in the file based on the class name
@@ -82,6 +101,16 @@ public final class ProcessUtil {
 	 */
 	public static String readProcessId(Class<?> clazz) throws IOException {
 		return preader.readProcessId(clazz);
+	}
+	/**
+	 * Reads the process ID in the file based on the class name
+	 * @param clazz
+	 * @param uid A unique name appended to the file
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readProcessId(Class<?> clazz, String uid) throws IOException {
+		return preader.readProcessId(clazz, uid);
 	}
 
 	/**
@@ -110,18 +139,33 @@ public final class ProcessUtil {
 			}
 			return false;
 		}
-		public default void writeProcessId(Class<?> clazz) throws IOException {
-			File pidFile= new File(clazz.getCanonicalName() + ".pid");
+		public default boolean processExists(Class<?> clazz, String uid) throws IOException {
+			String pidStr= readProcessId(clazz, uid);
+			if(pidStr != null && !pidStr.trim().isEmpty()) {
+				if(processExists(Integer.parseInt(pidStr, 10))) {
+					return true;
+				}
+			}
+			return false;
+		}
+		public default void writeProcessId(Class<?> clazz, String uid) throws IOException {
+			File pidFile= new File(clazz.getCanonicalName()+uid + ".pid");
 			try(FileWriter pidWriter= new FileWriter(pidFile, false)){
 				pidWriter.write(Integer.toString(ProcessUtil.getProcessId(), 10));
 			}
 		}
-		public default String readProcessId(Class<?> clazz) throws IOException {
-			Path pidFile= Paths.get(clazz.getCanonicalName() + ".pid");
+		public default String readProcessId(Class<?> clazz, String uid) throws IOException {
+			Path pidFile= Paths.get(clazz.getCanonicalName()+uid + ".pid");
 			if(Files.exists(pidFile)){
 				return Files.readAllLines(pidFile).get(0);
 			}
 			return null;
+		}
+		public default void writeProcessId(Class<?> clazz) throws IOException {
+			writeProcessId(clazz, "");
+		}
+		public default String readProcessId(Class<?> clazz) throws IOException {
+			return readProcessId(clazz, "");
 		}
 	}
 	private static final class Unknown implements ProcessReader{
