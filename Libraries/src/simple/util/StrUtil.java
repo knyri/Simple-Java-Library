@@ -1,6 +1,7 @@
 package simple.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -609,5 +610,25 @@ public final class StrUtil{
 		int i= str.length() - 1;
 		for(;i > -1 && Character.isWhitespace(str.charAt(i));i--);
 		return str.substring(0, i);
+	}
+	public static String concat(String sep, String...strings) {
+		StringBuilder sb= new StringBuilder(100 * strings.length);
+		for(String string: strings) {
+			sb.append(string).append(sep);
+		}
+		if(sb.length() > sep.length()) {
+			sb.setLength(sb.length() - sep.length());
+		}
+		return sb.toString();
+	}
+	public static String concat(String sep, Collection<String> strings) {
+		StringBuilder sb= new StringBuilder(100 * strings.size());
+		for(String string: strings) {
+			sb.append(string).append(sep);
+		}
+		if(sb.length() > sep.length()) {
+			sb.setLength(sb.length() - sep.length());
+		}
+		return sb.toString();
 	}
 }
