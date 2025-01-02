@@ -11,16 +11,26 @@ public class ParseException extends Exception {
 		super(reason);
 		PP = null;
 	}
+	public ParseException(String reason, Exception cause) {
+		super(reason, cause);
+		PP = null;
+	}
+	public ParseException(ParsePosition pp, String reason, Exception cause) {
+		super(reason, cause);
+		PP = pp;
+	}
 	public ParseException(ParsePosition pp, String reason) {
 		super(reason);
 		PP = pp;
 	}
+	@Override
 	public String getMessage() {
 		if (PP==null)
 			return super.getMessage();
 		else
 			return "["+PP.toString()+"]"+super.getMessage();
 	}
+	@Override
 	public String getLocalizedMessage() {
 		if (PP==null)
 			return super.getLocalizedMessage();
