@@ -44,7 +44,7 @@ public class CLIParameters {
 	private final boolean caseSensitive;
 	private final String[] args;
 	private int argsParsed= 0;
-	public Set<String> getStringFlags(){
+	public Set<String> getSwitches(){
 		return bigFlags;
 	}
 	public Set<Character> getFlags(){
@@ -53,11 +53,23 @@ public class CLIParameters {
 	public Map<String, String> getParams(){
 		return params;
 	}
-	public CLIParameters(String[] args, boolean caseSensitiveFlags) throws ParseException{
+	public CLIParameters(String[] args, boolean caseSensitiveFlags) throws ParseException {
+		this(args, caseSensitiveFlags, null, null, null);
+	}
+	public CLIParameters(String[] args, boolean caseSensitiveFlags, Map<String, String> defaultParams, Set<Character> defaultFlags, Set<String> defaultSwitches) throws ParseException{
 		caseSensitive= caseSensitiveFlags;
-		HashMap<String, String> params= new HashMap<String, String>();
-		HashSet<Character> flags= new HashSet<Character>();
+		HashMap<String, String> params= new HashMap<>();
+		HashSet<Character> flags= new HashSet<>();
 		HashSet<String> bigFlags= new HashSet<>();
+		if(defaultParams != null) {
+			params.putAll(defaultParams);
+		}
+		if(defaultFlags != null) {
+			flags.addAll(defaultFlags);
+		}
+		if(defaultSwitches != null) {
+			bigFlags.addAll(defaultSwitches);
+		}
 		out:
 		for(int i= 0, len= args.length; i < len; i++){
 			if(args[i].length() == 0 || args[i].equals("-")){
