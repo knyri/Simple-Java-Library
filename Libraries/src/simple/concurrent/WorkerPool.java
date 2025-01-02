@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class WorkerPool<T> implements Runnable{
 	private volatile boolean done= false;
 	private final WorkerPoolWorker<T> worker;
-	protected ThreadPoolExecutor threadPool;
+	private final ThreadPoolExecutor threadPool;
 	protected final int threadCount;
 	protected WorkerPool(WorkerPoolWorker<T> worker, int threadCount){
 		this.worker= worker;
