@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 public class IniSection implements Map<String, String>, Serializable{
@@ -25,6 +26,12 @@ public class IniSection implements Map<String, String>, Serializable{
 	}
 	public void putAll(IniSection section){
 		props.putAll(section.props);
+	}
+
+	public Properties asProperties(){
+		Properties props= new Properties();
+		props.putAll(this.props);
+		return props;
 	}
 
 	/**

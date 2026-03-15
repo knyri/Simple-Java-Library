@@ -1,110 +1,72 @@
 package simple.concurrent;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A pool of worker threads
+ * Pool of worker threads.
+ * @author Ken Pierce
+ *
  * @param <T>
  */
-public abstract class WorkerPool<T> implements Runnable{
-	private volatile boolean done= false;
-	private final WorkerPoolWorker<T> worker;
-	private final ThreadPoolExecutor threadPool;
-	protected final int threadCount;
-	protected WorkerPool(WorkerPoolWorker<T> worker, int threadCount){
-		this.worker= worker;
-		this.threadCount= threadCount;
-		threadPool= new ThreadPoolExecutor(threadCount, threadCount, 5, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(threadCount, true));
-		worker.setWorkerPool(this);
-	}
-	public WorkerPoolWorker<T> getWorker(){
-		return worker;
-	}
-	protected ThreadPoolExecutor getThreadPool(){
-		return threadPool;
-	}
-	@Override
-	public void run(){
-		if(threadPool.isShutdown()){
-			return;
-		}
-		for (int i= 0; i < threadCount; i++){
-			threadPool.submit(worker);
-		}
-		threadPool.shutdown();
-	}
+public interface WorkerPool<T>{
 	/**
-	 * Number of items in the pool.
-	 * @return
-	 * @see #getItemsRemaining()
-	 * @see #getEffectiveItemsRemaining()
-	 */
-	public abstract int getTotalItems();
-	/**
-	 * Items left in the pool + active thread count
-	 * A more accurate representation of the work left to be done.
+	 * Attempts to add the item. Does not wait for space.
+	 * @param item
 	 * @return
 	 */
-	public int getEffectiveItemsRemaining(){
-		return getItemsRemaining() + getActiveThreadCount();
+	public boolean addItem(T item);
+	/**
+	 * Adds the item to the queue, waiting if needed. Default calls putItem(item, 0, null)
+	 * @param item
+	 * @throws InterruptedException
+	 */
+	public default void putItem(T item) throws InterruptedException{
+		putItem(item, 0, null);
 	}
 	/**
-	 * Items left in the pool
+	 * Adds the item to the queue, waiting up to [amount]
+	 * @param item
+	 * @param amount
+	 * @param unit
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public boolean putItem(T item, long amount, TimeUnit unit) throws InterruptedException;
+	/**
+	 * Attempts to remove the item from the work queue.
+	 * @param item
+	 * @return false if the item couldn't be removed from the queue.
+	 */
+	public boolean removeItem(T item);
+	/**
+	 * True if the item is in the work queue
+	 * @param item
 	 * @return
 	 */
-	public abstract int getItemsRemaining();
+	public boolean hasItem(T item);
 	/**
-	 * Waits until all worker threads are complete.
-	 * @throws InterruptedException If interrupted while waiting.
-	 */
-	public void waitFor() throws InterruptedException{
-		waitFor(0);
-	};
-	/**
-	 * @param timeout Time, in milliseconds, to wait for the threads to complete.
-	 * 		0 waits forever.
-	 * @throws InterruptedException If interrupted while waiting
-	 */
-	public void waitFor(long timeout) throws InterruptedException{
-		if(done){
-			return;
-		}
-		if(timeout == 0){
-			while(!done){
-				done= threadPool.awaitTermination(10, TimeUnit.SECONDS);
-			}
-		}else{
-			done= threadPool.awaitTermination(timeout, TimeUnit.MILLISECONDS);
-		}
-	};
-
-	/**
-	 * Optional. The number of workers doing work. Default returns 0.
+	 * Items remaining in the work queue
 	 * @return
 	 */
-	public int getActiveThreadCount(){
-		return threadPool.getActiveCount();
-	}
-	public boolean isRunning(){
-		return threadPool.isTerminating();
-	}
-	public final boolean isDone(){
-		return done;
-	}
+	public int getItemsRemaining();
 	/**
-	 * Sets the stop flag to signal the workers to stop gracefully.
-	 * Unless the stop flag is ignored.
+	 * Waits at most timeout units for this pool to finish
+	 * @param timeout
+	 * @param unit
+	 * @throws InterruptedException
 	 */
-	public void stop(){
-		worker.stop();
-	}
+	public void waitFor(long timeout, TimeUnit unit) throws InterruptedException;
 	/**
-	 * Sets the stop flag and calls interrupt() on all the workers.
+	 * Waits for this pool to finish. Calls waitFor(0, null)
+	 * @throws InterruptedException
 	 */
-	public void interruptThreads(){
-		worker.stop();
-		threadPool.shutdownNow();
+	public default void waitFor() throws InterruptedException{
+		waitFor(0, null);
 	}
+	public int getActiveThreadCount();
+	public boolean isRunning();
+	public boolean isDone();
+	public void stop();
+	public void stopNow();
+	public boolean isStopping();
 }

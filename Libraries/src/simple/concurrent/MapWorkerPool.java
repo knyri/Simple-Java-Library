@@ -1,95 +1,82 @@
 package simple.concurrent;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import simple.collections.ArrayQueue;
-
-public class MapWorkerPool<K, V> extends WorkerPool<MapWorkerPool.WorkerEntry<K,V>>{
-	protected final Queue<K> keys;
-	protected final Map<K, V> pool;
-	private final int poolSize;
+/**
+ * Pool with multiple queues
+ * @author Ken Pierce
+ *
+ * @param <K>
+ * @param <D>
+ */
+public interface MapWorkerPool<K,D>{
+	public void addAll(Map<K, Collection<D>> items);
+	public Set<K> getKeys();
 	/**
-	 * @param worker The worker that will do the work
-	 * @param pool The pool of items to work on
-	 * @param threads Thread count
-	 */
-	public MapWorkerPool(Worker<K, V> worker, Map<K, V> pool, int threads) {
-		super(worker, threads);
-		this.pool= pool;
-		poolSize= pool.size();
-		keys= new ArrayQueue<K>((K[])pool.keySet().toArray());
-		worker.setPool(new MapWorkerDataPool<K, V>(keys, pool));
-	}
-	/**
-	 * Thread count will be {@linkplain java.lang.Runtime#availableProcessors()}.
-	 * @param worker The worker that will do the work
-	 * @param pool The pool of items to work on
-	 */
-	public MapWorkerPool(Worker<K, V> worker, Map<K, V> pool) {
-		this(worker, pool, Runtime.getRuntime().availableProcessors());
-	}
-	/**
-	 * Items left in the pool
+	 * Attempts to add item to the work queue
+	 * @param key
+	 * @param item
 	 * @return
 	 */
-	@Override
-	public int getItemsRemaining(){
-		return keys.size();
+	public boolean addItem(K key, D item);
+	/**
+	 * Put the item in the work queue, Waiting if needed.
+	 * @param key
+	 * @param item
+	 * @throws InterruptedException
+	 */
+	public default void putItem(K key, D item) throws InterruptedException{
+		putItem(key, item, 0, null);
 	}
 	/**
-	 * Does the dirty work
+	 * Attempts to put the item in the queue, waiting if needed
+	 * @param key
+	 * @param item
+	 * @param timeout
+	 * @param unit
+	 * @return
+	 * @throws InterruptedException
 	 */
-	public static abstract class Worker<K, V> extends WorkerPoolWorker<WorkerEntry<K, V>> {
-		private final WorkerEntry<K,V> entry= new WorkerEntry<K,V>();
-		/**
-		 * @return The next Object to work on or null
-		 */
-		@SuppressWarnings("unchecked")
-		@Override
-		protected final WorkerEntry<K, V> getNext(){
-			return ((MapWorkerDataPool<K, V>)getDataPool()).getNext(entry);
-		}
+	public boolean putItem(K key, D item, long timeout, TimeUnit unit) throws InterruptedException;
+	/**
+	 * Attempts to remove the item from the queue
+	 * @param key
+	 * @param item
+	 * @return true if the item was removed. Should return false if the item was not present
+	 */
+	public boolean removeItem(K key, D item);
+	/**
+	 * @param key
+	 * @param item
+	 * @return true if the item is in the work queue
+	 */
+	public boolean hasItem(K key, D item);
+	public int getItemsRemaining();
+	public int getItemsRemaining(K key);
+	/**
+	 * Waits for the pool to finish
+	 * @param timeout
+	 * @param unit
+	 * @throws InterruptedException
+	 */
+	public void waitFor(long timeout, TimeUnit unit) throws InterruptedException;
+	/**
+	 * Waits for the pool to finish. Default calls waitFor(0, null)
+	 * @throws InterruptedException
+	 */
+	public default void waitFor() throws InterruptedException{
+		waitFor(0, null);
 	}
-	public static class WorkerEntry<K, V>{
-		public K key= null;
-		public V value= null;
-		public K key(){return key;}
-		public V value(){return value;}
-	}
-	static class MapWorkerDataPool<K, V> implements WorkerDataPool<WorkerEntry<K, V>>{
-		protected final Queue<K> keys;
-		protected final Map<K, V> data;
-		public MapWorkerDataPool(Queue<K> keys, Map<K, V> data){
-			this.keys= keys;
-			this.data= data;
-		}
-		public WorkerEntry<K, V> getNext(WorkerEntry<K, V> entry){
-			synchronized(keys){
-				if(keys.isEmpty()){
-					return null;
-				}
-				entry.key= keys.poll();
-				entry.value= data.get(entry.key);
-			}
-			return entry;
-		}
-		@Override
-		public WorkerEntry<K, V> getNext(){
-			return getNext(new WorkerEntry<K, V>());
-		}
-
-		@Override
-		public boolean putBack(WorkerEntry<K, V> entry){
-			synchronized(keys){
-				return keys.add(entry.key);
-			}
-		}
-
-	}
-	@Override
-	public int getTotalItems(){
-		return poolSize;
-	}
+	public int getActiveThreadCount();
+	public boolean isRunning();
+	public boolean isDone();
+	public boolean isRunning(K key);
+	public boolean isDone(K key);
+	public void stop();
+	public void stopNow();
+	public boolean isStopping();
 
 }
