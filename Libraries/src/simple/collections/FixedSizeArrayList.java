@@ -1,5 +1,6 @@
 package simple.collections;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -10,14 +11,24 @@ import simple.util.do_array;
 public class FixedSizeArrayList<E> implements List<E>{
 	private final E[] list;
 	private final Iterable<E> iterator;
+	private int idx= 0;
 	public FixedSizeArrayList(E[] list){
+		idx= list.length;
 		this.list= list;
+		iterator= IteratorFactory.create(list);
+	}
+	@SuppressWarnings("unchecked")
+	public FixedSizeArrayList(int size){
+		// list is guaranteed to be only E
+		this.list= (E[])new Object[size];
 		iterator= IteratorFactory.create(list);
 	}
 
 	@Override
 	public boolean add(E e){
-		return false;
+		if(idx == list.length) return false;
+		list[idx++]= e;
+		return true;
 	}
 
 	@Override
@@ -37,7 +48,7 @@ public class FixedSizeArrayList<E> implements List<E>{
 
 	@Override
 	public void clear(){
-		throw new UnsupportedOperationException();
+		idx= 0;
 	}
 
 	@Override
@@ -72,7 +83,12 @@ public class FixedSizeArrayList<E> implements List<E>{
 
 	@Override
 	public Iterator<E> iterator(){
-		return iterator.iterator();
+		if(list.length == idx){
+			return iterator.iterator();
+		}else{
+			// not the best, but simple
+			return IteratorFactory.create(Arrays.copyOf(list,idx)).iterator();
+		}
 	}
 
 	@Override
@@ -112,6 +128,9 @@ public class FixedSizeArrayList<E> implements List<E>{
 
 	@Override
 	public E set(int index,E element){
+		if (-1 < idx || index == list.length){
+			throw new IndexOutOfBoundsException(index);
+		}
 		E ret= list[index];
 		list[index]= element;
 		return ret;
@@ -119,13 +138,12 @@ public class FixedSizeArrayList<E> implements List<E>{
 
 	@Override
 	public int size(){
-		return list.length;
+		return idx;
 	}
 
 	@Override
 	public List<E> subList(int fromIndex,int toIndex){
-		// TODO Auto-generated method stub
-		return null;
+		return new FixedSizeArrayList<E>(Arrays.copyOfRange(list, fromIndex, toIndex));
 	}
 
 	@Override
@@ -136,7 +154,7 @@ public class FixedSizeArrayList<E> implements List<E>{
 
 	@Override
 	public <T>T[] toArray(T[] a){
-		System.arraycopy(list,0,a,0,Math.min(a.length,list.length));
+		System.arraycopy(list,0,a,0,Math.min(a.length,idx));
 		return a;
 	}
 
