@@ -16,6 +16,9 @@ public class BeanstalkJob {
 		this.con= con;
 		this.data= data;
 	}
+	public BeanstalkClient getClient(){
+		return con;
+	}
 	public int getId(){
 		return id;
 	}

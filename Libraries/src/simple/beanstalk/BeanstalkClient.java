@@ -9,10 +9,13 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import simple.io.ByteBuffer;
@@ -22,7 +25,7 @@ import simple.io.ByteBuffer;
  * https://github.com/kr/beanstalkd/blob/master/doc/protocol.txt
  */
 public class BeanstalkClient implements AutoCloseable{
-//	private static final Logger log= LogManager.getLogManager().getLogger(BeanstalkClient.class.getCanonicalName());
+	private static final Logger log= LogManager.getLogManager().getLogger(BeanstalkClient.class.getCanonicalName());
 	private final InetSocketAddress address;
 	private Socket con= null;
 	private InputStream input;
@@ -94,6 +97,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws IOException
 	 */
 	public void connect() throws IOException {
+		log.finer("Connecting to Server");
 		if(con == null || con.isClosed()){
 			con= new Socket(address.getAddress(), address.getPort());
 			output= con.getOutputStream();
@@ -321,6 +325,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public BeanstalkJob reserve(int timeout) throws IOException, BeanstalkException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Waiting ").append(timeout).append(" seconds for a job")
+				.toString()
+			;
+		});
 		String response;
 		if(timeout == -1){
 			response= doCommand("reserve");
@@ -351,6 +361,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public void delete(int jobId) throws IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkDisconnectedException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Deleting job ").append(jobId)
+				.toString()
+			;
+		});
 		String response= doCommand("delete "+ Integer.toString(jobId, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Job " + jobId + " not found");
@@ -372,6 +388,14 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public PutResponse release(int jobId, int priority, int delay) throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Returning job ").append(jobId)
+				.append("; delay: ").append(delay)
+				.append("; priority: ").append(priority)
+				.toString()
+			;
+		});
 		String response= doCommand("release " + Integer.toString(jobId, 10) + ' ' + Integer.toString(priority, 10) + ' ' + Integer.toString(delay, 10));
 		PutResponse resp;
 		switch(response){
@@ -398,6 +422,13 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public void bury(int jobId, int priority) throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Burying job ").append(jobId)
+				.append("; priority: ").append(priority)
+				.toString()
+			;
+		});
 		String response= doCommand("bury "+ Integer.toString(jobId, 10) + ' ' + Integer.toString(priority, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Job " + jobId + " not found");
@@ -416,6 +447,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public void touch(int jobId) throws IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkDisconnectedException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Touching job ").append(jobId)
+				.toString()
+			;
+		});
 		String response= doCommand("touch "+ Integer.toString(jobId, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Job " + jobId + " not found");
@@ -433,6 +470,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public void watch(String tube) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Watching tube ").append(tube)
+				.toString()
+			;
+		});
 		String response= doCommand("watch "+ tube);
 		if(!"WATCHING".equals(response)){
 			throw new BeanstalkProtocolException("Unexpected response: '" + response + "'");
@@ -450,6 +493,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public boolean ignore(String tube) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Ignoring tube ").append(tube)
+				.toString()
+			;
+		});
 		String response= doCommand("ignore "+ tube);
 		switch(response){
 		case "WATCHING":
@@ -473,6 +522,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public BeanstalkJob peek(int jobId) throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Peeking job ").append(jobId)
+				.toString()
+			;
+		});
 		String response= doCommand("peek "+ Integer.toString(jobId, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Job "+ jobId +" not found");
@@ -492,6 +547,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public BeanstalkJob peekReady() throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer("Peeking ready queue");
 		String response= doCommand("peek-ready");
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("No jobs in the ready queue");
@@ -511,6 +567,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public BeanstalkJob peekDelayed() throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer("Peeking delayed queue");
 		String response= doCommand("peek-delayed");
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("No jobs in the delayed queue");
@@ -530,6 +587,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public BeanstalkJob peekBuried() throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer("Peeking buried queue");
 		String response= doCommand("peek-buried");
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("No jobs in the buried queue");
@@ -551,6 +609,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public int kick(int limit) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Kicking up to ").append(limit).append(" jobs out of the buried queue")
+				.toString()
+			;
+		});
 		String response= doCommand("kick "+ Integer.toString(limit, 10));
 		if(!"KICKED".equals(response)){
 			throw new BeanstalkProtocolException("Unexpected response: '" + response + "'");
@@ -567,6 +631,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public void kickJob(int jobId) throws BeanstalkDisconnectedException, IOException, BeanstalkNotFoundException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Kicking ").append(jobId).append(" out of the buried queue")
+				.toString()
+			;
+		});
 		String response= doCommand("kick-job "+ Integer.toString(jobId, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Job "+ jobId +" not found");
@@ -585,6 +655,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public boolean use(String tube) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Using tube ").append(tube)
+				.toString()
+			;
+		});
 		String response= doCommand("use "+ tube);
 		if(!"USING".equals(response)){
 			throw new BeanstalkProtocolException("Unexpected response: '" + response + "'");
@@ -601,6 +677,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException
 	 */
 	public String listTubeUsed() throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer("Listing used tubes");
 		String response= doCommand("list-tube-used");
 		if(!"USING".equals(response)){
 			throw new BeanstalkProtocolException("Unexpected response: '" + response + "'");
@@ -621,12 +698,30 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkServerException See {@link #doCommand(byte[])}
 	 */
 	public PutResponse put(int priority, int delay, int ttr, byte[] data) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Putting job into queue. ")
+				.append("delay: ").append(delay).append("; priority: ").append(priority)
+				.append("; time-to-run: ").append(ttr)
+				.append("; data: ").append(bytesToHex(data))
+				.toString()
+			;
+		});
 		String response= doCommand("put "+ Integer.toString(priority, 10) + ' ' + Integer.toString(delay, 10) + ' ' + Integer.toString(ttr, 10), data);
+		String id;
 		switch(response){
 		case "INSERTED":
-			return new PutResponse(PutResponse.Type.INSERTED, Integer.parseInt(getToken(), 10));
+			id= getToken();
+			log.finer(()->{
+				return "PUT " + response + ' ' + id;
+			});
+			return new PutResponse(PutResponse.Type.INSERTED, Integer.parseInt(id, 10));
 		case "BURIED":
-			return new PutResponse(PutResponse.Type.BURIED, Integer.parseInt(getToken(), 10));
+			id= getToken();
+			log.finer(()->{
+				return "PUT " + response + ' ' + id;
+			});
+			return new PutResponse(PutResponse.Type.BURIED, Integer.parseInt(id, 10));
 		case "EXPECTED_CRLF":
 			throw new BeanstalkProtocolException("Missing trailing CRLF after data.");
 		case "JOB_TOO_BIG":
@@ -671,6 +766,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws IOException
 	 */
 	public Map<String, String> statsJob(int jobId) throws BeanstalkProtocolException, BeanstalkNotFoundException, BeanstalkDisconnectedException, BeanstalkServerException, IOException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Getting stats for job ").append(jobId)
+				.toString()
+			;
+		});
 		String response= doCommand("stats-job " + Integer.toString(jobId, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Job "+ jobId +" not found");
@@ -708,6 +809,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws IOException
 	 */
 	public Map<String, String> statsTube(String tube) throws BeanstalkProtocolException, BeanstalkNotFoundException, BeanstalkDisconnectedException, BeanstalkServerException, IOException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Getting stats for tube ").append(tube)
+				.toString()
+			;
+		});
 		String response= doCommand("stats-tube " + tube);
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Tube " + tube + " not found");
@@ -776,6 +883,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws IOException
 	 */
 	public Map<String, String> stats() throws BeanstalkProtocolException, BeanstalkNotFoundException, BeanstalkDisconnectedException, BeanstalkServerException, IOException{
+		log.finer("Getting server stats");
 		String response= doCommand("stats");
 
 		if(!"OK".equals(response)){
@@ -795,6 +903,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws IOException
 	 */
 	public List<String> listTubes() throws BeanstalkProtocolException, BeanstalkNotFoundException, BeanstalkDisconnectedException, BeanstalkServerException, IOException{
+		log.finer("Listing all tubes");
 		String response= doCommand("list-tubes");
 
 		if(!"OK".equals(response)){
@@ -813,6 +922,7 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws IOException
 	 */
 	public List<String> listTubesWatched() throws BeanstalkProtocolException, BeanstalkNotFoundException, BeanstalkDisconnectedException, BeanstalkServerException, IOException{
+		log.finer("Listing watched tubes");
 		String response= doCommand("list-tubes-watched");
 
 		if(!"OK".equals(response)){
@@ -830,6 +940,12 @@ public class BeanstalkClient implements AutoCloseable{
 	 * @throws BeanstalkNotFoundException
 	 */
 	public void pauseTube(String tube, int delay) throws BeanstalkDisconnectedException, IOException, BeanstalkProtocolException, BeanstalkServerException, BeanstalkNotFoundException{
+		log.finer(()->{
+			return (new StringBuilder(200))
+				.append("Pausing tube ").append(tube).append(" for ").append(delay).append(" seconds")
+				.toString()
+			;
+		});
 		String response= doCommand("pause-tube "+ tube + ' ' + Integer.toString(delay, 10));
 		if("NOT_FOUND".equals(response)){
 			throw new BeanstalkNotFoundException("Tube "+ tube +" not found.");
@@ -837,5 +953,15 @@ public class BeanstalkClient implements AutoCloseable{
 		if(!"PAUSED".equals(response)){
 			throw new BeanstalkProtocolException("Unexpected response: '" + response + "'");
 		}
+	}
+	private static final byte[] HEX_ARRAY= "0123456789ABCDEF".getBytes(Charset.forName("UTF-8"));
+	public static String bytesToHex(byte[] bytes){
+		byte[] hexChars= new byte[bytes.length * 2];
+		for(int j= 0; j < bytes.length; j++){
+			int v= bytes[j] & 0xFF;
+			hexChars[j * 2]= HEX_ARRAY[v >>> 4];
+			hexChars[j * 2]= HEX_ARRAY[v & 0x0F];
+		}
+		return new String(hexChars, Charset.forName("UTF-8"));
 	}
 }
